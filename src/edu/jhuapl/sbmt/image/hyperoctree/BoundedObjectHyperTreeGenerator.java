@@ -1,64 +1,63 @@
 package edu.jhuapl.sbmt.image.hyperoctree;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collection;
 import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.filefilter.WildcardFileFilter;
-
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 
-import edu.jhuapl.saavtk.util.BoundingBox;
 import edu.jhuapl.saavtk.util.NativeLibraryLoader;
 import edu.jhuapl.sbmt.lidar.DataOutputStreamPool;
-import edu.jhuapl.sbmt.lidar.LidarInstrument;
-import edu.jhuapl.sbmt.lidar.hyperoctree.FSHyperTreeGenerator;
 import edu.jhuapl.sbmt.lidar.hyperoctree.HyperBox;
 import edu.jhuapl.sbmt.lidar.hyperoctree.HyperException;
-import edu.jhuapl.sbmt.lidar.hyperoctree.laser.LaserFSHyperTreeGenerator;
-import edu.jhuapl.sbmt.lidar.hyperoctree.nlr.NlrFSHyperTreeGenerator;
-import edu.jhuapl.sbmt.lidar.hyperoctree.ola.OlaFSHyperPoint;
-import edu.jhuapl.sbmt.lidar.hyperoctree.ola.OlaFSHyperTreeGenerator;
 
-public abstract class ImageFSHyperTreeGenerator
+public class BoundedObjectHyperTreeGenerator
 {
     final Path outputDirectory;
-    final int maxNumberOfPointsPerLeaf;
+    final int maxNumberObjectsPerLeaf;
     final HyperBox bbox;
     final int maxNumberOfOpenOutputFiles;
     final DataOutputStreamPool pool;
-    ImageFSHyperTreeNode root;
-    long totalPointsWritten = 0;
+    BoundedObjectHyperTreeNode root;
+    long totalObjectsWritten = 0;
 
 
     BiMap<Path, Integer> fileMap=HashBiMap.create();
 
-    public ImageFSHyperTreeGenerator(Path outputDirectory, int maxNumberOfPointsPerLeaf, HyperBox bbox, int maxNumberOfOpenOutputFiles, DataOutputStreamPool pool)
+    public BoundedObjectHyperTreeGenerator(Path outputDirectory, int maxObjectsPerLeaf, HyperBox bbox, int maxNumberOfOpenOutputFiles, DataOutputStreamPool pool)
     {
         this.outputDirectory = outputDirectory;
-        this.maxNumberOfPointsPerLeaf = maxNumberOfPointsPerLeaf;
+        this.maxNumberObjectsPerLeaf = maxObjectsPerLeaf;
         this.maxNumberOfOpenOutputFiles = maxNumberOfOpenOutputFiles;
-        this.bbox = bbox;
+        this.bbox = bbox; // bounding box of body
         this.pool = pool;
-        root = new ImageFSHyperTreeNode(null, outputDirectory, bbox, maxNumberOfPointsPerLeaf,pool);
+        root = new BoundedObjectHyperTreeNode(null, outputDirectory, bbox, maxObjectsPerLeaf,pool);
     }
 
-    public void addImage(Path inputPath) throws HyperException, IOException
+    private void addAllObjectsFromFile(String inputFile) throws HyperException, IOException
     {
-        // TODO create constructor for FSHyperImage from datasource -- database? file? both?
-        FSHyperImage image = new FSHyperImage(null);
-        root.add(image);
-        totalPointsWritten++;
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] toks = line.split(",");
+                String objName = toks[0];
+                String objId = toks[1];
+                HyperBox objBBox = new HyperBox(new double[]{Double.parseDouble(toks[2]), Double.parseDouble(toks[3])},
+                        new double[]{Double.parseDouble(toks[4]), Double.parseDouble(toks[5])});
+
+                HyperBoundedObject obj = new HyperBoundedObject(objName, Integer.parseInt(objId), objBBox);
+                root.add(obj);
+                totalObjectsWritten++;
+            }
+        }
+
     }
 
 
@@ -67,16 +66,16 @@ public abstract class ImageFSHyperTreeGenerator
         expandNode(root);
     }
 
-    public void expandNode(ImageFSHyperTreeNode node) throws HyperException, IOException
+    public void expandNode(BoundedObjectHyperTreeNode node) throws HyperException, IOException
     {
-        if (node.getNumberOfPoints()>maxNumberOfPointsPerLeaf)
+        if (node.getNumberOfObjects() > maxNumberObjectsPerLeaf)
         {
             node.split();
             for (int i=0; i<node.getNumberOfChildren(); i++)
                 if (node.childExists(i))
                 {
                     System.out.println(node.getChild(i).getPath());
-                    expandNode((ImageFSHyperTreeNode)node.getChild(i));
+                    expandNode((BoundedObjectHyperTreeNode)node.getChild(i));
                 }
         }
     }
@@ -87,7 +86,7 @@ public abstract class ImageFSHyperTreeGenerator
         finalCommit(root);
     }
 
-    void finalCommit(ImageFSHyperTreeNode node) throws IOException
+    void finalCommit(BoundedObjectHyperTreeNode node) throws IOException
     {
         File dataFile = node.getDataFilePath().toFile();  // clean up any data files with zero points
         if (!node.isLeaf())
@@ -95,7 +94,7 @@ public abstract class ImageFSHyperTreeGenerator
             if (dataFile.exists())
                 dataFile.delete();
             for (int i=0; i<8; i++)
-                finalCommit((ImageFSHyperTreeNode)node.getChild(i));
+                finalCommit((BoundedObjectHyperTreeNode)node.getChild(i));
         }
         else {
             if (!dataFile.exists() || dataFile.length()==0l)
@@ -120,18 +119,18 @@ public abstract class ImageFSHyperTreeGenerator
 //        return total;
 //    }
 
-    public List<ImageFSHyperTreeNode> getAllNonEmptyLeafNodes()
+    public List<BoundedObjectHyperTreeNode> getAllNonEmptyLeafNodes()
     {
-        List<ImageFSHyperTreeNode> nodeList=Lists.newArrayList();
+        List<BoundedObjectHyperTreeNode> nodeList=Lists.newArrayList();
         getAllNonEmptyLeafNodes(root, nodeList);
         return nodeList;
     }
 
-    void getAllNonEmptyLeafNodes(ImageFSHyperTreeNode node, List<ImageFSHyperTreeNode> nodeList)
+    void getAllNonEmptyLeafNodes(BoundedObjectHyperTreeNode node, List<BoundedObjectHyperTreeNode> nodeList)
     {
         if (!node.isLeaf())
             for (int i=0; i<node.getNumberOfChildren(); i++)
-                getAllNonEmptyLeafNodes((ImageFSHyperTreeNode)node.getChild(i), nodeList);
+                getAllNonEmptyLeafNodes((BoundedObjectHyperTreeNode)node.getChild(i), nodeList);
         else if (node.getDataFilePath().toFile().exists())
             nodeList.add(node);
     }
@@ -150,73 +149,32 @@ public abstract class ImageFSHyperTreeGenerator
 
     public static void main(String[] args) throws IOException, HyperException
     {
-        if (args.length!=6)
+        if (args.length!=4)
         {
             printUsage();
             return;
         }
 
         //String inputDirectoryString=args[0];    // "/Volumes/dumbledore/sbmt/OLA"
-        String inputDirectoryListFileString=args[0];
+        String inputFile = args[0];
         String outputDirectoryString=args[1];   // "/Volumes/dumbledore/sbmt/ola_hypertree"
         double dataFileMBLimit=Double.valueOf(args[2]); // 1
         int maxNumOpenOutputFiles=Integer.valueOf(args[3]);   // 32
-        int nFilesToProcess=Integer.valueOf(args[4]);
-        String instrumentName=args[5];
 
-        System.out.println("Input data directory listing = "+inputDirectoryListFileString);
+        System.out.println("Input file = "+ inputFile);
         System.out.println("Output tree location = "+outputDirectoryString);
         System.out.println("Data file MB limit = "+dataFileMBLimit);
         System.out.println("Max # open output files = "+maxNumOpenOutputFiles);
-        System.out.println("Number of files to process = "+nFilesToProcess);
-        System.out.println("Instrument = "+instrumentName);
 
         NativeLibraryLoader.loadVtkLibrariesHeadless();
-        Path inputDirectoryListFile=Paths.get(inputDirectoryListFileString);
+        Path inputDirectoryListFile=Paths.get(inputFile);
         Path outputDirectory=Paths.get(outputDirectoryString);
 
         int dataFileByteLimit=(int)(dataFileMBLimit*1024*1024);
-        int maxPointsPerLeaf=dataFileByteLimit/new OlaFSHyperPoint().getSizeInBytes();   // three doubles for scpos, three doubles for tgpos, one double for time, and one double for intensity
+        int maxObjectsPerLeaf = 2;
         DataOutputStreamPool pool=new DataOutputStreamPool(maxNumOpenOutputFiles);
 
-        LidarInstrument instrument=LidarInstrument.valueOf(instrumentName);
-        BoundingBox bbox=instrument.getBoundingBox();
-        System.out.println("Original bounding box = "+bbox);
-        double bboxSizeIncrease=0.05;
-        bbox.increaseSize(bboxSizeIncrease);
-        System.out.println("Bounding box diagonal length increase = "+bboxSizeIncrease);
-        System.out.println("Rescaled bounding box = "+bbox);
-        System.out.println();
 
-        double tmin=instrument.getTmin();
-        double tmax=instrument.getTmax();
-        double tscale=(tmax-tmin)*bboxSizeIncrease/2.;
-        double newTmin=tmin-tscale;
-        double newTmax=tmax+tscale;
-        System.out.println("tmin="+tmin+" tmax="+tmax+" are being expanded by a factor of "+bboxSizeIncrease+" to tmin="+newTmin+" tmax="+newTmax);
-        HyperBox hbox=new HyperBox(new double[]{bbox.xmin, bbox.ymin, bbox.zmin, tmin}, new double[]{bbox.xmax, bbox.ymax, bbox.zmax, tmax});
-
-        List<File> fileList=Lists.newArrayList();
-        Scanner scanner=new Scanner(inputDirectoryListFile.toFile());
-        while (scanner.hasNextLine())
-        {
-            File dataDirectory=inputDirectoryListFile.getParent().resolve(scanner.nextLine().trim()).toFile();
-            System.out.println(dataDirectory+" "+dataDirectory.isDirectory()+" "+dataDirectory.getName());
-            System.out.println("Searching for ."+instrument.getRawFileExtension()+" files in "+dataDirectory.toString());
-            Collection<File> fileCollection=FileUtils.listFiles(dataDirectory, new WildcardFileFilter("*."+instrument.getRawFileExtension()), null);
-            for (File f : fileCollection) {
-                System.out.println("Adding file "+f+" to the processing queue");
-                fileList.add(f);
-            }
-        }
-        scanner.close();
-        int numFiles=fileList.size();
-
-        if (nFilesToProcess>-1)
-            numFiles=nFilesToProcess;
-
-        //FileUtils.deleteDirectory(outputDirectory.toFile());
-        //FileUtils.forceMkdir(outputDirectory.toFile());
         if (!outputDirectory.toFile().exists())
         {
             System.out.println("Error: Output directory \""+outputDirectory.toString()+"\" does not exist");
@@ -231,56 +189,29 @@ public abstract class ImageFSHyperTreeGenerator
             System.out.println();
         }
 
+        // TODO min and max dimensions for hyperbox around body
+        double[] min = {};
+        double[] max = {};
+        HyperBox hbox = new HyperBox(min, max);
+        BoundedObjectHyperTreeGenerator generator = new BoundedObjectHyperTreeGenerator(outputDirectory, maxObjectsPerLeaf, hbox, maxNumOpenOutputFiles, pool);
 
-        FSHyperTreeGenerator generator=null;
-        switch (instrument)
-        {
-        case OLA:
-            generator=new OlaFSHyperTreeGenerator(outputDirectory, maxPointsPerLeaf, hbox, maxNumOpenOutputFiles, pool);
-            break;
-        case NLR:
-            generator=new NlrFSHyperTreeGenerator(outputDirectory, maxPointsPerLeaf, hbox, maxNumOpenOutputFiles, pool);
-            break;
-        case LASER:
-            generator=new LaserFSHyperTreeGenerator(outputDirectory, maxPointsPerLeaf, hbox, maxNumOpenOutputFiles, pool);
-            break;
-        }
+        generator.addAllObjectsFromFile(inputFile);
 
-        Stopwatch sw=new Stopwatch();
-        for (int i=0; i<numFiles; i++) {
-            sw.reset();
-            sw.start();
-            Path inputPath=Paths.get(fileList.get(i).toString());
-            System.out.println("Searching for valid lidar points in file "+(i+1)+"/"+numFiles+" : "+inputPath);
-  //          generator.addPointsFromL2FileToRoot(inputPath,Integer.MAX_VALUE);
-            generator.addAllPointsFromFile(inputPath);
-            System.out.println("  Elapsed time = "+sw.elapsedTime(TimeUnit.SECONDS)+" s");
-            System.out.println("  Total points written into master data file = "+generator.totalPointsWritten);// TODO: close down all DataOutputStreams
-            System.out.println("  Total MB written into master data file = "+generator.convertBytesToMB(generator.root.getDataFilePath().toFile().length()));
-        }
-        long rootFileSizeBytes=generator.root.getDataFilePath().toFile().length();
-
-        sw.reset();
-        sw.start();
         System.out.println("Expanding tree.");
-        System.out.println("Max # pts per leaf="+maxPointsPerLeaf);
-        System.out.println("   ... equivalent to "+dataFileMBLimit+" MB max per file");
+        System.out.println("Max # pts per leaf="+maxObjectsPerLeaf);
         generator.expand();
-        System.out.println("Done expanding tree. Time elapsed="+sw.elapsedTime(TimeUnit.SECONDS)+" s");
-        System.out.println("Cleaning up.");
         System.out.println();
         generator.commit(); // clean up any empty or open data files
 
-        System.out.println("Total MB stored = "+generator.convertBytesToMB(generator.countBytes()));
-        System.out.println("Total MB initially copied = "+generator.convertBytesToMB(rootFileSizeBytes));
 
-
-        Path fileMapPath=outputDirectory.resolve("fileMap.txt");
+        Path fileMapPath = outputDirectory.resolve("fileMap.txt");
         System.out.print("Writing file map to "+fileMapPath+"... ");
-        FileWriter writer=new FileWriter(fileMapPath.toFile());
+        FileWriter writer = new FileWriter(fileMapPath.toFile());
         for (int i : generator.fileMap.inverse().keySet())
             writer.write(i+" "+generator.fileMap.inverse().get(i)+"\n");
         writer.close();
         System.out.println("Done.");
     }
+
+
 }

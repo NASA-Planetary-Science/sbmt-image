@@ -11,19 +11,19 @@ import edu.jhuapl.sbmt.lidar.hyperoctree.HyperBox;
 import edu.jhuapl.sbmt.lidar.hyperoctree.HyperException;
 import edu.jhuapl.sbmt.lidar.hyperoctree.HyperException.HyperDimensionMismatchException;
 
-public class ImageFSHyperTreeNode
+public class BoundedObjectHyperTreeNode
 {
 
-    ImageFSHyperTreeNode parent;
-    ImageFSHyperTreeNode[] children;
+    BoundedObjectHyperTreeNode parent;
+    BoundedObjectHyperTreeNode[] children;
     Path path;
     HyperBox bbox;
     int maxPointsPerNode;
     DataOutputStreamPool pool;
     boolean isLeaf = true;
-    private int numPoints = 0;
+    private int numObjs = 0;
 
-    public ImageFSHyperTreeNode(ImageFSHyperTreeNode parent, Path path,
+    public BoundedObjectHyperTreeNode(BoundedObjectHyperTreeNode parent, Path path,
             HyperBox bbox, int maxPoints, DataOutputStreamPool pool)
     {
         this.parent=parent;
@@ -31,17 +31,17 @@ public class ImageFSHyperTreeNode
         this.bbox=bbox;
         this.pool=pool;
         this.maxPointsPerNode=maxPoints;
-        children=new ImageFSHyperTreeNode[(int)Math.pow(2, bbox.getDimension())];
+        children=new BoundedObjectHyperTreeNode[(int)Math.pow(2, bbox.getDimension())];
         for (int i=0; i<children.length; i++)
             children[i]=null;
         path.toFile().mkdir();
     }
 
-    protected ImageFSHyperTreeNode createNewChild(int i)
+    protected BoundedObjectHyperTreeNode createNewChild(int i)
     {
         try
         {
-            return new ImageFSHyperTreeNode(this, getChildPath(i), getChildBounds(i), maxPointsPerNode, pool);
+            return new BoundedObjectHyperTreeNode(this, getChildPath(i), getChildBounds(i), maxPointsPerNode, pool);
         }
         catch (HyperDimensionMismatchException e)
         {
@@ -81,22 +81,22 @@ public class ImageFSHyperTreeNode
         return path.resolve(String.valueOf(i));
     }
 
-    protected FSHyperImage createNewImage(DataInputStream stream)
+    protected HyperBoundedObject createNewBoundedObject(DataInputStream stream)
     {
-        return new FSHyperImage(stream);
+        return new HyperBoundedObject(stream);
     }
 
     // TODO  implement adding of images
-    public boolean add(FSHyperImage image) throws HyperException, IOException
+    public boolean add(HyperBoundedObject obj) throws HyperException, IOException
     {
         if (!isLeaf) {
             for (int i=0; i<getNumberOfChildren(); i++)
-                if (children[i].add(image))
+                if (children[i].add(obj))
                     return true;
         } else {
-            if (isInside(image)) {
-                image.write(pool.getStream(getDataFilePath()));
-                numPoints ++;
+            if (isInside(obj)) {
+                obj.write(pool.getStream(getDataFilePath()));
+                numObjs ++;
                 return true;
             }
         }
@@ -115,35 +115,33 @@ public class ImageFSHyperTreeNode
         return children.length;
     }
 
-    public boolean isInside(FSHyperImage image) throws HyperException
+    public boolean isInside(HyperBoundedObject image) throws HyperException
     {
-        return bbox.contains(image);
+        return bbox.intersects(image.getBbox());
     }
 
-    public int getNumberOfPoints()
+    public int getNumberOfObjects()
     {
-        return numPoints;
+        return numObjs;
     }
 
     public void split() throws HyperException, IOException
     {
-        pool.closeStream(getDataFilePath());
         for (int i=0; i<getNumberOfChildren(); i++)
             children[i]=createNewChild(i); // this creates a bounding box for where it is in comparison to the root
         DataInputStream instream=new DataInputStream(new BufferedInputStream(new FileInputStream(getDataFilePath().toFile())));
-        while (instream.available()>0)
+        while (instream.available()>0) // for every object in the node
         {
-            FSHyperImage im = createNewImage(instream);
+            HyperBoundedObject obj = createNewBoundedObject(instream);
             for (int i=0; i<getNumberOfChildren() ; i++)
-                if (children[i].getBoundingBox().contains(im))
+                if (children[i].getBoundingBox().contains(obj))
                 {
-                    children[i].add(im);
+                    children[i].add(obj);
                     break;
                 }
         }
         instream.close();
         isLeaf=false;
-        deleteDataFile();
     }
 
     void deleteDataFile() {
@@ -160,7 +158,7 @@ public class ImageFSHyperTreeNode
         return children[i]!=null;
     }
 
-    public ImageFSHyperTreeNode getChild(int i)
+    public BoundedObjectHyperTreeNode getChild(int i)
     {
         return children[i];
     }
