@@ -22,22 +22,7 @@ public class PixelVectorDoubleFactory
         super();
     }
 
-    public PixelVectorDouble of(int size, double outOfBoundsValue)
-    {
-        Preconditions.checkArgument(size >= 0);
-
-        return new BasicPixelVectorDouble(size) {
-
-            @Override
-            public double getOutOfBoundsValue()
-            {
-                return outOfBoundsValue;
-            }
-
-        };
-    }
-
-    public PixelVectorDouble of(int size, double outOfBoundsValue, double invalidValue)
+    public PixelVectorDouble of(int size, double outOfBoundsValue, Double invalidValue)
     {
         Preconditions.checkArgument(size >= 0);
 
@@ -62,7 +47,7 @@ public class PixelVectorDoubleFactory
                     return getOutOfBoundsValue();
                 }
 
-                return isValid() ? getStoredValue(index) : invalidValue;
+                return isValid()|| invalidValue == null ? getStoredValue(index) : invalidValue;
             }
 
             @Override

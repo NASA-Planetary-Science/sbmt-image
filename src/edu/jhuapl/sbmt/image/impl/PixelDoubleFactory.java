@@ -19,20 +19,7 @@ public class PixelDoubleFactory
         super();
     }
 
-    public PixelDouble of(double value, double outOfBoundsValue)
-    {
-        return new BasicPixelDouble(value) {
-
-            @Override
-            public double getOutOfBoundsValue()
-            {
-                return outOfBoundsValue;
-            }
-
-        };
-    }
-
-    public PixelDouble of(double value, double outOfBoundsValue, double invalidValue)
+    public PixelDouble of(double value, double outOfBoundsValue, Double invalidValue)
     {
         return new BasicPixelDouble(value) {
 
@@ -44,7 +31,7 @@ public class PixelDoubleFactory
                     return getOutOfBoundsValue();
                 }
 
-                return isValid() ? getStoredValue() : invalidValue;
+                return isValid() || invalidValue == null ? getStoredValue() : invalidValue;
             }
 
             @Override

@@ -4,13 +4,12 @@ import java.util.function.Function;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
-import edu.jhuapl.sbmt.image.api.PixelDouble;
-import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleFactory.DoubleGetter2d;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleFactory.DoubleGetter3d;
+import edu.jhuapl.sbmt.image.impl.LayerTransformFactory.ForwardingLayer;
 
 /**
- * Sample/test class for demonstrate how to load and manipulate {@link Layer}s
+ * Sample/test class for demonstrate how to create and manipulate {@link Layer}s
  * using {@link Pixel}s to extract information from them.
  *
  * @author James Peachey
@@ -29,36 +28,32 @@ public abstract class FakePipeline
     protected static final LayerDoubleTransformFactory DoubleTransformFactory = new LayerDoubleTransformFactory();
 
     private final String pipelineTitle;
+    private Function<Layer, Layer> transform;
 
-    public FakePipeline(String pipelineTitle)
+    public FakePipeline(String pipelineTitle, Function<Layer, Layer> transform)
     {
         super();
 
         this.pipelineTitle = pipelineTitle;
+        this.transform = transform;
     }
 
     /**
-     * Each pipeline simulates loading a layer, then processing the layer,
-     * displaying what the layer looks like after each step.
+     * Each pipeline creates (simulates loading) a layer, then processing the
+     * layer, displaying what the layer looks like after each step.
      */
-    public void run()
+    public final void run()
     {
-        Layer layer = loadLayer();
+        Layer layer = createLayer();
 
-        System.out.println("************************************************");
-        System.out.println(getPipelineTitle(layer));
-        System.out.println("************************************************");
-
-        display("Loaded layer:", layer);
-        System.out.println();
-
-        Layer processedLayer = processLayer(layer);
+        Layer processedLayer = transform.apply(layer);
 
         if (processedLayer != layer)
         {
-            display("Processed layer:", processedLayer);
-            System.out.println();
+            displayCreatedLayer(layer);
         }
+
+        displayProcessedLayer(processedLayer);
     }
 
     /**
@@ -91,55 +86,22 @@ public abstract class FakePipeline
     }
 
     /**
-     * Load a {@link Layer} to be used in a pipeline run. Details are up to the
-     * concrete pipeline implementation. This method may return any type of
-     * {@link Layer} (scalar or vector).
+     * Create ("load") a {@link Layer} to be used in a pipeline run. Details are
+     * up to the concrete pipeline implementation. This method may return any
+     * type of {@link Layer} (scalar or vector).
      *
      * @return the loaded layer
      */
-    protected abstract Layer loadLayer();
+    protected abstract Layer createLayer();
 
-    /**
-     * Apply a series of processing/transform steps to a layer. Each concrete
-     * pipeline implementation defines the steps it performs.
-     *
-     * @param layer the layer to process
-     * @return the layer resulting from the the final processing step
-     */
-    protected abstract Layer processLayer(Layer layer);
-
-    /**
-     * Display a message concerning the specifed {@link Layer}.
-     *
-     * @param message the message
-     * @param layer the layer
-     */
-    protected abstract void display(String message, Layer layer);
-
-    /**
-     * Display the state of a {@link Layer}, prefaced by a message, and using
-     * the specified {@link Pixel} instance to retrieve data from the layer.
-     *
-     * @param message the message used as a preface
-     * @param layer the layer whose state to display
-     * @param p the pixel used to get data from the layer
-     */
-    protected void displayState(String message, Layer layer, Pixel p)
+    protected Layer createScalarLayer()
     {
-        System.out.println(message);
-        for (int row = -1; row <= layer.jSize(); ++row)
-        {
-            StringBuilder builder = new StringBuilder();
-            String delim = "";
-            for (int column = -1; column <= layer.iSize(); ++column)
-            {
-                layer.get(column, row, p);
-                builder.append(delim);
-                builder.append(p);
-                delim = ", ";
-            }
-            System.out.println(builder.toString());
-        }
+        return ofScalar(TestISize, TestJSize, TestChecker);
+    }
+
+    protected Layer createVectorLayer()
+    {
+        return ofVector(TestISize, TestJSize, TestKSize, TestChecker);
     }
 
     /**
@@ -198,6 +160,50 @@ public abstract class FakePipeline
                 LayerFactory.ofVector(doubleGetter, iSize, jSize, kSize);
     }
 
+    protected abstract void displayCreatedLayer(Layer layer);
+
+    protected abstract void displayProcessedLayer(Layer layer);
+
+    protected void displayLayer(String message, Layer layer, int displayKsize, Double invalidValueSubstitute)
+    {
+        System.out.println("************************************************");
+        System.out.println(message);
+        System.out.println(getPipelineTitle(layer));
+        System.out.println("************************************************");
+
+        Pixel pixel = displayKsize == 0 ? //
+                PixelScalarFactory.of(0.0, TestOOBValue, invalidValueSubstitute) : //
+                PixelVectorFactory.of(displayKsize, TestOOBValue, invalidValueSubstitute);
+        display("Loaded layer:", layer, pixel);
+        System.out.println();
+    }
+
+    /**
+     * Display the state of a {@link Layer}, prefaced by a message, and using
+     * the specified {@link Pixel} instance to retrieve data from the layer.
+     *
+     * @param message the message used as a preface
+     * @param layer the layer whose state to display
+     * @param pixel the pixel used to get data from the layer
+     */
+    protected final void display(String message, Layer layer, Pixel pixel)
+    {
+        System.out.println(message);
+        for (int row = -1; row <= layer.jSize(); ++row)
+        {
+            StringBuilder builder = new StringBuilder();
+            String delim = "";
+            for (int column = -1; column <= layer.iSize(); ++column)
+            {
+                layer.get(column, row, pixel);
+                builder.append(delim);
+                builder.append(pixel);
+                delim = ", ";
+            }
+            System.out.println(builder.toString());
+        }
+    }
+
     /**
      * Default dimensions for generated test layers.
      */
@@ -239,57 +245,55 @@ public abstract class FakePipeline
         return (j * layer.iSize() + i + 1) % 5 != 0;
     };
 
+    protected static final Function<Layer, Layer> TouchLayer = layer -> {
+        return new ForwardingLayer(layer);
+    };
+
     /**
      * Create a pipeline that loads a {@link Layer} that contains scalar double
-     * values, and applies the specified set of functions in the
-     * {@link #processLayer(Layer)} implementation.
-     * <p>
-     * After the transforms are applied, the layer is displayed in the natural
-     * way, as a scalar.
+     * values, retrieved and displayed as scalars.
      *
      * @param invalidValueSubstitute the value to substitute for all invalid
      *            data elements, or null to show the actual data elements
      *            present in each case
-     * @param functions to apply to the layer
-     *
      * @return the pipeline
      */
-    @SafeVarargs
-    protected static FakePipeline scalarToScalar(Double invalidValueSubstitute, Function<Layer, Layer>... functions)
+    protected static FakePipeline scalarToScalar(Double invalidValueSubstitute)
     {
-        return new FakePipeline("Load a scalar layer, display as scalar layer") {
+        return scalarToScalar(invalidValueSubstitute, Function.identity());
+    }
+
+    /**
+     * Create a pipeline that loads a {@link Layer} that contains scalar double
+     * values, and applies the specified transform. The original and transformed
+     * layers are displayed as scalars.
+     *
+     * @param invalidValueSubstitute the value to substitute for all invalid
+     *            data elements, or null to show the actual data elements
+     *            present in each case
+     * @param transform the transform to apply to the layer
+     * @return the pipeline
+     */
+    protected static FakePipeline scalarToScalar(Double invalidValueSubstitute, Function<Layer, Layer> transform)
+    {
+        return new FakePipeline("Load a scalar layer, display as scalar layer", transform) {
 
             @Override
-            protected Layer loadLayer()
+            protected Layer createLayer()
             {
-                return ofScalar(TestISize, TestJSize, TestChecker);
+                return createScalarLayer();
             }
 
             @Override
-            protected Layer processLayer(Layer layer)
+            protected void displayCreatedLayer(Layer layer)
             {
-                for (Function<Layer, Layer> f : functions)
-                {
-                    layer = f.apply(layer);
-                }
-
-                return layer;
+                displayLayer("Created layer", layer, 0, invalidValueSubstitute);
             }
 
             @Override
-            protected void display(String message, Layer layer)
+            protected void displayProcessedLayer(Layer layer)
             {
-                PixelDouble p;
-                if (invalidValueSubstitute != null)
-                {
-                    p = PixelScalarFactory.of(0.0, TestOOBValue, invalidValueSubstitute);
-                }
-                else
-                {
-                    p = PixelScalarFactory.of(0.0, TestOOBValue);
-                }
-
-                displayState(message, layer, p);
+                displayLayer("Transformed layer", layer, 0, invalidValueSubstitute);
             }
 
         };
@@ -297,58 +301,54 @@ public abstract class FakePipeline
 
     /**
      * Create a pipeline that loads a {@link Layer} that contains scalar double
-     * values, and applies the specified set of functions in the
-     * {@link #processLayer(Layer)} implementation.
-     * <p>
-     * After the transforms are applied, the layer is displayed as if it were a vector. The extra layers
-     * that are not present in the input are created with elements padded with
-     * the out-of-bounds value.
+     * values, retrieved and displayed as a vector.
      *
+     * @param displayKsize the number of elements to display at each indexed
+     *            location (I, J).
      * @param invalidValueSubstitute the value to substitute for all invalid
      *            data elements, or null to show the actual data elements
      *            present in each case
-     * @param displayKsize the number of elements to display at each indexed
-     *            location (I, J).
-     * @param functions to apply to the layer
-     *
      * @return the pipeline
      */
-    @SafeVarargs
-    protected static FakePipeline scalarToVector(Double invalidValueSubstitute, int displayKsize, Function<Layer, Layer>... functions)
+    protected static FakePipeline scalarToVector(int displayKsize, Double invalidValueSubstitute)
     {
-        return new FakePipeline("Load a scalar layer, display as vector layer") {
+        return scalarToVector(displayKsize, invalidValueSubstitute, Function.identity());
+    }
+
+    /**
+     * Create a pipeline that loads a {@link Layer} that contains scalar double
+     * values, and applies the specified transform. The original layer is
+     * displayed as a scalar, while the transformed one is displayed as a
+     * vector.
+     *
+     * @param displayKsize the number of elements to display at each indexed
+     *            location (I, J).
+     * @param invalidValueSubstitute the value to substitute for all invalid
+     *            data elements, or null to show the actual data elements
+     *            present in each case
+     * @param transform the transform to apply to the layer
+     * @return the pipeline
+     */
+    protected static FakePipeline scalarToVector(int displayKsize, Double invalidValueSubstitute, Function<Layer, Layer> transform)
+    {
+        return new FakePipeline("Load a scalar layer, display as vector layer", transform) {
 
             @Override
-            protected Layer loadLayer()
+            protected Layer createLayer()
             {
-                return ofScalar(TestISize, TestJSize, TestChecker);
+                return createScalarLayer();
             }
 
             @Override
-            protected Layer processLayer(Layer layer)
+            protected void displayCreatedLayer(Layer layer)
             {
-                for (Function<Layer, Layer> f : functions)
-                {
-                    layer = f.apply(layer);
-                }
-
-                return layer;
+                displayLayer("Created layer", layer, 0, invalidValueSubstitute);
             }
 
             @Override
-            protected void display(String message, Layer layer)
+            protected void displayProcessedLayer(Layer layer)
             {
-                PixelVectorDouble p;
-                if (invalidValueSubstitute != null)
-                {
-                    p = PixelVectorFactory.of(displayKsize, TestOOBValue, invalidValueSubstitute);
-                }
-                else
-                {
-                    p = PixelVectorFactory.of(displayKsize, TestOOBValue);
-                }
-
-                displayState(message, layer, p);
+                displayLayer("Transformed layer", layer, displayKsize, invalidValueSubstitute);
             }
 
         };
@@ -356,29 +356,49 @@ public abstract class FakePipeline
 
     /**
      * Create a pipeline that loads a {@link Layer} that contains vector double
-     * values, and applies the specified set of functions in the
-     * {@link #processLayer(Layer)} implementation. Finally, the layer is
-     * displayed in the natural way, as a vector.
+     * values, displayed as a vector layer.
      * <p>
-     * However, the caller may specify any value for displayKsize, which is the
-     * number of elements displayed for each element in the vector. This can be
-     * different (larger or smaller) than the actual the depth of the layer. If
-     * larger, the displayed layer is padded with out-of-bounds pixel values. If
+     * The caller may specify any value for displayKsize, which is the number of
+     * elements displayed for each element in the vector. This can be different
+     * (larger or smaller) than the actual the depth of the layer. If larger,
+     * the displayed layer is padded with out-of-bounds pixel values. If
      * smaller, the higher elements are simply not displayed.
      *
+     * @param displayKsize the number of elements to display at each indexed
+     *            location (I, J).
      * @param invalidValueSubstitute the value to substitute for all invalid
      *            data elements, or null to show the actual data elements
      *            present in each case
-     * @param displayKsize the number of elements to display at each indexed
-     *            location (I, J).
-     * @param functions to apply to the layer
      *
      * @return the pipeline
      */
-    @SafeVarargs
-    protected static FakePipeline vectorToVector(Double invalidValueSubstitute, int displayKsize, Function<Layer, Layer>... functions)
+    protected static FakePipeline vectorToVector(int displayKsize, Double invalidValueSubstitute)
     {
-        return new FakePipeline("Load a vector layer, display as vector layer") {
+        return vectorToVector(displayKsize, invalidValueSubstitute, Function.identity());
+    }
+
+    /**
+     * Create a pipeline that loads a {@link Layer} that contains vector double
+     * values, displayed as a vector layer.
+     * <p>
+     * The caller may specify any value for displayKsize, which is the number of
+     * elements displayed for each element in the vector. This can be different
+     * (larger or smaller) than the actual the depth of the layer. If larger,
+     * the displayed layer is padded with out-of-bounds pixel values. If
+     * smaller, the higher elements are simply not displayed.
+     *
+     * @param displayKsize the number of elements to display at each indexed
+     *            location (I, J).
+     * @param invalidValueSubstitute the value to substitute for all invalid
+     *            data elements, or null to show the actual data elements
+     *            present in each case
+     * @param transform the transform to apply to the layer
+     *
+     * @return the pipeline
+     */
+    protected static FakePipeline vectorToVector(int displayKsize, Double invalidValueSubstitute, Function<Layer, Layer> transform)
+    {
+        return new FakePipeline("Load a vector layer, display as vector layer", transform) {
 
             @Override
             protected String getPipelineTitle(Layer layer)
@@ -393,36 +413,21 @@ public abstract class FakePipeline
             }
 
             @Override
-            protected Layer loadLayer()
+            protected Layer createLayer()
             {
-                return ofVector(TestISize, TestJSize, TestKSize, TestChecker);
+                return createVectorLayer();
             }
 
             @Override
-            protected Layer processLayer(Layer layer)
+            protected void displayCreatedLayer(Layer layer)
             {
-                for (Function<Layer, Layer> f : functions)
-                {
-                    layer = f.apply(layer);
-                }
-
-                return layer;
+                displayLayer("Created layer", layer, TestKSize, invalidValueSubstitute);
             }
 
             @Override
-            protected void display(String message, Layer layer)
+            protected void displayProcessedLayer(Layer layer)
             {
-                PixelVectorDouble p;
-                if (invalidValueSubstitute != null)
-                {
-                    p = PixelVectorFactory.of(displayKsize, TestOOBValue, invalidValueSubstitute);
-                }
-                else
-                {
-                    p = PixelVectorFactory.of(displayKsize, TestOOBValue);
-                }
-
-                displayState(message, layer, p);
+                displayLayer("Transformed layer", layer, displayKsize, invalidValueSubstitute);
             }
 
         };
@@ -439,54 +444,47 @@ public abstract class FakePipeline
      * @param invalidValueSubstitute the value to substitute for all invalid
      *            data elements, or null to show the actual data elements
      *            present in each case
-     * @param functions to apply to the layer
-     *
      * @return the pipeline
      */
-    @SafeVarargs
-    protected static FakePipeline vectorToScalar(Double invalidValueSubstitute, Function<Layer, Layer>... functions)
+    protected static FakePipeline vectorToScalar(Double invalidValueSubstitute)
     {
-        return new FakePipeline("Load a vector layer, display as scalar layer") {
+        return vectorToScalar(invalidValueSubstitute, Function.identity());
+    }
+
+    /**
+     * Create a pipeline that loads a {@link Layer} that contains vector double
+     * values, and applies the specified set of functions in the
+     * {@link #processLayer(Layer)} implementation. Finally, the layer is
+     * displayed as a scalar, despite the fact that the input is really a
+     * vector. Only the first element in each pixel (with K index == 0) will be
+     * displayed.
+     *
+     * @param invalidValueSubstitute the value to substitute for all invalid
+     *            data elements, or null to show the actual data elements
+     *            present in each case
+     * @param transform the transform to apply to the layer
+     * @return the pipeline
+     */
+    protected static FakePipeline vectorToScalar(Double invalidValueSubstitute, Function<Layer, Layer> transform)
+    {
+        return new FakePipeline("Load a vector layer, display as scalar layer", transform) {
 
             @Override
-            protected String getPipelineTitle(Layer layer)
+            protected Layer createLayer()
             {
-                String title = super.getPipelineTitle(layer) + " displayed as a scalar layer";
-
-                return title;
+                return createVectorLayer();
             }
 
             @Override
-            protected Layer loadLayer()
+            protected void displayCreatedLayer(Layer layer)
             {
-                return ofVector(TestISize, TestJSize, TestKSize, TestChecker);
+                displayLayer("Created layer", layer, TestKSize, invalidValueSubstitute);
             }
 
             @Override
-            protected Layer processLayer(Layer layer)
+            protected void displayProcessedLayer(Layer layer)
             {
-                for (Function<Layer, Layer> f : functions)
-                {
-                    layer = f.apply(layer);
-                }
-
-                return layer;
-            }
-
-            @Override
-            protected void display(String message, Layer layer)
-            {
-                PixelDouble p;
-                if (invalidValueSubstitute != null)
-                {
-                    p = PixelScalarFactory.of(0.0, TestOOBValue, invalidValueSubstitute);
-                }
-                else
-                {
-                    p = PixelScalarFactory.of(0.0, TestOOBValue);
-                }
-
-                displayState(message, layer, p);
+                displayLayer("Transformed layer", layer, 0, invalidValueSubstitute);
             }
 
         };
@@ -500,10 +498,11 @@ public abstract class FakePipeline
         System.out.println("Layer pipeline simulator.");
         System.out.println();
         System.out.println("In displays below, indices i and j run -1, 0, 1, 2, ... N - 1, N");
-        System.out.println("Indices -1 and N should show as out-of-bounds: \"(O) " + TestOOBValue + "\"");
-        System.out.println("Every 5th element in each layer, starting with i = 4, j = 0, should show as invalid (I).");
+        System.out.println("Indices -1 and N should show as out-of-bounds: \"(O) " + (int) TestOOBValue + "\"");
+        System.out.println();
         System.out.println("The elements themselves are a ramp of values from 0 through iSize * jSize * kSize - 1,");
         System.out.println("where iSize, jSize, kSize are the X, Y, and Z dimensions. kSize == 1 for a scalar, > 1 for a vector.");
+        System.out.println("Every 5th element in each layer, starting with i = 4, j = 0, should be marked invalid \"(I)\".");
         System.out.println();
         System.out.println("      x(i) ->");
         System.out.println(" y(j)");
@@ -518,84 +517,77 @@ public abstract class FakePipeline
 
         // Demonstrate options for how to handle "invalid" data.
         System.out.println("Create scalar layer and display all its data, even those marked as \"invalid\".");
-        System.out.println();
         scalarToScalar(null).run();
 
-        System.out.println();
-        System.out.println("Create scalar layer, then display it with each \"invalid\" element replaced by \"" + TestInvalidValueSubstitute + "\".");
+        System.out.println("Create scalar layer, then display it with each \"invalid\" element replaced by \"" + //
+                (int) TestInvalidValueSubstitute + "\".");
         System.out.println("Note that this does not modify the layer! It only changes how data values are extracted from the layer.");
-        System.out.println();
         scalarToScalar(TestInvalidValueSubstitute).run();
 
-        System.out.println();
         System.out.println("Create scalar layer, then display it with each \"invalid\" element replaced by ");
-        System.out.println("the same value as out-of-bound pixels, \"" + TestOOBValue + "\". This is what");
-        System.out.println("should happen during VTK rendering, except both should use NaN, not \"" + TestOOBValue + "\".");
-        System.out.println();
+        System.out.println("the same value as out-of-bound pixels, \"" + (int) TestOOBValue + "\". This is what");
+        System.out.println("should happen during VTK rendering, except both should use NaN, not \"" + (int) TestOOBValue + "\".");
         scalarToScalar(TestOOBValue).run();
+        System.out.println();
 
         // Show how vector layers are handled, first where the layer is
         // displayed in its own native depth, then displayed with fewer "K"
         // values and more "K" values than are present in the layer. This
         // simulates handing data of unknown structure to a renderer that can
         // handle layers with depth.
-        System.out.println();
-        System.out.println();
         System.out.println("Create and show vector layer. At each (i, j) is an array of size " + TestKSize + ".");
-        vectorToVector(null, TestKSize).run();
+        vectorToVector(TestKSize, null).run();
 
-        System.out.println();
         System.out.println("Create and show vector layer, but only the first " + (TestKSize - 1) + " values out of " + TestKSize + ".");
         System.out.println("Notice there are skips in the sequences. This is right!");
-        vectorToVector(null, TestKSize - 1).run();
+        vectorToVector(TestKSize - 1, null).run();
 
-        System.out.println();
         System.out.println("Create and show vector layer, but try to access MORE elements than are in the layer, " + (TestKSize + 1) + " instead of " + TestKSize + ".");
-        System.out.println("The missing elements are shown with \"(O) " + TestOOBValue + "\"");
-        vectorToVector(null, TestKSize + 1).run();
-
+        System.out.println("The missing elements are shown with \"(O) " + (int) TestOOBValue + "\"");
+        vectorToVector(TestKSize + 1, null).run();
         System.out.println();
+
         System.out.println("Create a vector layer but treat it as if it were a scalar layer.");
-        System.out.println("This simulates loading an image cube or color image but rendering it with a monochrome renderer.");
-        vectorToScalar(null).run();
+        System.out.println("This simulates, e.g., loading an image cube or color image but rendering it with a monochrome renderer.");
+        // Use the TouchLayer transform so it displays the vector first as a
+        // vector, then as a scalar.
+        vectorToScalar(null, TouchLayer).run();
 
-        System.out.println();
         System.out.println("Create a scalar layer but treat it as if it were a vector layer.");
         System.out.println("This simulates loading a monochrome image but rendering it with a color renderer.");
-        scalarToVector(null, TestKSize).run();
+        // Use the TouchLayer transform so it displays the scalar first as a
+        // scalar, then as a vector.
+        scalarToVector(TestKSize, null, TouchLayer).run();
+        System.out.println();
 
         // Now show transforms. These work equally well on vector layers, but
         // it's easier to see what's going on with scalars.
-        System.out.println();
-        System.out.println();
         System.out.println("Back to a scalar layer, but now transform it by swapping I and J");
         scalarToScalar(null, TransformFactory.swapIJ()).run();
 
-        System.out.println();
         System.out.println("Show effect of flipping about the Y axis");
         scalarToScalar(null, TransformFactory.flipAboutY()).run();
 
-        System.out.println();
         System.out.println("Show effect of clockwise rotation");
         scalarToScalar(null, TransformFactory.rotateCW()).run();
 
-        System.out.println();
         System.out.println("Show that flipping about X AND Y, and then rotating half-way around, gets you back to the original state");
-        scalarToScalar(null, TransformFactory.flipAboutXY(), TransformFactory.rotateHalfway()).run();
+        scalarToScalar(null, TransformFactory.rotateHalfway().compose(TransformFactory.flipAboutXY())).run();
 
-        System.out.println();
         System.out.println("Show what happens when one multiplies valid values by a factor of 2.0,");
         System.out.println("leaving untouched out-of-bounds and \"invalid\" values.");
         scalarToScalar(null, DoubleTransformFactory.toLayerTransform(value -> {
             return 2.0 * value;
         }, LayerDoubleTransformFactory.DoubleIdentity)).run();
 
-        System.out.println();
         System.out.println("Show what happens when one multiplies valid AND invalid values by a factor of 2.0.");
         System.out.println("In no case is math EVER attempted on out-of-bounds elements.");
         scalarToScalar(null, DoubleTransformFactory.toLayerTransform(value -> {
             return 2.0 * value;
         }, null)).run();
+
+        System.out.println("Show what happens when one slices a vector, pulling out the middle element of the 3");
+        vectorToScalar(null, DoubleTransformFactory.slice(1, TestOOBValue, null)).run();
     }
 
 }

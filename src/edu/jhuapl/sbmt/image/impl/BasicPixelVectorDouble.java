@@ -107,7 +107,7 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
         {
             builder.append(delim);
 
-            PixelDouble p = scalarFactory().of(get(k), outOfBoundsValue);
+            PixelDouble p = scalarFactory().of(get(k), outOfBoundsValue, null);
             p.setIsValid(valid);
             p.setInBounds(inBounds);
 
