@@ -1,5 +1,6 @@
 package edu.jhuapl.sbmt.image.impl;
 
+import java.util.List;
 import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
@@ -24,9 +25,9 @@ import edu.jhuapl.sbmt.image.impl.LayerTransformFactory.ForwardingLayer;
 public class LayerDoubleTransformFactory
 {
 
-    protected static final PixelDoubleFactory ScalarPixelFactory = new PixelDoubleFactory();
+    protected static final PixelDoubleFactory PixelScalarFactory = new PixelDoubleFactory();
 
-    protected static final PixelVectorDoubleFactory VectorPixelFactory = new PixelVectorDoubleFactory();
+    protected static final PixelVectorDoubleFactory PixelVectorFactory = new PixelVectorDoubleFactory();
 
     @FunctionalInterface
     public interface DoubleTransform
@@ -86,7 +87,7 @@ public class LayerDoubleTransformFactory
 
                         // Make a copy of the pixel, and get its state from the
                         // layer.
-                        PixelDouble tmpPd = ScalarPixelFactory.of(pd);
+                        PixelDouble tmpPd = PixelScalarFactory.of(pd);
                         layer.get(i, j, tmpPd);
 
                         boolean valid = tmpPd.isValid();
@@ -124,7 +125,7 @@ public class LayerDoubleTransformFactory
 
                         // Make a copy of the pixel, and get its state from the
                         // layer.
-                        PixelVectorDouble tmpPd = VectorPixelFactory.of(pd);
+                        PixelVectorDouble tmpPd = PixelVectorFactory.of(pd);
                         layer.get(i, j, tmpPd);
 
                         boolean valid = tmpPd.isValid();
@@ -173,6 +174,45 @@ public class LayerDoubleTransformFactory
         return function;
     }
 
+    public Function<Layer, Layer> slice(int index, double outOfBoundsValue, Double invalidValue)
+    {
+        return layer -> {
+            Preconditions.checkNotNull(layer);
+            Preconditions.checkArgument(0 <= index);
+
+            List<Integer> dataSizes = layer.dataSizes();
+            Preconditions.checkNotNull(dataSizes);
+
+            Integer size;
+            if (dataSizes.isEmpty()) {
+                // Slicing a scalar layer is OK, though that will force index to be 0 below.
+                size = Integer.valueOf(1);
+            } else {
+                // Slicing a vector layer is OK.
+                Preconditions.checkArgument(dataSizes.size() == 1);
+                size = dataSizes.get(0);
+            }
+
+            // Confirm the layer has at least *some* data.
+            Preconditions.checkNotNull(size);
+            Preconditions.checkArgument(size > index);
+
+            PixelVectorDouble p = PixelVectorFactory.of(size, outOfBoundsValue, invalidValue);
+
+            return new BasicLayerOfDouble(layer.iSize(), layer.jSize()) {
+
+                @Override
+                protected double doGetDouble(int i, int j)
+                {
+                    layer.get(i, j, p);
+
+                    return p.get(index);
+                }
+
+            };
+
+        };
+    }
     /**
      * Return a flag that indicates whether the specified index is in the
      * half-open range [minValue, maxValue).
