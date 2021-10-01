@@ -377,6 +377,8 @@ public abstract class FakePipeline
         System.out.println("In displays below, indices i and j run -1, 0, 1, 2, ... N - 1, N");
         System.out.println("Indices -1 and N should show as out-of-bounds: \"(O) " + TestOOBValue + "\"");
         System.out.println("Every 5th element in each layer, starting with i = 4, j = 0, should show as invalid (I).");
+        System.out.println("The elements themselves are a ramp of values from 0 through iSize * jSize * kSize - 1,");
+        System.out.println("where iSize, jSize, kSize are the X, Y, and Z dimensions. kSize == 1 for a scalar, > 1 for a vector.");
         System.out.println();
         System.out.println("      x(i) ->");
         System.out.println(" y(j)");
@@ -402,7 +404,7 @@ public abstract class FakePipeline
 
         System.out.println();
         System.out.println("Show scalar layer loaded with each \"invalid\" element replaced by \"" + TestOOBValue + "\"");
-        System.out.println("Invalid and out-of-bounds data not distinguished from each other.");
+        System.out.println("Invalid and out-of-bounds data have the same associated data value.");
         System.out.println("This is what should happen during rendering, except both should use NaN, not " + TestOOBValue);
         System.out.println();
         scalarToScalar(TestOOBValue).run();
@@ -455,7 +457,7 @@ public abstract class FakePipeline
 
         System.out.println();
         System.out.println("Show what happens when one multiplies valid AND invalid values by a factor of 2.0.");
-        System.out.println("In no case is math ever attempted on out-of-bounds elements.");
+        System.out.println("In no case is math EVER attempted on out-of-bounds elements.");
         scalarToScalar(null, DoubleTransformFactory.toLayerTransform(value -> {
             return 2.0 * value;
         }, null)).run();
