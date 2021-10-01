@@ -34,14 +34,16 @@ public interface Layer
     int jSize();
 
     /**
-     * Return the dimensionality and sizes of data elements located at each
-     * pair of indices (I, J). Scalar implementations shall return an empty
-     * list. Vector implementations shall return a list with one element.
+     * Return the dimensionality and sizes of data elements located at each pair
+     * of indices (I, J). Scalar implementations shall return an empty list.
+     * Vector implementations shall return a list with one element.
      * Higher-dimensional data structures shall return a list with one entry for
-     * each dimension.
+     * each dimension. No implementation shall return a null list, nor shall any
+     * list entry be null or non-positive.
      * <p>
-     * It is permissible to return null for any index that is present. This
-     * indicates that the specified data elements vary in size.
+     * Data associated with a particular pair of indices are permitted to have
+     * variable size in any dimesion. The sizes in the returned list give the
+     * maximum size of data elements in each dimension.
      *
      * @return the size information.
      */
