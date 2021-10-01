@@ -46,10 +46,11 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
             return getOutOfBoundsValue();
         }
 
-        return doGet(index);
+        return getStoredValue(index);
     }
 
-    protected double doGet(int index)
+    @Override
+   public double getStoredValue(int index)
     {
         return array[index];
     }

@@ -29,10 +29,11 @@ public abstract class BasicPixelDouble extends BasicPixel implements PixelDouble
             return getOutOfBoundsValue();
         }
 
-        return doGet();
+        return getStoredValue();
     }
 
-    protected double doGet()
+    @Override
+    public double getStoredValue()
     {
         return value;
     }

@@ -16,15 +16,31 @@ public interface PixelVectorDouble extends Pixel
     int size();
 
     /**
-     * Return the element present at the specified index. Implementations shall
-     * not throw an exception if the index is out of bounds, rather they shall
-     * return the result of calling the {@link #getOutOfBoundsValue()} method in
-     * that case.
+     * Return the effective value present at the specified index, taking into
+     * account whether the value {@link #isValid()} and/or
+     * {@link #isInBounds()}. Implementations shall not throw an exception if
+     * the index is out of bounds, rather they shall return the result of
+     * calling the {@link #getOutOfBoundsValue()} method in that case. Call this
+     * method and not {@link #getStoredValue(int)} most of the time.
      *
      * @param index the index
      * @return the current value
      */
     double get(int index);
+
+    /**
+     * Return the value stored at the specified index, ignoring whether the
+     * value {@link #isValid()} and/or {@link #isInBounds()}. This method exists
+     * mainly to make it possible to make an exact duplicate of the pixel.
+     * <p>
+     * If the specified index is out of bounds in this pixel, i.e., if it is
+     * outside the half-open range [0, size() ), this method shall return the
+     * result of calling {@link #getOutOfBoundsValue()}.
+     *
+     * @param index the index
+     * @return the current value
+     */
+    double getStoredValue(int index);
 
     /**
      * Set the element present at the specified index to the specified value.

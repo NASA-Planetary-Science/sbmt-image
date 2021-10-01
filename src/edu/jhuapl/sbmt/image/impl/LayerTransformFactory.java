@@ -8,7 +8,12 @@ import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
 
 /**
- * Factory class for creating {@link Layer} transforms.
+ * Factory class for creating {@link Layer} transforms (that is,
+ * {@link Function} instances that operate on a layer and return a new layer).
+ * <p>
+ * This factory provides transforms that involve only changes to indices, no
+ * operations that are specific to the underlying data type associated with each
+ * pixel.
  *
  * @author James Peachey
  *

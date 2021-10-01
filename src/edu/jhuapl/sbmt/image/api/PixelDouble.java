@@ -9,11 +9,22 @@ package edu.jhuapl.sbmt.image.api;
 public interface PixelDouble extends Pixel
 {
     /**
-     * Return the current value of this pixel.
+     * Return the current effective value of this pixel, taking into account
+     * whether it {@link #isInBounds()} and/or {@link #isValid()}. Call this,
+     * not {@link #getStoredValue()} most of the time.
      *
-     * @return the current value of this pixel
+     * @return the current effective value of this pixel
      */
     double get();
+
+    /**
+     * Return the current stored value of this pixel, not accounting for whether
+     * it is {@link #isInBounds()} or {@link #isValid()}. This method exists
+     * mainly to make it possible to make an exact duplicate of the pixel.
+     *
+     * @return
+     */
+    double getStoredValue();
 
     /**
      * Set the current value of this pixel.

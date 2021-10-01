@@ -1,5 +1,8 @@
 package edu.jhuapl.sbmt.image.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Preconditions;
 
 import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
@@ -13,6 +16,11 @@ import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
  */
 public class PixelVectorDoubleFactory
 {
+
+    public PixelVectorDoubleFactory()
+    {
+        super();
+    }
 
     public PixelVectorDouble of(int size, double outOfBoundsValue)
     {
@@ -54,7 +62,7 @@ public class PixelVectorDoubleFactory
                     return getOutOfBoundsValue();
                 }
 
-                return isValid() ? doGet(index) : invalidValue;
+                return isValid() ? getStoredValue(index) : invalidValue;
             }
 
             @Override
@@ -64,6 +72,40 @@ public class PixelVectorDoubleFactory
             }
 
         };
+    }
+
+    public PixelVectorDouble of(PixelVectorDouble pixel)
+    {
+        Preconditions.checkNotNull(pixel);
+
+        int size = pixel.size();
+
+        List<Double> values = new ArrayList<>(size);
+        for (int k = 0; k < size; ++k) {
+            values.add(Double.valueOf(pixel.getStoredValue(k)));
+        }
+
+        boolean valid = pixel.isValid();
+        boolean inBounds = pixel.isInBounds();
+        double outOfBoundsValue = pixel.getOutOfBoundsValue();
+
+        pixel = new BasicPixelVectorDouble(size) {
+
+            @Override
+            public double getOutOfBoundsValue()
+            {
+                return outOfBoundsValue;
+            }
+
+        };
+
+        for (int k = 0; k < size; ++k) {
+            pixel.set(k, values.get(k).doubleValue());
+        }
+        pixel.setIsValid(valid);
+        pixel.setInBounds(inBounds);
+
+        return pixel;
     }
 
 }

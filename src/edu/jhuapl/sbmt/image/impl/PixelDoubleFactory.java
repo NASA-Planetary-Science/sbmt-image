@@ -1,5 +1,7 @@
 package edu.jhuapl.sbmt.image.impl;
 
+import com.google.common.base.Preconditions;
+
 import edu.jhuapl.sbmt.image.api.PixelDouble;
 
 /**
@@ -11,6 +13,11 @@ import edu.jhuapl.sbmt.image.api.PixelDouble;
  */
 public class PixelDoubleFactory
 {
+
+    public PixelDoubleFactory()
+    {
+        super();
+    }
 
     public PixelDouble of(double value, double outOfBoundsValue)
     {
@@ -37,7 +44,7 @@ public class PixelDoubleFactory
                     return getOutOfBoundsValue();
                 }
 
-                return isValid() ? doGet() : invalidValue;
+                return isValid() ? getStoredValue() : invalidValue;
             }
 
             @Override
@@ -47,5 +54,31 @@ public class PixelDoubleFactory
             }
 
         };
+    }
+
+    public PixelDouble of(PixelDouble pixel)
+    {
+        Preconditions.checkNotNull(pixel);
+
+        double value = pixel.getStoredValue();
+        boolean valid = pixel.isValid();
+        boolean inBounds = pixel.isInBounds();
+        double outOfBoundsValue = pixel.getOutOfBoundsValue();
+
+        pixel = new BasicPixelDouble(value) {
+
+            @Override
+            public double getOutOfBoundsValue()
+            {
+                return outOfBoundsValue;
+            }
+
+        };
+
+        pixel.set(value);
+        pixel.setIsValid(valid);
+        pixel.setInBounds(inBounds);
+
+        return pixel;
     }
 }

@@ -26,6 +26,7 @@ public abstract class FakePipeline
     protected static final PixelDoubleFactory PixelScalarFactory = new PixelDoubleFactory();
     protected static final PixelVectorDoubleFactory PixelVectorFactory = new PixelVectorDoubleFactory();
     protected static final LayerTransformFactory TransformFactory = new LayerTransformFactory();
+    protected static final LayerDoubleTransformFactory DoubleTransformFactory = new LayerDoubleTransformFactory();
 
     private final String pipelineTitle;
 
@@ -389,7 +390,7 @@ public abstract class FakePipeline
         displayStartupMessage();
 
         // Demonstrate options for how to handle "invalid" data.
-        System.out.println("Show scalar layer loaded with \"invalid\" data untouched.");
+        System.out.println("Show scalar layer loaded, and display all data, even those marked as \"invalid\".");
         System.out.println();
         scalarToScalar(null).run();
 
@@ -413,16 +414,16 @@ public abstract class FakePipeline
         // handle layers with depth.
         System.out.println();
         System.out.println();
-        System.out.println("Show vector in the most natural way");
+        System.out.println("Show vector layer. At each (i, j) is an array of size " + TestKSize);
         vectorToVector(null, TestKSize).run();
 
         System.out.println();
-        System.out.println("Show vector, but only the first " + (TestKSize - 1) + " values out of " + TestKSize);
+        System.out.println("Show vector layer, but only the first " + (TestKSize - 1) + " values out of " + TestKSize);
         System.out.println("Notice there are skips in the sequences. This is right!");
         vectorToVector(null, TestKSize - 1).run();
 
         System.out.println();
-        System.out.println("Show vector, but try to show MORE elements, " + (TestKSize + 1) + " instead of " + TestKSize);
+        System.out.println("Show vector layer, but try to access MORE elements than are in the layer, " + (TestKSize + 1) + " instead of " + TestKSize);
         System.out.println("The displayed elements are padded with \"(O) " + TestOOBValue + "\"");
         vectorToVector(null, TestKSize + 1).run();
 
@@ -430,20 +431,34 @@ public abstract class FakePipeline
         // it's easier to see what's going on with scalars.
         System.out.println();
         System.out.println();
-        System.out.println("Back to a scalar layer, but this time transform it by swapping I and J");
+        System.out.println("Back to a scalar layer, but now transform it by swapping I and J");
         scalarToScalar(null, TransformFactory.swapIJ()).run();
 
         System.out.println();
-        System.out.println("Show flipping about the Y axis");
+        System.out.println("Show effect of flipping about the Y axis");
         scalarToScalar(null, TransformFactory.flipAboutY()).run();
 
         System.out.println();
-        System.out.println("Show clockwise rotation");
+        System.out.println("Show effect of clockwise rotation");
         scalarToScalar(null, TransformFactory.rotateCW()).run();
 
         System.out.println();
         System.out.println("Show that flipping about X AND Y, and then rotating half-way around, gets you back to the original state");
         scalarToScalar(null, TransformFactory.flipAboutXY(), TransformFactory.rotateHalfway()).run();
+
+        System.out.println();
+        System.out.println("Show what happens when one multiplies valid values by a factor of 2.0,");
+        System.out.println("leaving untouched out-of-bounds and \"invalid\" values.");
+        scalarToScalar(null, DoubleTransformFactory.toLayerTransform(value -> {
+            return 2.0 * value;
+        }, LayerDoubleTransformFactory.DoubleIdentity)).run();
+
+        System.out.println();
+        System.out.println("Show what happens when one multiplies valid AND invalid values by a factor of 2.0.");
+        System.out.println("In no case is math ever attempted on out-of-bounds elements.");
+        scalarToScalar(null, DoubleTransformFactory.toLayerTransform(value -> {
+            return 2.0 * value;
+        }, null)).run();
     }
 
 }
