@@ -535,6 +535,10 @@ public class LayerTransformFactory
      * General utility method for resizing a layer in both I and J dimensions.
      * The sum of the minimum index plus the new size must be <= the original
      * target layer's size.
+     * <p>
+     * This method just removes pixels from the layer, as in a crop/subset/trim
+     * operation; it does not change (interpolate, expand, etc.) any of the
+     * remaining pixels.
      *
      * @param layer input target layer to be resized
      * @param iMin the minimum index in the original layer's I-th dimension
