@@ -588,6 +588,12 @@ public abstract class FakePipeline
 
         System.out.println("Show what happens when one slices a vector, pulling out the middle element of the 3");
         vectorToScalar(null, DoubleTransformFactory.slice(1, TestOOBValue, null)).run();
+
+        System.out.println("Show what happens when a subset of a layer I range = [1, 4), J range = [1, 3) is taken");
+        scalarToScalar(null, TransformFactory.subset(1, 4, 1, 3)).run();
+
+        System.out.println("Show what happens when a a layer is trimmed by 1 on left (I) and 2 on the right (I), and 1 each from top and bottom");
+        scalarToScalar(null, TransformFactory.trim(1, 2, 1, 1)).run();
     }
 
 }

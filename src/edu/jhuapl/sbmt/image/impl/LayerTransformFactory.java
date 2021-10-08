@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 
+import com.google.common.base.Preconditions;
+
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
 
@@ -25,13 +27,17 @@ public class LayerTransformFactory
      * Invert indices in the Ith dimension.
      */
     private static final Function<Layer, Layer> InvertI = layer -> {
+        if (layer == null)
+        {
+            return null;
+        }
 
         return new ForwardingLayer(layer) {
 
             @Override
             public void get(int i, int j, Pixel p)
             {
-                target.get(iSize() - 1 - i, j, p);
+                super.get(iSize() - 1 - i, j, p);
             }
 
         };
@@ -41,13 +47,17 @@ public class LayerTransformFactory
      * Invert indices in the Jth dimension.
      */
     private static final Function<Layer, Layer> InvertJ = layer -> {
+        if (layer == null)
+        {
+            return null;
+        }
 
         return new ForwardingLayer(layer) {
 
             @Override
             public void get(int i, int j, Pixel p)
             {
-                target.get(i, jSize() - 1 - j, p);
+                super.get(i, jSize() - 1 - j, p);
             }
 
         };
@@ -57,13 +67,17 @@ public class LayerTransformFactory
      * Invert indices in the both I and J dimensions.
      */
     private static final Function<Layer, Layer> InvertIJ = layer -> {
+        if (layer == null)
+        {
+            return null;
+        }
 
         return new ForwardingLayer(layer) {
 
             @Override
             public void get(int i, int j, Pixel p)
             {
-                target.get(iSize() - 1 - i, jSize() - 1 - j, p);
+                super.get(iSize() - 1 - i, jSize() - 1 - j, p);
             }
 
         };
@@ -74,25 +88,29 @@ public class LayerTransformFactory
      * doing a flip and a rotation together.
      */
     private static final Function<Layer, Layer> SwapIJ = layer -> {
+        if (layer == null)
+        {
+            return null;
+        }
 
         return new ForwardingLayer(layer) {
 
             @Override
             public int iSize()
             {
-                return target.jSize();
+                return super.jSize();
             }
 
             @Override
             public int jSize()
             {
-                return target.iSize();
+                return super.iSize();
             }
 
             @Override
             public void get(int i, int j, Pixel p)
             {
-                target.get(j, i, p);
+                super.get(j, i, p);
             }
 
         };
@@ -219,11 +237,306 @@ public class LayerTransformFactory
      * equivalent to performing both a flip and a rotation, and is also
      * equivalent to rotation about the NW - SE diagonal.
      *
-     * @return
+     * @return the function
      */
     public Function<Layer, Layer> swapIJ()
     {
         return SwapIJ;
+    }
+
+    /**
+     * Return a function that extracts a subset of the image in the I-th
+     * dimension whose range is specified by the arguments. The I index in the
+     * layer that is returned will run from 0 to an iSize() equal to iMax -
+     * iMin. For an I index of 0 in the new layer, the same pixel will be
+     * returned as at the I index iMin in the original layer, and when the I
+     * index is (iSize() - 1) == (iMax - iMin - 1) in the new layer, the same
+     * pixel will be returned as at the I index (iSize() - iMax - 1) in the
+     * original layer.
+     *
+     * @param iMin the minimum index in the original Layer's I-th dimension
+     *            space
+     * @param iMax the maximum index (one past last kept) in the original
+     *            Layer's I-th dimension space
+     * @return the function
+     * @throws IllegalArgumentException if iMin or iMax is negative, or iMax <
+     *             iMin
+     */
+    public Function<Layer, Layer> subsetI(int iMin, int iMax)
+    {
+        Preconditions.checkArgument(iMin >= 0);
+        Preconditions.checkArgument(iMax >= iMin);
+
+        int iNewSize = iMax - iMin;
+
+        return layer -> {
+            return resize(layer, iMin, iNewSize, 0, layer.jSize());
+        };
+    }
+
+    /**
+     * Return a function that extracts a subset of the image in the J-th
+     * dimension whose range is specified by the arguments. The J index in the
+     * layer that is returned will run from 0 to a jSize() equal to jMax - jMin.
+     * For a J index of 0 in the new layer, the same pixel will be returned as
+     * at the J index jMin in the original layer, and when the J index is
+     * (jSize() - 1) == (iMax - jMin - 1) in the new layer, the same pixel will
+     * be returned as at the J index (jSize() - jMax - 1) in the original layer.
+     *
+     * @param jMin the minimum index in the original Layer's J-th dimension
+     *            space
+     * @param jMax the maximum index (one past last kept) in the original
+     *            Layer's J-th dimension space
+     * @return the function
+     * @throws IllegalArgumentException if jMin or jMax is negative, or jMax <
+     *             jMin
+     */
+    public Function<Layer, Layer> subsetJ(int jMin, int jMax)
+    {
+        Preconditions.checkArgument(jMin >= 0);
+        Preconditions.checkArgument(jMax >= jMin);
+
+        int jNewSize = jMax - jMin;
+
+        return layer -> {
+            return resize(layer, 0, layer.iSize(), jMin, jNewSize);
+        };
+    }
+
+    /**
+     * Return a function that extracts a subset of the image both I and J
+     * spaces. Behaves like a composition of the functions returned by
+     * {@link #subsetI(int, int)} and {@link #subsetJ(int, int)}.
+     *
+     * @param iMin the minimum index in the original Layer's I-th dimension
+     *            space
+     * @param iMax the maximum index (one past last kept) in the original
+     *            Layer's I-th dimension space
+     * @param jMin the minimum index in the original Layer's J-th dimension
+     *            space
+     * @param jMax the maximum index (one past last kept) in the original
+     *            Layer's J-th dimension space
+     * @return the function
+     * @throws IllegalArgumentException if jMin or jMax is negative, or jMax <
+     *             jMin
+     */
+    public Function<Layer, Layer> subset(int iMin, int iMax, int jMin, int jMax)
+    {
+        Preconditions.checkArgument(iMin >= 0);
+        Preconditions.checkArgument(iMax >= iMin);
+        Preconditions.checkArgument(jMin >= 0);
+        Preconditions.checkArgument(jMax >= jMin);
+
+        int iNewSize = iMax - iMin;
+        int jNewSize = jMax - jMin;
+
+        return layer -> {
+            return resize(layer, iMin, iNewSize, jMin, jNewSize);
+        };
+    }
+
+    /**
+     * Return a function that trims pixels off either/both ends of a layer in
+     * the I-th dimension. The layer returned by the function will have new
+     * iSize() == (original iSize() - iLowerOffset - iUpperOffset). When the I
+     * index is 0 in the new layer, the pixel located with I = iLowerOffset in
+     * the original image will be accessed.
+     *
+     * @param iLowerOffset number of pixels to offset at the lower end of the I
+     *            index
+     * @param iUpperOffset number of pixels to offset at the upper end of the I
+     *            index
+     * @return the function
+     */
+    public Function<Layer, Layer> trimI(int iLowerOffset, int iUpperOffset)
+    {
+        Preconditions.checkArgument(iLowerOffset >= 0);
+        Preconditions.checkArgument(iUpperOffset >= 0);
+
+        return layer -> {
+            if (layer == null)
+            {
+                return null;
+            }
+
+            int iNewSize = layer.iSize() - iLowerOffset - iUpperOffset;
+
+            return resize(layer, iLowerOffset, iNewSize, 0, layer.jSize());
+        };
+    }
+
+    /**
+     * Return a function that trims pixels off either/both ends of a layer in
+     * the I-th dimension. The layer returned by the function will have new
+     * iSize() == (original iSize() - iLowerOffset - iUpperOffset). When the I
+     * index is 0 in the new layer, the pixel located with I = iLowerOffset in
+     * the original image will be accessed.
+     *
+     * @param jLowerOffset number of pixels to offset at the lower end of the I
+     *            index
+     * @param jUpperOffset number of pixels to offset at the upper end of the I
+     *            index
+     * @return the function
+     */
+    public Function<Layer, Layer> trimJ(int jLowerOffset, int jUpperOffset)
+    {
+        Preconditions.checkArgument(jLowerOffset >= 0);
+        Preconditions.checkArgument(jUpperOffset >= 0);
+
+        return layer -> {
+            if (layer == null)
+            {
+                return null;
+            }
+
+            int jNewSize = layer.jSize() - jLowerOffset - jUpperOffset;
+
+            return resize(layer, 0, layer.iSize(), jLowerOffset, jNewSize);
+        };
+    }
+
+    /**
+     * Return a function that trims pixels off either/both ends of a layer in
+     * both I-th and J-th dimensions. Behaves like a composition of functions
+     * returned by {@link #trimI(int, int)} and {@link #trimJ(int, int)}.
+     *
+     * @param iLowerOffset number of pixels to offset at the lower end of the I
+     *            index
+     * @param iUpperOffset number of pixels to offset at the upper end of the I
+     *            index
+     * @param jLowerOffset number of pixels to offset at the lower end of the I
+     *            index
+     * @param jUpperOffset number of pixels to offset at the upper end of the I
+     *            index
+     * @return the function
+     */
+    public Function<Layer, Layer> trim(int iLowerOffset, int iUpperOffset, int jLowerOffset, int jUpperOffset)
+    {
+        Preconditions.checkArgument(iLowerOffset >= 0);
+        Preconditions.checkArgument(iUpperOffset >= 0);
+        Preconditions.checkArgument(jLowerOffset >= 0);
+        Preconditions.checkArgument(jUpperOffset >= 0);
+
+        return layer -> {
+            if (layer == null)
+            {
+                return null;
+            }
+
+            int iNewSize = layer.iSize() - iLowerOffset - iUpperOffset;
+            int jNewSize = layer.jSize() - jLowerOffset - jUpperOffset;
+
+            return resize(layer, iLowerOffset, iNewSize,  jLowerOffset, jNewSize);
+        };
+    }
+
+    /**
+     * General utility method for resizing a layer in both I and J dimensions.
+     * The sum of the minimum index plus the new size must be <= the original
+     * target layer's size.
+     *
+     * @param layer input target layer to be resized
+     * @param iMin the minimum index in the original layer's I-th dimension
+     *            space
+     * @param iNewSize the size of the new layer in the output layer's I-th
+     *            dimension space
+     * @param iMin the minimum index in the original layer's J-th dimension
+     *            space
+     * @param iNewSize the size of the new layer in the output layer's J-th
+     *            dimension space
+     * @return the resized output layer
+     */
+    protected ForwardingLayer resize(Layer layer, int iMin, int iNewSize, int jMin, int jNewSize)
+    {
+        if (layer == null)
+        {
+            return null;
+        }
+
+        int iOrigSize = layer.iSize();
+        int jOrigSize = layer.jSize();
+
+        Preconditions.checkArgument(iMin >= 0);
+        Preconditions.checkArgument(iNewSize >= 0);
+        Preconditions.checkArgument((iMin + iNewSize) <= iOrigSize);
+
+        Preconditions.checkArgument(jMin >= 0);
+        Preconditions.checkArgument(jNewSize >= 0);
+        Preconditions.checkArgument((jMin + jNewSize) <= jOrigSize);
+
+        return new ForwardingLayer(layer) {
+
+            @Override
+            public int iSize()
+            {
+                return iNewSize;
+            }
+
+            @Override
+            public int jSize()
+            {
+                return jNewSize;
+            }
+
+            @Override
+            public boolean isValid(int i, int j)
+            {
+                i = toOutputIndex(i, iMin, iOrigSize, iNewSize);
+                j = toOutputIndex(j, jMin, jOrigSize, jNewSize);
+
+                return super.isValid(i, j);
+            }
+
+            @Override
+            public boolean isInBounds(int i, int j)
+            {
+                i = toOutputIndex(i, iMin, iOrigSize, iNewSize);
+                j = toOutputIndex(j, jMin, jOrigSize, jNewSize);
+
+                return super.isInBounds(i, j);
+            }
+
+            @Override
+            public void get(int i, int j, Pixel p)
+            {
+                i = toOutputIndex(i, iMin, iOrigSize, iNewSize);
+                j = toOutputIndex(j, jMin, jOrigSize, jNewSize);
+
+                super.get(i, j, p);
+            }
+
+            /**
+             * Utility to convert the specified index in the output layer's
+             * index "coordinate system" back to the input target layer's index
+             * "coordinate system". The index returned by this method is safe to
+             * pass to any of the forwarded/target methods that require this
+             * index.
+             *
+             * @param index in the new output layer's index coordinate
+             * @param offset to be applied to the index argument to match the
+             *            original input layer's index coordinate
+             * @param origSize size of the original input target layer
+             * @param newSize size of the output layer
+             * @return index in the target layer's index coordinate
+             */
+            protected int toOutputIndex(int index, int offset, int origSize, int newSize)
+            {
+                if (index < 0)
+                {
+                    // Below minimum in output = below minimum in input.
+                    return -1;
+                }
+                else if (index >= newSize)
+                {
+                    // Above maximum in output = above maximum in input.
+                    return origSize;
+                }
+
+                return index += offset;
+            }
+
+        };
+
     }
 
     /**
@@ -234,7 +547,7 @@ public class LayerTransformFactory
     public static class ForwardingLayer implements Layer
     {
 
-        protected final Layer target;
+        private final Layer target;
 
         /**
          * The concrete implementation is responsible for ensuring the target is
@@ -299,7 +612,7 @@ public class LayerTransformFactory
         @Override
         public String toString()
         {
-            return target.toString();
+            return "Layer(" + iSize() + ", " + jSize() + ")";
         }
 
     }
