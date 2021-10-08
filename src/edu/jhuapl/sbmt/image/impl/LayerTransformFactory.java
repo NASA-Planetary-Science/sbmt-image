@@ -251,8 +251,8 @@ public class LayerTransformFactory
      * iMin. For an I index of 0 in the new layer, the same pixel will be
      * returned as at the I index iMin in the original layer, and when the I
      * index is (iSize() - 1) == (iMax - iMin - 1) in the new layer, the same
-     * pixel will be returned as at the I index (iSize() - iMax - 1) in the
-     * original layer.
+     * pixel will be returned as at the I index (iMax - 1) in the original
+     * layer.
      *
      * @param iMin the minimum index in the original Layer's I-th dimension
      *            space
@@ -270,7 +270,7 @@ public class LayerTransformFactory
         int iNewSize = iMax - iMin;
 
         return layer -> {
-            return resize(layer, iMin, iNewSize, 0, layer.jSize());
+            return resizeLayer(layer, iMin, iNewSize, 0, layer.jSize());
         };
     }
 
@@ -280,8 +280,8 @@ public class LayerTransformFactory
      * layer that is returned will run from 0 to a jSize() equal to jMax - jMin.
      * For a J index of 0 in the new layer, the same pixel will be returned as
      * at the J index jMin in the original layer, and when the J index is
-     * (jSize() - 1) == (iMax - jMin - 1) in the new layer, the same pixel will
-     * be returned as at the J index (jSize() - jMax - 1) in the original layer.
+     * (jSize() - 1) == (jMax - jMin - 1) in the new layer, the same pixel will
+     * be returned as at the J index (jMax - 1) in the original layer.
      *
      * @param jMin the minimum index in the original Layer's J-th dimension
      *            space
@@ -299,7 +299,7 @@ public class LayerTransformFactory
         int jNewSize = jMax - jMin;
 
         return layer -> {
-            return resize(layer, 0, layer.iSize(), jMin, jNewSize);
+            return resizeLayer(layer, 0, layer.iSize(), jMin, jNewSize);
         };
     }
 
@@ -317,8 +317,8 @@ public class LayerTransformFactory
      * @param jMax the maximum index (one past last kept) in the original
      *            Layer's J-th dimension space
      * @return the function
-     * @throws IllegalArgumentException if jMin or jMax is negative, or jMax <
-     *             jMin
+     * @throws IllegalArgumentException if iMin or iMax is negative, iMax <
+     *             iMin, jMin or jMax is negative, or jMax < jMin
      */
     public Function<Layer, Layer> subset(int iMin, int iMax, int jMin, int jMax)
     {
@@ -331,7 +331,7 @@ public class LayerTransformFactory
         int jNewSize = jMax - jMin;
 
         return layer -> {
-            return resize(layer, iMin, iNewSize, jMin, jNewSize);
+            return resizeLayer(layer, iMin, iNewSize, jMin, jNewSize);
         };
     }
 
@@ -340,13 +340,16 @@ public class LayerTransformFactory
      * the I-th dimension. The layer returned by the function will have new
      * iSize() == (original iSize() - iLowerOffset - iUpperOffset). When the I
      * index is 0 in the new layer, the pixel located with I = iLowerOffset in
-     * the original image will be accessed.
+     * the original image will be accessed. When the I index is (iSize() - 1) in
+     * the new layer, the pixel located at (iSize() - iUpperOffset - 1) in the
+     * original layer will be accessed.
      *
      * @param iLowerOffset number of pixels to offset at the lower end of the I
      *            index
      * @param iUpperOffset number of pixels to offset at the upper end of the I
      *            index
      * @return the function
+     * @throws IllegalArgumentException if either argument is negative
      */
     public Function<Layer, Layer> trimI(int iLowerOffset, int iUpperOffset)
     {
@@ -361,22 +364,25 @@ public class LayerTransformFactory
 
             int iNewSize = layer.iSize() - iLowerOffset - iUpperOffset;
 
-            return resize(layer, iLowerOffset, iNewSize, 0, layer.jSize());
+            return resizeLayer(layer, iLowerOffset, iNewSize, 0, layer.jSize());
         };
     }
 
     /**
      * Return a function that trims pixels off either/both ends of a layer in
-     * the I-th dimension. The layer returned by the function will have new
-     * iSize() == (original iSize() - iLowerOffset - iUpperOffset). When the I
-     * index is 0 in the new layer, the pixel located with I = iLowerOffset in
-     * the original image will be accessed.
+     * the J-th dimension. The layer returned by the function will have new
+     * jSize() == (original jSize() - jLowerOffset - jUpperOffset). When the J
+     * index is 0 in the new layer, the pixel located with J = jLowerOffset in
+     * the original image will be accessed. When the J index is (jSize() - 1) in
+     * the new layer, the pixel located at (jSize() - jUpperOffset - 1) in the
+     * original layer will be accessed.
      *
-     * @param jLowerOffset number of pixels to offset at the lower end of the I
+     * @param jLowerOffset number of pixels to offset at the lower end of the J
      *            index
-     * @param jUpperOffset number of pixels to offset at the upper end of the I
+     * @param jUpperOffset number of pixels to offset at the upper end of the J
      *            index
      * @return the function
+     * @throws IllegalArgumentException if either argument is negative
      */
     public Function<Layer, Layer> trimJ(int jLowerOffset, int jUpperOffset)
     {
@@ -391,7 +397,7 @@ public class LayerTransformFactory
 
             int jNewSize = layer.jSize() - jLowerOffset - jUpperOffset;
 
-            return resize(layer, 0, layer.iSize(), jLowerOffset, jNewSize);
+            return resizeLayer(layer, 0, layer.iSize(), jLowerOffset, jNewSize);
         };
     }
 
@@ -399,16 +405,21 @@ public class LayerTransformFactory
      * Return a function that trims pixels off either/both ends of a layer in
      * both I-th and J-th dimensions. Behaves like a composition of functions
      * returned by {@link #trimI(int, int)} and {@link #trimJ(int, int)}.
+     * <p>
+     * This differs from {@link #mask(int, int, int, int)} in that this function
+     * in effect removes the pixels from the edges, so that the actual size of
+     * the returned layer is smaller.
      *
      * @param iLowerOffset number of pixels to offset at the lower end of the I
      *            index
      * @param iUpperOffset number of pixels to offset at the upper end of the I
      *            index
-     * @param jLowerOffset number of pixels to offset at the lower end of the I
+     * @param jLowerOffset number of pixels to offset at the lower end of the J
      *            index
-     * @param jUpperOffset number of pixels to offset at the upper end of the I
+     * @param jUpperOffset number of pixels to offset at the upper end of the J
      *            index
      * @return the function
+     * @throws IllegalArgumentException if any argument is negative
      */
     public Function<Layer, Layer> trim(int iLowerOffset, int iUpperOffset, int jLowerOffset, int jUpperOffset)
     {
@@ -426,7 +437,97 @@ public class LayerTransformFactory
             int iNewSize = layer.iSize() - iLowerOffset - iUpperOffset;
             int jNewSize = layer.jSize() - jLowerOffset - jUpperOffset;
 
-            return resize(layer, iLowerOffset, iNewSize,  jLowerOffset, jNewSize);
+            return resizeLayer(layer, iLowerOffset, iNewSize, jLowerOffset, jNewSize);
+        };
+    }
+
+    /**
+     * Return a function that masks pixels off the edges of a layer.
+     * <p>
+     * This differs from {@link #trim(int, int, int, int)} in that masking
+     * produces a layer of exactly the same size as the input layer, but with
+     * the area that is masked off being treated as out-of-bounds.
+     *
+     * @param iLowerOffset number of pixels to mask at the lower end of the I
+     *            index
+     * @param iUpperOffset number of pixels to mask at the upper end of the I
+     *            index
+     * @param jLowerOffset number of pixels to mask at the lower end of the J
+     *            index
+     * @param jUpperOffset number of pixels to mask at the upper end of the J
+     *            index
+     * @return the function
+     * @throws IllegalArgumentException if any argument is negative
+     */
+    public Function<Layer, Layer> mask(int iLowerOffset, int iUpperOffset, int jLowerOffset, int jUpperOffset)
+    {
+        Preconditions.checkArgument(iLowerOffset >= 0);
+        Preconditions.checkArgument(iUpperOffset >= 0);
+        Preconditions.checkArgument(jLowerOffset >= 0);
+        Preconditions.checkArgument(jUpperOffset >= 0);
+
+        return layer -> {
+            if (layer == null)
+            {
+                return null;
+            }
+
+            return new ForwardingLayer(layer) {
+
+                @Override
+                public boolean isValid(int i, int j)
+                {
+                    if (!isWithinFrame(i, j))
+                    {
+                        return false;
+                    }
+
+                    return super.isValid(i, j);
+                }
+
+                @Override
+                public boolean isInBounds(int i, int j)
+                {
+                    if (!isWithinFrame(i, j))
+                    {
+                        return false;
+                    }
+
+                    return super.isInBounds(i, j);
+                }
+
+                @Override
+                public void get(int i, int j, Pixel p)
+                {
+                    if (!isWithinFrame(i, j))
+                    {
+                        p.setInBounds(false);
+                    }
+                    else
+                    {
+                        super.get(i, j, p);
+                    }
+                }
+
+                /**
+                 * Utility method that determines whether a location is within
+                 * the frame formed by the mask pixels around the edge of the
+                 * image.
+                 *
+                 * @param i the I index to check
+                 * @param j the J index to check
+                 * @return true if the location is in the central portion of the
+                 *         image, i.e., NOT masked off
+                 */
+                protected boolean isWithinFrame(int i, int j)
+                {
+                    return i >= iLowerOffset && //
+                            i < iSize() - iUpperOffset && //
+                            j >= jLowerOffset && //
+                            j < jSize() - jUpperOffset;
+                }
+
+            };
         };
     }
 
@@ -445,8 +546,11 @@ public class LayerTransformFactory
      * @param iNewSize the size of the new layer in the output layer's J-th
      *            dimension space
      * @return the resized output layer
+     * @throws IllegalArgumentException if any argument is negative, or if (iMin
+     *             + iNewSize) > original layer's iSize() or if (jMin +
+     *             jNewSize) > original layer's jSize()
      */
-    protected ForwardingLayer resize(Layer layer, int iMin, int iNewSize, int jMin, int jNewSize)
+    protected ForwardingLayer resizeLayer(Layer layer, int iMin, int iNewSize, int jMin, int jNewSize)
     {
         if (layer == null)
         {
