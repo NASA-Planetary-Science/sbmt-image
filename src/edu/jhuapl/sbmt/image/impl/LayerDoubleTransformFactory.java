@@ -18,6 +18,9 @@ import edu.jhuapl.sbmt.image.impl.LayerTransformFactory.ForwardingLayer;
  * This factory provides transforms that involve changes to the data associated
  * with a pixel. It can operate on layers that support pixels of type
  * {@link PixelDouble} and {@link PixelVectorDouble}.
+ * <p>
+ * The {@link Function#apply(Layer)} methods for all the functions returned by
+ * this factory will return null if called with a null layer argument.
  *
  * @author James Peachey
  *
@@ -76,6 +79,11 @@ public class LayerDoubleTransformFactory
         }
 
         Function<Layer, Layer> function = layer -> {
+            if (layer == null)
+            {
+                return null;
+            }
+
             return new ForwardingLayer(layer) {
 
                 @Override
@@ -177,17 +185,24 @@ public class LayerDoubleTransformFactory
     public Function<Layer, Layer> slice(int index, double outOfBoundsValue, Double invalidValue)
     {
         return layer -> {
-            Preconditions.checkNotNull(layer);
+            if (layer == null)
+            {
+                return null;
+            }
+
             Preconditions.checkArgument(0 <= index);
 
             List<Integer> dataSizes = layer.dataSizes();
             Preconditions.checkNotNull(dataSizes);
 
             Integer size;
-            if (dataSizes.isEmpty()) {
+            if (dataSizes.isEmpty())
+            {
                 // Slicing a scalar layer is OK, though that will force index to be 0 below.
                 size = Integer.valueOf(1);
-            } else {
+            }
+            else
+            {
                 // Slicing a vector layer is OK.
                 Preconditions.checkArgument(dataSizes.size() == 1);
                 size = dataSizes.get(0);
@@ -213,6 +228,7 @@ public class LayerDoubleTransformFactory
 
         };
     }
+
     /**
      * Return a flag that indicates whether the specified index is in the
      * half-open range [minValue, maxValue).
