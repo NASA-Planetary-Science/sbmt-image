@@ -1,6 +1,13 @@
 package edu.jhuapl.sbmt.image.impl;
 
+import java.util.List;
+import java.util.Set;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 import edu.jhuapl.sbmt.image.api.Layer;
+import edu.jhuapl.sbmt.image.api.Pixel;
 
 /**
  * Abstract base implementation of {@link LayerOfDouble} that assumes the native
@@ -19,6 +26,37 @@ import edu.jhuapl.sbmt.image.api.Layer;
  */
 public abstract class BasicLayer implements Layer
 {
+
+    private static final Layer EmptyLayer = new BasicLayer(0, 0) {
+
+        @Override
+        public List<Integer> dataSizes()
+        {
+            return ImmutableList.of();
+        }
+
+        @Override
+        public Set<Class<?>> getPixelTypes()
+        {
+            return ImmutableSet.of();
+        }
+
+        @Override
+        public void get(int i, int j, Pixel p)
+        {
+            p.setInBounds(false);
+        }
+
+    };
+
+    /**
+     * Return an immutable empty layer, that is, one with no pixels, empty data
+     * sizes, etc.
+     */
+    public static Layer emptyLayer()
+    {
+        return EmptyLayer;
+    }
 
     private final int iSize;
     private final int jSize;
