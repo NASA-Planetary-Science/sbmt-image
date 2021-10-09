@@ -3,11 +3,14 @@ package edu.jhuapl.sbmt.image.impl;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
+import edu.jhuapl.sbmt.image.api.PixelDouble;
+import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
 
 /**
  * Abstract base implementation of {@link LayerOfDouble} that assumes the native
@@ -42,9 +45,9 @@ public abstract class BasicLayer implements Layer
         }
 
         @Override
-        public void get(int i, int j, Pixel p)
+        protected boolean checkIndices(int i, int j, Pixel p)
         {
-            p.setInBounds(false);
+            return false;
         }
 
     };
@@ -93,16 +96,58 @@ public abstract class BasicLayer implements Layer
     @Override
     public boolean isValid(int i, int j)
     {
-        return checkIndices(i, j);
+        return checkIndices(i, j, null);
+    }
+
+    @Override
+    public void get(int i, int j, Pixel p)
+    {
+        Preconditions.checkNotNull(p);
+
+        p.setIsValid(isValid(i, j));
+
+        if (checkIndices(i, j, p))
+        {
+            p.setInBounds(true);
+
+            if (p instanceof PixelDouble pd)
+            {
+                get(i, j, pd);
+            }
+
+            if (p instanceof PixelVectorDouble pvd)
+            {
+                get(i, j, pvd);
+            }
+        }
+        else
+        {
+            p.setInBounds(false);
+        }
+    }
+
+    protected void get(int i, int j, PixelDouble pd)
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    protected void get(int i, int j, PixelVectorDouble pvd)
+    {
+        throw new UnsupportedOperationException();
     }
 
     /**
+     * Check the inputs to determine whether the indices are in-bounds. The base
+     * implementation checks only the I and J indices and ignores the
+     * {@link Pixel} argument.
+     *
      * @param i the I index
      * @param j the J index
+     * @param p the pixel to check
      * @return true if the specified indices are valid (in-bounds), false
      *         otherwise.
      */
-    protected boolean checkIndices(int i, int j)
+    protected boolean checkIndices(int i, int j, Pixel p)
     {
         if (!checkIndex(i, 0, iSize()))
         {

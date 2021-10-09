@@ -3,7 +3,6 @@ package edu.jhuapl.sbmt.image.impl;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
@@ -53,51 +52,28 @@ public abstract class BasicLayerOfDouble extends BasicLayer
         return AcceptedPixelTypes;
     }
 
-    /**
-     *
-     */
     @Override
-    public void get(int i, int j, Pixel p)
+    protected void get(int i, int j, PixelDouble pd)
     {
-        Preconditions.checkNotNull(p);
+        pd.set(doGetDouble(i, j));
+    }
 
-        p.setIsValid(isValid(i, j));
+    @Override
+    protected void get(int i, int j, PixelVectorDouble pvd)
+    {
+        double value = doGetDouble(i, j);
+        double outOfBoundsValue = pvd.getOutOfBoundsValue();
 
-        if (checkIndices(i, j))
+        for (int k = 0; k < pvd.size(); ++k)
         {
-            p.setInBounds(true);
-
-            if (p instanceof PixelDouble)
-            {
-                ((PixelDouble) p).set(doGetDouble(i, j));
-            }
-            else if (p instanceof PixelVectorDouble)
-            {
-                PixelVectorDouble vdp = (PixelVectorDouble) p;
-
-                double value = doGetDouble(i, j);
-                double outOfBoundsValue = vdp.getOutOfBoundsValue();
-
-                for (int k = 0; k < vdp.size(); ++k)
-                {
-                    vdp.set(k, value);
-                    value = outOfBoundsValue;
-                }
-            }
-            else
-            {
-                throw new UnsupportedOperationException("Do not know how to set values in a pixel of type " + p.getClass());
-            }
+            pvd.set(k, value);
+            value = outOfBoundsValue;
         }
-        else
-        {
-            p.setInBounds(false);
-        }
-
     }
 
     protected abstract double doGetDouble(int i, int j);
 
+    @Override
     public String toString()
     {
         return "Layer of double (" + iSize() + ", " + jSize() + ")";
