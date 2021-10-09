@@ -1,5 +1,6 @@
 package edu.jhuapl.sbmt.image.impl;
 
+import java.util.List;
 import java.util.function.Function;
 
 import edu.jhuapl.sbmt.image.api.Layer;
@@ -404,7 +405,8 @@ public abstract class FakePipeline
             protected String getPipelineTitle(Layer layer)
             {
                 String title = super.getPipelineTitle(layer);
-                if (!Integer.valueOf(displayKsize).equals(layer.dataSizes().get(0)))
+                List<Integer> dataSizes = layer.dataSizes();
+                if ((dataSizes.isEmpty() && displayKsize != 0) || !Integer.valueOf(displayKsize).equals(dataSizes.get(0)))
                 {
                     title += " displayed with kSize = " + displayKsize;
                 }
@@ -543,7 +545,7 @@ public abstract class FakePipeline
         vectorToVector(TestKSize - 1, null).run();
 
         System.out.println("Create and show vector layer, but try to access MORE elements than are in the layer, " + (TestKSize + 1) + " instead of " + TestKSize + ".");
-        System.out.println("The missing elements are shown with \"(O) " + (int) TestOOBValue + "\"");
+        System.out.println("The missing elements are shown with \"" + (int) TestOOBValue + "\"");
         vectorToVector(TestKSize + 1, null).run();
         System.out.println();
 
@@ -587,7 +589,7 @@ public abstract class FakePipeline
         }, null)).run();
 
         System.out.println("Show what happens when one slices a vector, pulling out the middle element of the 3");
-        vectorToScalar(null, DoubleTransformFactory.slice(1, TestOOBValue, null)).run();
+        vectorToVector(TestKSize, null, DoubleTransformFactory.slice(1, TestOOBValue, null)).run();
 
         System.out.println("Show what happens when a subset of a scalar layer I range = [1, 4), J range = [1, 3) is taken");
         scalarToScalar(null, TransformFactory.subset(1, 4, 1, 3)).run();
