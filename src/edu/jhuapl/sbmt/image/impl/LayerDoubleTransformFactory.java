@@ -129,17 +129,17 @@ public class LayerDoubleTransformFactory
                     }
                     else if (p instanceof PixelVectorDouble)
                     {
-                        PixelVectorDouble pd = (PixelVectorDouble) p;
+                        PixelVectorDouble pvd = (PixelVectorDouble) p;
 
                         // Make a copy of the pixel, and get its state from the
                         // layer.
-                        PixelVectorDouble tmpPd = PixelVectorFactory.of(pd);
-                        layer.get(i, j, tmpPd);
+                        PixelVectorDouble tmpPvd = PixelVectorFactory.of(pvd);
+                        layer.get(i, j, tmpPvd);
 
-                        boolean valid = tmpPd.isValid();
-                        boolean inBounds = tmpPd.isInBounds();
-                        double outOfBoundsValue = tmpPd.getOutOfBoundsValue();
-                        int kSize = tmpPd.size();
+                        boolean valid = tmpPvd.isValid();
+                        boolean inBounds = tmpPvd.isInBounds();
+                        double outOfBoundsValue = tmpPvd.getOutOfBoundsValue();
+                        int kSize = tmpPvd.size();
 
                         for (int k = 0; k < kSize; ++k)
                         {
@@ -155,18 +155,18 @@ public class LayerDoubleTransformFactory
                             {
                                 // Value is in-bounds and valid, so use the
                                 // regular value transform.
-                                value = valueTransform.apply(tmpPd.getStoredValue(k));
+                                value = valueTransform.apply(tmpPvd.get(k).getStoredValue());
                             }
                             else
                             {
                                 // Value is not valid, so use the invalid value
                                 // transform.
-                                value = finalInvalidValueTransform.apply(tmpPd.getStoredValue(k));
+                                value = finalInvalidValueTransform.apply(tmpPvd.get(k).getStoredValue());
                             }
 
-                            pd.set(k, value);
-                            pd.setIsValid(valid);
-                            pd.setInBounds(inBounds);
+                            pvd.get(k).set(value);
+                            pvd.setIsValid(valid);
+                            pvd.setInBounds(inBounds);
                         }
                     }
                     else
@@ -221,7 +221,7 @@ public class LayerDoubleTransformFactory
                 {
                     layer.get(i, j, p);
 
-                    return p.get(index);
+                    return p.get(index).get();
                 }
 
             };

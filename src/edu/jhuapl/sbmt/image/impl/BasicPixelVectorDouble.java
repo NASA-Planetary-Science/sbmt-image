@@ -1,5 +1,7 @@
 package edu.jhuapl.sbmt.image.impl;
 
+import com.google.common.collect.ImmutableList;
+
 import edu.jhuapl.sbmt.image.api.Pixel;
 import edu.jhuapl.sbmt.image.api.PixelDouble;
 import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
@@ -14,63 +16,46 @@ import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
 public abstract class BasicPixelVectorDouble extends BasicPixel implements PixelVectorDouble
 {
 
-    private final double[] array;
-    private static final PixelDoubleFactory ScalarFactory = new PixelDoubleFactory();
+    private final ImmutableList<ScalarPixel> pixels;
 
-    protected BasicPixelVectorDouble(int size)
+    protected BasicPixelVectorDouble(int size, boolean isValid, boolean inBounds)
     {
-        super();
-        this.array = new double[size];
+        super(isValid, inBounds);
+
+        ImmutableList.Builder<ScalarPixel> builder = ImmutableList.builder();
+        for (int index = 0; index < size; ++index)
+        {
+            builder.add(new ScalarPixel(0.));
+        }
+
+        this.pixels = builder.build();
     }
 
+    protected BasicPixelVectorDouble(BasicPixelVectorDouble source) {
+        super(source.isValid(), source.isInBounds());
+
+        ImmutableList.Builder<ScalarPixel> builder = ImmutableList.builder();
+        for (int index = 0; index < source.size(); ++index)
+        {
+            builder.add(new ScalarPixel(source.get(index)));
+        }
+
+        this.pixels = builder.build();
+    }
     @Override
     public int size()
     {
-        return array.length;
+        return pixels.size();
     }
 
     @Override
-    public double get(int index)
+    public ScalarPixel get(int index)
     {
-        // Check if this pixel has been flagged as being out of bounds
-        // (presumably by its layer). If so, return the out of-bounds-value.
-        if (!isInBounds())
-        {
-            return getOutOfBoundsValue();
-        }
-
-        // Check whether the index argument is out of bounds, in which case
-        // also return the out-of-bounds value.
-        if (!checkIndex(index, 0, size()))
-        {
-            return getOutOfBoundsValue();
-        }
-
-        return getStoredValue(index);
-    }
-
-    @Override
-   public double getStoredValue(int index)
-    {
-        return array[index];
-    }
-
-    @Override
-    public void set(int index, double value)
-    {
-        if (checkIndex(index, 0, size()))
-        {
-            doSet(index, value);
-        }
-        else
-        {
+        if (!checkIndex(index, 0, size()) ) {
             throw new IndexOutOfBoundsException();
         }
-    }
 
-    protected void doSet(int index, double value)
-    {
-        array[index] = value;
+        return pixels.get(index);
     }
 
     /**
@@ -88,41 +73,110 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
         return index >= minValid && index < maxValid;
     }
 
-    protected PixelDoubleFactory scalarFactory()
-    {
-        return ScalarFactory;
-    }
-
     @Override
     public String toString()
     {
-        double outOfBoundsValue = getOutOfBoundsValue();
-
-        boolean valid = isValid();
-        boolean inBounds = isInBounds();
-
         StringBuilder builder = new StringBuilder("(");
         String delim = "";
         for (int k = 0; k < size(); ++k)
         {
             builder.append(delim);
-
-            PixelDouble p = scalarFactory().of(get(k), outOfBoundsValue, null);
-            p.setIsValid(valid);
-            p.setInBounds(inBounds);
-
-            if (!checkIndex(k, 0, size()))
-            {
-                p.setInBounds(false);
-            }
-
-            builder.append(p);
+            builder.append(get(k));
 
             delim = ", ";
         }
         builder.append(")");
 
         return builder.toString();
+    }
+
+    public class ScalarPixel implements PixelDouble
+    {
+
+        private volatile double value;
+
+        protected ScalarPixel(double value)
+        {
+            this.value = value;
+        }
+
+        protected ScalarPixel(ScalarPixel source) {
+            this.value = source.get();
+        }
+
+        @Override
+        public boolean isValid()
+        {
+            return BasicPixelVectorDouble.this.isValid();
+        }
+
+        @Override
+        public void setIsValid(boolean isValid) {
+            BasicPixelVectorDouble.this.setIsValid(isValid);
+        }
+
+        @Override
+        public boolean isInBounds()
+        {
+            return BasicPixelVectorDouble.this.isInBounds();
+        }
+
+        @Override
+        public void setInBounds(boolean inBounds)
+        {
+            BasicPixelVectorDouble.this.setInBounds(inBounds);
+        }
+
+        @Override
+        public double get()
+        {
+            if (!isInBounds())
+            {
+                return getOutOfBoundsValue();
+            }
+
+            return getStoredValue();
+        }
+
+        @Override
+        public double getStoredValue()
+        {
+            return value;
+        }
+
+        @Override
+        public void set(double value)
+        {
+            this.value = value;
+        }
+
+        @Override
+        public double getOutOfBoundsValue()
+        {
+            return BasicPixelVectorDouble.this.getOutOfBoundsValue();
+        }
+
+        @Override
+        public String toString()
+        {
+            String formattedValue = String.format("%.3g", get());
+            String stringFormat = "%9s";
+            if (!isInBounds())
+            {
+                formattedValue = String.format(stringFormat, "(O) " + formattedValue);
+            }
+            else if (!isValid())
+            {
+                formattedValue = String.format(stringFormat, "(I) " + formattedValue);
+            }
+            else
+            {
+                formattedValue = String.format(stringFormat, formattedValue);
+            }
+
+            return formattedValue;
+        }
+
     }
 
 }

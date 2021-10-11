@@ -16,12 +16,12 @@ public class BasicPixel implements Pixel
     private volatile boolean isValid;
     private volatile boolean inBounds;
 
-    protected BasicPixel()
+    protected BasicPixel(boolean isValid, boolean inBounds)
     {
         super();
 
-        this.isValid = true;
-        this.inBounds = true;
+        this.isValid = isValid;
+        this.inBounds = inBounds;
     }
 
     @Override

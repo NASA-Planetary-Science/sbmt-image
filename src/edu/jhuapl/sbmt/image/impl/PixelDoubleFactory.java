@@ -21,7 +21,7 @@ public class PixelDoubleFactory
 
     public PixelDouble of(double value, double outOfBoundsValue, Double invalidValue)
     {
-        return new BasicPixelDouble(value) {
+        return new BasicPixelDouble(value, true, true) {
 
             @Override
             public double get()
@@ -47,12 +47,12 @@ public class PixelDoubleFactory
     {
         Preconditions.checkNotNull(pixel);
 
-        double value = pixel.getStoredValue();
-        boolean valid = pixel.isValid();
-        boolean inBounds = pixel.isInBounds();
         double outOfBoundsValue = pixel.getOutOfBoundsValue();
+        double value = pixel.getStoredValue();
+        boolean isValid = pixel.isValid();
+        boolean inBounds = pixel.isInBounds();
 
-        pixel = new BasicPixelDouble(value) {
+        pixel = new BasicPixelDouble(value, isValid, inBounds) {
 
             @Override
             public double getOutOfBoundsValue()
@@ -61,10 +61,6 @@ public class PixelDoubleFactory
             }
 
         };
-
-        pixel.set(value);
-        pixel.setIsValid(valid);
-        pixel.setInBounds(inBounds);
 
         return pixel;
     }

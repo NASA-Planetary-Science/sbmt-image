@@ -14,9 +14,9 @@ public abstract class BasicPixelDouble extends BasicPixel implements PixelDouble
 {
     private volatile double value;
 
-    protected BasicPixelDouble(double value)
+    protected BasicPixelDouble(double value, boolean isValid, boolean inBounds)
     {
-        super();
+        super(isValid, inBounds);
 
         this.value = value;
     }

@@ -34,12 +34,13 @@ public interface Layer
     int jSize();
 
     /**
-     * Return the dimensionality and sizes of data elements located at each pair
-     * of indices (I, J). Scalar implementations shall return an empty list.
-     * Vector implementations shall return a list with one element.
-     * Higher-dimensional data structures shall return a list with one entry for
-     * each dimension. No implementation shall return a null list, nor shall any
-     * list entry be null or non-positive.
+     * Return the dimensionality and sizes of data elements located at each pair of
+     * indices (I, J). Scalar implementations shall return a list with just one
+     * element, equal to the integer 1. Vector implementations shall return a list
+     * wieh just one element; the number indicates the maximum size of any vector in
+     * the layer. Higher-dimensional data structures shall return a list with one
+     * entry for each dimension. No implementation shall return a null list, nor
+     * shall any list entry be null or non-positive.
      * <p>
      * Data associated with a particular pair of indices are permitted to have
      * variable size in any dimesion. The sizes in the returned list give the
@@ -64,17 +65,14 @@ public interface Layer
      * @param j the J index
      * @return true if the data associated with these indices are valid/usable
      */
-    default boolean isValid(int i, int j)
-    {
-        return isInBounds(i, j);
-    }
+    boolean isValid(int i, int j);
 
     /**
      * Return a flag that indicates whether the specified indices are in-bounds
      * (true) or out-of-bounds (false).
      * <p>
-     * The I index is in-bounds if it is in the half-open range [0, iSize() ).
-     * The J index is in-bounds if it is in the half-open range [0, jSize() ).
+     * The I index is in-bounds if it is in the half-open range [0, iSize() ). The J
+     * index is in-bounds if it is in the half-open range [0, jSize() ).
      *
      * @param i the I index
      * @param j the J index
@@ -89,8 +87,7 @@ public interface Layer
      * Return a set of the types of sub-interfaces that the
      * {@link #get(int, int, Pixel)} method accepts for the pixel argument.
      * <p>
-     * Implementations are free to return an empty set, but they may not return
-     * null
+     * Implementations are free to return an empty set, but they may not return null
      *
      * @return the interface types
      */
@@ -98,8 +95,8 @@ public interface Layer
 
     /**
      * Return a flag that indicates whether this implementation's
-     * {@link #get(int, int, Pixel)} method can get data using pixels that
-     * implement the specified type.
+     * {@link #get(int, int, Pixel)} method can get data using pixels that implement
+     * the specified type.
      *
      * @param pixelType the {@link Class} designating the type to check
      * @return true if this layer's {@link #get(int, int, Pixel)} method accepts
@@ -111,10 +108,10 @@ public interface Layer
     }
 
     /**
-     * Retrieve data associated with the specified indices, and use it to set
-     * values in the specified {@link Pixel} instance. Implementations shall
-     * always attempt to set all the values in the pixel, even if
-     * {@link #isValid(int, int)} returns false for any reason.
+     * Retrieve data associated with the specified indices, and use it to set values
+     * in the specified {@link Pixel} instance. Implementations shall always attempt
+     * to set all the values in the pixel, even if {@link #isValid(int, int)}
+     * returns false for any reason.
      * <p>
      * If an implementation cannot or does not know how to set the values of the
      * specified {@link Pixel} instance using its data, it shall throw an
@@ -123,9 +120,8 @@ public interface Layer
      * @param i the I index
      * @param j the J index
      * @param p the pixel, which will be mutated by this method
-     * @param throws UnsupportedOperationException if the layer implementation
-     *            does not know how to handle the specified instance of the
-     *            pixel
+     * @param throws UnsupportedOperationException if the layer implementation does
+     *            not know how to handle the specified instance of the pixel
      */
     void get(int i, int j, Pixel p);
 

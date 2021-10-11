@@ -38,7 +38,7 @@ public abstract class BasicLayerOfDouble extends BasicLayer
     @Override
     public List<Integer> dataSizes()
     {
-        return ImmutableList.of();
+        return ImmutableList.of(Integer.valueOf(1));
     }
 
     /**
@@ -66,7 +66,7 @@ public abstract class BasicLayerOfDouble extends BasicLayer
 
         for (int k = 0; k < pvd.size(); ++k)
         {
-            pvd.set(k, value);
+            pvd.get(k).set(value);
             value = outOfBoundsValue;
         }
     }

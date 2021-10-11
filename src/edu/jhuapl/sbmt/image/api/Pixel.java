@@ -37,10 +37,7 @@ public interface Pixel
      *
      * @return true if the data associated with these indices are valid/usable
      */
-    default boolean isValid()
-    {
-        return isInBounds();
-    }
+    boolean isValid();
 
     /**
      * Set the flag that indicates whether the data associated with this pixel
@@ -48,10 +45,7 @@ public interface Pixel
      *
      * @param valid the new value for the flag
      */
-    default void setIsValid(boolean valid)
-    {
-
-    }
+    void setIsValid(boolean valid);
 
     /**
      * Return a flag that indicates whether this pixel is in-bounds (true) or

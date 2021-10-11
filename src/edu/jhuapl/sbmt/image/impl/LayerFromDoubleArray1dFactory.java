@@ -168,7 +168,7 @@ public class LayerFromDoubleArray1dFactory extends LayerFromDoubleCollection1dFa
 
                 try
                 {
-                    p.set(p.size(), -7.);
+                    p.get(p.size()).set(-7.);
                     System.err.println("Oops, expected this to throw.");
                 }
                 catch (IndexOutOfBoundsException e)
@@ -180,7 +180,7 @@ public class LayerFromDoubleArray1dFactory extends LayerFromDoubleCollection1dFa
                 List<Double> list = new ArrayList<>(p.size());
                 for (int k = 0; k < p.size(); ++k)
                 {
-                    list.add(p.get(k));
+                    list.add(p.get(k).get());
                 }
                 slice.add(list);
             }

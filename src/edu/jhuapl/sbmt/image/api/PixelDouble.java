@@ -22,9 +22,15 @@ public interface PixelDouble extends Pixel
      * it is {@link #isInBounds()} or {@link #isValid()}. This method exists
      * mainly to make it possible to make an exact duplicate of the pixel.
      *
-     * @return
+     * @return the current stored value of this pixel
      */
     double getStoredValue();
+
+    default void set(PixelDouble source) {
+        set(source.getStoredValue());
+        setIsValid(source.isValid());
+        setInBounds(source.isInBounds());
+    }
 
     /**
      * Set the current value of this pixel.

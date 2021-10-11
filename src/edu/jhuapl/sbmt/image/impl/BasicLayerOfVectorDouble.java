@@ -66,7 +66,7 @@ public abstract class BasicLayerOfVectorDouble extends BasicLayer
             boolean isInBounds = checkIndex(k, 0, getKsize(i, j));
 
             double value = isInBounds ? doGetDouble(i, j, k) : outOfBoundsValue;
-            vdp.set(k, value);
+            vdp.get(k).set(value);
         }
 
     }
