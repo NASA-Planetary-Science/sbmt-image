@@ -270,7 +270,7 @@ public class LayerTransformFactory
         int iNewSize = iMax - iMin;
 
         return layer -> {
-            return resizeLayer(layer, iMin, iNewSize, 0, layer.jSize());
+            return subsetLayer(layer, iMin, iNewSize, 0, layer.jSize());
         };
     }
 
@@ -299,7 +299,7 @@ public class LayerTransformFactory
         int jNewSize = jMax - jMin;
 
         return layer -> {
-            return resizeLayer(layer, 0, layer.iSize(), jMin, jNewSize);
+            return subsetLayer(layer, 0, layer.iSize(), jMin, jNewSize);
         };
     }
 
@@ -331,7 +331,7 @@ public class LayerTransformFactory
         int jNewSize = jMax - jMin;
 
         return layer -> {
-            return resizeLayer(layer, iMin, iNewSize, jMin, jNewSize);
+            return subsetLayer(layer, iMin, iNewSize, jMin, jNewSize);
         };
     }
 
@@ -364,7 +364,7 @@ public class LayerTransformFactory
 
             int iNewSize = layer.iSize() - iLowerOffset - iUpperOffset;
 
-            return resizeLayer(layer, iLowerOffset, iNewSize, 0, layer.jSize());
+            return subsetLayer(layer, iLowerOffset, iNewSize, 0, layer.jSize());
         };
     }
 
@@ -397,7 +397,7 @@ public class LayerTransformFactory
 
             int jNewSize = layer.jSize() - jLowerOffset - jUpperOffset;
 
-            return resizeLayer(layer, 0, layer.iSize(), jLowerOffset, jNewSize);
+            return subsetLayer(layer, 0, layer.iSize(), jLowerOffset, jNewSize);
         };
     }
 
@@ -437,7 +437,7 @@ public class LayerTransformFactory
             int iNewSize = layer.iSize() - iLowerOffset - iUpperOffset;
             int jNewSize = layer.jSize() - jLowerOffset - jUpperOffset;
 
-            return resizeLayer(layer, iLowerOffset, iNewSize, jLowerOffset, jNewSize);
+            return subsetLayer(layer, iLowerOffset, iNewSize, jLowerOffset, jNewSize);
         };
     }
 
@@ -532,9 +532,10 @@ public class LayerTransformFactory
     }
 
     /**
-     * General utility method for resizing a layer in both I and J dimensions.
-     * The sum of the minimum index plus the new size must be <= the original
-     * target layer's size.
+     * General utility method for extracting a subset from a layer in both I and
+     * J dimensions. For each index (I and J), the sum of the minimum index plus
+     * the new size must be <= the original target layer's size for the same
+     * index.
      * <p>
      * This method just removes pixels from the layer, as in a crop/subset/trim
      * operation; it does not change (interpolate, expand, etc.) any of the
@@ -554,7 +555,7 @@ public class LayerTransformFactory
      *             + iNewSize) > original layer's iSize() or if (jMin +
      *             jNewSize) > original layer's jSize()
      */
-    protected ForwardingLayer resizeLayer(Layer layer, int iMin, int iNewSize, int jMin, int jNewSize)
+    protected ForwardingLayer subsetLayer(Layer layer, int iMin, int iNewSize, int jMin, int jNewSize)
     {
         if (layer == null)
         {
