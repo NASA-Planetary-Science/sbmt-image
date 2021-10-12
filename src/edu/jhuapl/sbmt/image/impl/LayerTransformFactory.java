@@ -8,6 +8,7 @@ import com.google.common.base.Preconditions;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
+import edu.jhuapl.sbmt.image.api.PixelDouble;
 
 /**
  * Factory class for creating {@link Layer} transforms (that is,
@@ -17,6 +18,8 @@ import edu.jhuapl.sbmt.image.api.Pixel;
  * operations that are specific to the underlying data type associated with each
  * pixel.
  *
+ * @see {@link LayerDoubleTransformFactory} for transforms that modify pixel
+ *      data.
  * @author James Peachey
  *
  */
@@ -27,10 +30,7 @@ public class LayerTransformFactory
      * Invert indices in the Ith dimension.
      */
     private static final Function<Layer, Layer> InvertI = layer -> {
-        if (layer == null)
-        {
-            return null;
-        }
+        Preconditions.checkNotNull(layer);
 
         return new ForwardingLayer(layer) {
 
@@ -47,10 +47,7 @@ public class LayerTransformFactory
      * Invert indices in the Jth dimension.
      */
     private static final Function<Layer, Layer> InvertJ = layer -> {
-        if (layer == null)
-        {
-            return null;
-        }
+        Preconditions.checkNotNull(layer);
 
         return new ForwardingLayer(layer) {
 
@@ -67,10 +64,7 @@ public class LayerTransformFactory
      * Invert indices in the both I and J dimensions.
      */
     private static final Function<Layer, Layer> InvertIJ = layer -> {
-        if (layer == null)
-        {
-            return null;
-        }
+        Preconditions.checkNotNull(layer);
 
         return new ForwardingLayer(layer) {
 
@@ -88,10 +82,7 @@ public class LayerTransformFactory
      * doing a flip and a rotation together.
      */
     private static final Function<Layer, Layer> SwapIJ = layer -> {
-        if (layer == null)
-        {
-            return null;
-        }
+        Preconditions.checkNotNull(layer);
 
         return new ForwardingLayer(layer) {
 
@@ -245,7 +236,7 @@ public class LayerTransformFactory
     }
 
     /**
-     * Return a function that extracts a subset of the image in the I-th
+     * Return a function that extracts a subset of the layer in the I-th
      * dimension whose range is specified by the arguments. The I index in the
      * layer that is returned will run from 0 to an iSize() equal to iMax -
      * iMin. For an I index of 0 in the new layer, the same pixel will be
@@ -275,7 +266,7 @@ public class LayerTransformFactory
     }
 
     /**
-     * Return a function that extracts a subset of the image in the J-th
+     * Return a function that extracts a subset of the layer in the J-th
      * dimension whose range is specified by the arguments. The J index in the
      * layer that is returned will run from 0 to a jSize() equal to jMax - jMin.
      * For a J index of 0 in the new layer, the same pixel will be returned as
@@ -304,7 +295,7 @@ public class LayerTransformFactory
     }
 
     /**
-     * Return a function that extracts a subset of the image both I and J
+     * Return a function that extracts a subset of the layer both I and J
      * spaces. Behaves like a composition of the functions returned by
      * {@link #subsetI(int, int)} and {@link #subsetJ(int, int)}.
      *
@@ -340,7 +331,7 @@ public class LayerTransformFactory
      * the I-th dimension. The layer returned by the function will have new
      * iSize() == (original iSize() - iLowerOffset - iUpperOffset). When the I
      * index is 0 in the new layer, the pixel located with I = iLowerOffset in
-     * the original image will be accessed. When the I index is (iSize() - 1) in
+     * the original layer will be accessed. When the I index is (iSize() - 1) in
      * the new layer, the pixel located at (iSize() - iUpperOffset - 1) in the
      * original layer will be accessed.
      *
@@ -357,10 +348,7 @@ public class LayerTransformFactory
         Preconditions.checkArgument(iUpperOffset >= 0);
 
         return layer -> {
-            if (layer == null)
-            {
-                return null;
-            }
+            Preconditions.checkNotNull(layer);
 
             int iNewSize = layer.iSize() - iLowerOffset - iUpperOffset;
 
@@ -373,7 +361,7 @@ public class LayerTransformFactory
      * the J-th dimension. The layer returned by the function will have new
      * jSize() == (original jSize() - jLowerOffset - jUpperOffset). When the J
      * index is 0 in the new layer, the pixel located with J = jLowerOffset in
-     * the original image will be accessed. When the J index is (jSize() - 1) in
+     * the original layer will be accessed. When the J index is (jSize() - 1) in
      * the new layer, the pixel located at (jSize() - jUpperOffset - 1) in the
      * original layer will be accessed.
      *
@@ -390,10 +378,7 @@ public class LayerTransformFactory
         Preconditions.checkArgument(jUpperOffset >= 0);
 
         return layer -> {
-            if (layer == null)
-            {
-                return null;
-            }
+            Preconditions.checkNotNull(layer);
 
             int jNewSize = layer.jSize() - jLowerOffset - jUpperOffset;
 
@@ -429,10 +414,7 @@ public class LayerTransformFactory
         Preconditions.checkArgument(jUpperOffset >= 0);
 
         return layer -> {
-            if (layer == null)
-            {
-                return null;
-            }
+            Preconditions.checkNotNull(layer);
 
             int iNewSize = layer.iSize() - iLowerOffset - iUpperOffset;
             int jNewSize = layer.jSize() - jLowerOffset - jUpperOffset;
@@ -467,10 +449,7 @@ public class LayerTransformFactory
         Preconditions.checkArgument(jUpperOffset >= 0);
 
         return layer -> {
-            if (layer == null)
-            {
-                return null;
-            }
+            Preconditions.checkNotNull(layer);
 
             return new ForwardingLayer(layer) {
 
@@ -512,12 +491,12 @@ public class LayerTransformFactory
                 /**
                  * Utility method that determines whether a location is within
                  * the frame formed by the mask pixels around the edge of the
-                 * image.
+                 * layer.
                  *
                  * @param i the I index to check
                  * @param j the J index to check
                  * @return true if the location is in the central portion of the
-                 *         image, i.e., NOT masked off
+                 *         layer, i.e., NOT masked off
                  */
                 protected boolean isWithinFrame(int i, int j)
                 {
@@ -525,6 +504,54 @@ public class LayerTransformFactory
                             i < iSize() - iUpperOffset && //
                             j >= jLowerOffset && //
                             j < jSize() - jUpperOffset;
+                }
+
+            };
+        };
+    }
+
+    /**
+     * Return a function that resamples a layer to produce a layer of a new size
+     * by associating each new layer (I, J) coordinate pair with the nearest
+     * neighbor pixel in the original layer's (I, J) coordinates. This probably
+     * works better for up-sampling rather than down-sampling, better for
+     * moderate size changes, and better on smoothly varying layers.
+     *
+     * @param iNewSize the size of the output layer in the I dimension
+     * @param jNewSize the size of the output layer in the J dimension
+     * @return the function
+     */
+    public Function<Layer, Layer> resampleNearestNeighbor(int iNewSize, int jNewSize)
+    {
+        return layer -> {
+            Preconditions.checkNotNull(layer);
+
+            int iOrigSize = layer.iSize();
+            int jOrigSize = layer.jSize();
+
+            if (iOrigSize == iNewSize && jOrigSize == jNewSize)
+            {
+                return layer;
+            }
+
+            return new ResampledLayer(iNewSize, jNewSize) {
+
+                @Override
+                protected Layer getInputLayer()
+                {
+                    return layer;
+                }
+
+                @Override
+                protected void get(int iNew, int jNew, PixelDouble pd)
+                {
+                    double x = (double) (iNew * iOrigSize) / iNewSize;
+                    double y = (double) (jNew * jOrigSize) / jNewSize;
+
+                    int iOrig = (int) Math.floor(x);
+                    int jOrig = (int) Math.floor(y);
+
+                    layer.get(iOrig, jOrig, pd);
                 }
 
             };
@@ -557,10 +584,7 @@ public class LayerTransformFactory
      */
     protected ForwardingLayer subsetLayer(Layer layer, int iMin, int iNewSize, int jMin, int jNewSize)
     {
-        if (layer == null)
-        {
-            return null;
-        }
+        Preconditions.checkNotNull(layer);
 
         int iOrigSize = layer.iSize();
         int jOrigSize = layer.jSize();
