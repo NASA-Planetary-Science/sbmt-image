@@ -7,12 +7,13 @@ package edu.jhuapl.sbmt.image.api;
  * @author James Peachey
  *
  */
-public interface PixelVectorDouble extends Pixel
+public interface PixelVectorDouble extends PixelVector
 {
 
     /**
      * @return the number of elements associated with this pixel
      */
+    @Override
     int size();
 
     /**
@@ -23,6 +24,7 @@ public interface PixelVectorDouble extends Pixel
      * @return the pixel
      * @throws IndexOutOfBoundsException if the index is outside the half-open range [0, size())
      */
+    @Override
     PixelDouble get(int index);
 
     /**

@@ -4,7 +4,9 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 
+import edu.jhuapl.sbmt.image.api.Pixel;
 import edu.jhuapl.sbmt.image.api.PixelDouble;
+import edu.jhuapl.sbmt.image.api.PixelVector;
 import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
 
 /**
@@ -48,30 +50,42 @@ public abstract class BasicLayerOfVectorDouble extends BasicLayer
     }
 
     @Override
-    protected void get(int i, int j, PixelDouble pd)
+    protected void getScalar(int i, int j, Pixel p)
     {
-        double value = doGetDouble(i, j, 0);
-        pd.set(value);
+        if (p instanceof PixelDouble pd)
+        {
+            double value = doGetDouble(i, j, 0);
+            pd.set(value);
+        }
+        else
+        {
+            super.getScalar(i, j, p);
+        }
     }
 
     @Override
-    protected void get(int i, int j, PixelVectorDouble vdp)
+    protected void getVector(int i, int j, PixelVector pv)
     {
-        double outOfBoundsValue = vdp.getOutOfBoundsValue();
-
-        for (int k = 0; k < vdp.size(); ++k)
+        if (pv instanceof PixelVectorDouble pvd)
         {
-            // Now need to ensure the number of items in the pixel does not
-            // exceed the number in this layer.
-            boolean isInBounds = checkIndex(k, 0, getKsize(i, j));
+            double outOfBoundsValue = pvd.getOutOfBoundsValue();
 
-            double value = isInBounds ? doGetDouble(i, j, k) : outOfBoundsValue;
-            vdp.get(k).set(value);
+            for (int k = 0; k < pvd.size(); ++k)
+            {
+                // Now need to ensure the number of items in the pixel does not
+                // exceed the number in this layer.
+                boolean isInBounds = checkIndex(k, 0, kSize(i, j));
+
+                double value = isInBounds ? doGetDouble(i, j, k) : outOfBoundsValue;
+                pvd.get(k).set(value);
+            }
+        }
+        else
+        {
+            super.getVector(i, j, pv);
         }
 
     }
-
-    protected abstract int getKsize(int i, int j);
 
     protected abstract double doGetDouble(int i, int j, int k);
 

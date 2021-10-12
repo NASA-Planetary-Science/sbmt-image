@@ -105,12 +105,6 @@ public class LayerDoubleFactory
             }
 
             @Override
-            protected int getKsize(int i, int j)
-            {
-                return kSize;
-            }
-
-            @Override
             protected double doGetDouble(int i, int j, int k)
             {
                 return doubleGetter.get(i, j, k);
@@ -135,12 +129,6 @@ public class LayerDoubleFactory
             public List<Integer> dataSizes()
             {
                 return dataSizes;
-            }
-
-            @Override
-            protected int getKsize(int i, int j)
-            {
-                return kSize;
             }
 
             @Override

@@ -573,7 +573,7 @@ public abstract class FakePipeline
         System.out.println("Show effect of clockwise rotation");
         scalarToScalar(null, TransformFactory.rotateCW()).run();
 
-        System.out.println("Show that flipping about X AND Y, and then rotating half-way around, gets you back to the original state");
+        System.out.println("Show that flipping about X AND Y, and then rotating half-way around, gets you back to the original layer");
         scalarToScalar(null, TransformFactory.rotateHalfway().compose(TransformFactory.flipAboutXY())).run();
 
         System.out.println("Show what happens when one multiplies valid values by a factor of 2.0,");
@@ -600,8 +600,8 @@ public abstract class FakePipeline
         System.out.println("Show what happens when a vector layer is masked by 2 on left (I) and 1 on the right (I), and 1 each from top and bottom (J)");
         vectorToVector(TestKSize, null, TransformFactory.mask(2, 1, 1, 1)).run();
 
-        System.out.println("Show what happens when a scalar layer is resampled from 4x6 to 4x9, using nearest-neighbors.");
-        scalarToScalar(null, TransformFactory.resampleNearestNeighbor(4, 9).compose(TransformFactory.swapIJ())).run();
+        System.out.println("Show what happens when a scalar layer is resampled from 6x4 to 4x6, using nearest-neighbors.");
+        scalarToScalar(null, TransformFactory.resampleNearestNeighbor(4, 6)).run();
     }
 
 }

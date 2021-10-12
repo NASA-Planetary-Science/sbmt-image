@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.Set;
 
 import edu.jhuapl.sbmt.image.api.Layer;
-import edu.jhuapl.sbmt.image.api.PixelDouble;
-import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
+import edu.jhuapl.sbmt.image.api.Pixel;
 
 public abstract class ResampledLayer extends BasicLayer
 {
@@ -29,15 +28,7 @@ public abstract class ResampledLayer extends BasicLayer
     }
 
     @Override
-    protected abstract void get(int i, int j, PixelDouble pd);
-
-    @Override
-    protected void get(int i, int j, PixelVectorDouble pvd)
-    {
-        for (int index = 0; index < pvd.size(); ++index) {
-            get(i, j, pvd.get(index));
-        }
-    }
+    protected abstract void getScalar(int i, int j, Pixel pd);
 
     @Override
     public String toString()

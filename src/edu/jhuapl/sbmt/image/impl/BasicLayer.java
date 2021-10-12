@@ -9,8 +9,7 @@ import com.google.common.collect.ImmutableSet;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
-import edu.jhuapl.sbmt.image.api.PixelDouble;
-import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
+import edu.jhuapl.sbmt.image.api.PixelVector;
 
 /**
  * Abstract base implementation of {@link LayerOfDouble} that assumes the native
@@ -65,10 +64,10 @@ public abstract class BasicLayer implements Layer
     private final int jSize;
 
     /**
-     * Constructor that creates a layer using the specified dimensions and validity
-     * checker. The caller must ensure iSize and jSize are non-negative. The isValid
-     * argument may be null, in which case all in-bounds values are considered
-     * valid.
+     * Constructor that creates a layer using the specified dimensions and
+     * validity checker. The caller must ensure iSize and jSize are
+     * non-negative. The isValid argument may be null, in which case all
+     * in-bounds values are considered valid.
      *
      * @param iSize the number of in-bounds values of the I index
      * @param jSize the number of in-bounds values of the J index
@@ -93,6 +92,18 @@ public abstract class BasicLayer implements Layer
         return jSize;
     }
 
+    /**
+     * Override this if the size of non-scalar pixels varies by (I, J).
+     *
+     * @param i the I index
+     * @param j the J index
+     * @return the size in the K dimension
+     */
+    protected int kSize(int i, int j)
+    {
+        return dataSizes().get(0);
+    }
+
     @Override
     public boolean isValid(int i, int j)
     {
@@ -100,9 +111,9 @@ public abstract class BasicLayer implements Layer
     }
 
     /**
-     * The base implementation handles whether or not the pixel location is "valid",
-     * and whether it is in-bounds in its (I, J) indices. It delegates the actual
-     * getting to pixel subtype-specific methods.
+     * The base implementation handles whether or not the pixel location is
+     * "valid", and whether it is in-bounds in its (I, J) indices. It delegates
+     * the actual getting to pixel subtype-specific methods.
      */
     @Override
     public void get(int i, int j, Pixel p)
@@ -115,14 +126,13 @@ public abstract class BasicLayer implements Layer
         {
             p.setInBounds(true);
 
-            if (p instanceof PixelDouble pd)
+            if (p instanceof PixelVector pv)
             {
-                get(i, j, pd);
+                getVector(i, j, pv);
             }
-
-            if (p instanceof PixelVectorDouble pvd)
+            else
             {
-                get(i, j, pvd);
+                getScalar(i, j, p);
             }
         }
         else
@@ -132,43 +142,62 @@ public abstract class BasicLayer implements Layer
     }
 
     /**
-     * Override this to set the value in the specified pixel instance. This method
-     * does not need to check validity or bounds of the (I, J) index pair.
+     * Override this to set the value in the specified pixel instance. This
+     * method does not need to check validity or bounds of the (I, J) index
+     * pair.
      *
      * @param i the I index
      * @param j the J index
-     * @param pd the output pixel
+     * @param p the output pixel
      */
-    protected void get(int i, int j, PixelDouble pd)
+    protected void getScalar(int i, int j, Pixel p)
     {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Override this to set the value in the specified pixel instance. This method
-     * does not need to check validity or bounds of the (I, J) index pair. However,
-     * when overriding this method, it is necessary to avoid exceptions should the
-     * size of the specified pixel be insufficient to hold the full vector present
-     * in the layer at index (I, J).
+     * Override this to set the value in the specified pixel instance. This
+     * method does not need to check validity or bounds of the (I, J) index
+     * pair. However, when overriding this method, it is necessary to avoid
+     * exceptions should the size of the specified pixel be insufficient to hold
+     * the full vector present in the layer at index (I, J).
      *
      * @param i the I index
      * @param j the J index
-     * @param pvd the output pixel
+     * @param pv the output pixel
      */
-    protected void get(int i, int j, PixelVectorDouble pvd)
+    protected void getVector(int i, int j, PixelVector pv)
     {
-        throw new UnsupportedOperationException();
+        for (int k = 0; k < pv.size(); ++k)
+        {
+            Pixel p = pv.get(k);
+            if (checkIndex(k, 0, kSize(i, j)))
+            {
+                // This layer has data for this pixel.
+                getScalar(i, j, p);
+            }
+            else
+            {
+                // This layer does not have data for this pixel.
+                // Do use the layer's validity for this location.
+                p.setIsValid(isValid(i, j));
+                // K index is out of bounds.
+                p.setInBounds(false);
+            }
+
+        }
     }
 
     /**
      * Check the inputs to determine whether the indices are in-bounds. The base
-     * implementation checks only the I and J indices and ignores the {@link Pixel}
-     * argument.
+     * implementation checks only the I and J indices and ignores the
+     * {@link Pixel} argument.
      *
      * @param i the I index
      * @param j the J index
      * @param p the pixel to check
-     * @return true if the specified indices are valid (in-bounds), false otherwise.
+     * @return true if the specified indices are valid (in-bounds), false
+     *         otherwise.
      */
     protected boolean checkIndices(int i, int j, Pixel p)
     {
@@ -186,13 +215,14 @@ public abstract class BasicLayer implements Layer
     }
 
     /**
-     * Return a flag that indicates whether the specified index is in the half-open
-     * range [minValue, maxValue).
+     * Return a flag that indicates whether the specified index is in the
+     * half-open range [minValue, maxValue).
      *
      * @param index the index value to check
      * @param minValid the minimum valid value for the index
      * @param maxValid one-past the maximum valid value for the index
-     * @return true if the specified index is valid (in-bounds), false otherwise.
+     * @return true if the specified index is valid (in-bounds), false
+     *         otherwise.
      */
     protected boolean checkIndex(int index, int minValid, int maxValid)
     {

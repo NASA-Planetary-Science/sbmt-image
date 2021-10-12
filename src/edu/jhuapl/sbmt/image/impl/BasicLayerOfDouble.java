@@ -53,21 +53,17 @@ public abstract class BasicLayerOfDouble extends BasicLayer
     }
 
     @Override
-    protected void get(int i, int j, PixelDouble pd)
+    protected void getScalar(int i, int j, Pixel p)
     {
-        pd.set(doGetDouble(i, j));
-    }
-
-    @Override
-    protected void get(int i, int j, PixelVectorDouble pvd)
-    {
-        double value = doGetDouble(i, j);
-        double outOfBoundsValue = pvd.getOutOfBoundsValue();
-
-        for (int k = 0; k < pvd.size(); ++k)
+        if (p instanceof PixelDouble pd)
         {
-            pvd.get(k).set(value);
-            value = outOfBoundsValue;
+            pd.set(doGetDouble(i, j));
+            pd.setIsValid(isValid(i, j));
+            pd.setInBounds(isInBounds(i, j));
+        }
+        else
+        {
+            super.getScalar(i, j, p);
         }
     }
 

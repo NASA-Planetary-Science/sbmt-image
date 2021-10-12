@@ -3,7 +3,6 @@ package edu.jhuapl.sbmt.image.impl;
 import com.google.common.collect.ImmutableList;
 
 import edu.jhuapl.sbmt.image.api.Pixel;
-import edu.jhuapl.sbmt.image.api.PixelDouble;
 import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
 
 /**
@@ -25,7 +24,7 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
         ImmutableList.Builder<ScalarPixel> builder = ImmutableList.builder();
         for (int index = 0; index < size; ++index)
         {
-            builder.add(new ScalarPixel(0.));
+            builder.add(new ScalarPixel(isValid, inBounds));
         }
 
         this.pixels = builder.build();
@@ -37,7 +36,7 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
         ImmutableList.Builder<ScalarPixel> builder = ImmutableList.builder();
         for (int index = 0; index < source.size(); ++index)
         {
-            builder.add(new ScalarPixel(source.get(index)));
+            builder.add(new ScalarPixel(source.isValid(), source.isInBounds()));
         }
 
         this.pixels = builder.build();
@@ -90,91 +89,38 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
         return builder.toString();
     }
 
-    public class ScalarPixel implements PixelDouble
+    protected class ScalarPixel extends BasicPixelDouble
     {
 
-        private volatile double value;
-
-        protected ScalarPixel(double value)
+        protected ScalarPixel(boolean isValid, boolean inBounds)
         {
-            this.value = value;
-        }
-
-        protected ScalarPixel(ScalarPixel source) {
-            this.value = source.get();
+            super(0., isValid, inBounds);
         }
 
         @Override
         public boolean isValid()
         {
-            return BasicPixelVectorDouble.this.isValid();
-        }
+            if (super.isValid()) {
+                return BasicPixelVectorDouble.this.isValid();
+            }
 
-        @Override
-        public void setIsValid(boolean isValid) {
-            BasicPixelVectorDouble.this.setIsValid(isValid);
+            return false;
         }
 
         @Override
         public boolean isInBounds()
         {
+            if (super.isInBounds()) {
             return BasicPixelVectorDouble.this.isInBounds();
-        }
-
-        @Override
-        public void setInBounds(boolean inBounds)
-        {
-            BasicPixelVectorDouble.this.setInBounds(inBounds);
-        }
-
-        @Override
-        public double get()
-        {
-            if (!isInBounds())
-            {
-                return getOutOfBoundsValue();
             }
 
-            return getStoredValue();
-        }
-
-        @Override
-        public double getStoredValue()
-        {
-            return value;
-        }
-
-        @Override
-        public void set(double value)
-        {
-            this.value = value;
+            return false;
         }
 
         @Override
         public double getOutOfBoundsValue()
         {
             return BasicPixelVectorDouble.this.getOutOfBoundsValue();
-        }
-
-        @Override
-        public String toString()
-        {
-            String formattedValue = String.format("%.3g", get());
-            String stringFormat = "%9s";
-            if (!isInBounds())
-            {
-                formattedValue = String.format(stringFormat, "(O) " + formattedValue);
-            }
-            else if (!isValid())
-            {
-                formattedValue = String.format(stringFormat, "(I) " + formattedValue);
-            }
-            else
-            {
-                formattedValue = String.format(stringFormat, formattedValue);
-            }
-
-            return formattedValue;
         }
 
     }

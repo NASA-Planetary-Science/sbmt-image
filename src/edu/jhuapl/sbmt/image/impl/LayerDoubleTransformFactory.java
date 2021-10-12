@@ -182,6 +182,18 @@ public class LayerDoubleTransformFactory
         return function;
     }
 
+    /**
+     * Return a function that extracts one scalar slice from a vector layer.
+     * This exposes a flaw in the interfaces. This operation should be possible
+     * without caring about the type of pixel. See also
+     * {@link LayerTransformFactory#resampleNearestNeighbor(int, int)}, which
+     * should also not care about the nature of the pixels.
+     *
+     * @param index
+     * @param outOfBoundsValue
+     * @param invalidValue
+     * @return
+     */
     public Function<Layer, Layer> slice(int index, double outOfBoundsValue, Double invalidValue)
     {
         return layer -> {
@@ -226,6 +238,37 @@ public class LayerDoubleTransformFactory
 
             };
 
+        };
+    }
+
+    public Function<Layer, Layer> linearInterpolate(int iNewSize, int jNewSize)
+    {
+        return layer -> {
+            Preconditions.checkNotNull(layer);
+
+            int iOrigSize = layer.iSize();
+            int jOrigSize = layer.jSize();
+
+            if (iOrigSize == iNewSize && jOrigSize == jNewSize)
+            {
+                return layer;
+            }
+
+            return new ResampledLayer(iNewSize, jNewSize) {
+
+                @Override
+                protected Layer getInputLayer()
+                {
+                    return layer;
+                }
+
+                @Override
+                protected void getScalar(int i, int j, Pixel pd)
+                {
+
+                }
+
+            };
         };
     }
 

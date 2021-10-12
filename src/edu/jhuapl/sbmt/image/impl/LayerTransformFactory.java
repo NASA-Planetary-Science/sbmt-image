@@ -8,7 +8,6 @@ import com.google.common.base.Preconditions;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
-import edu.jhuapl.sbmt.image.api.PixelDouble;
 
 /**
  * Factory class for creating {@link Layer} transforms (that is,
@@ -543,7 +542,7 @@ public class LayerTransformFactory
                 }
 
                 @Override
-                protected void get(int iNew, int jNew, PixelDouble pd)
+                protected void getScalar(int iNew, int jNew, Pixel pd)
                 {
                     double x = (double) (iNew * iOrigSize) / iNewSize;
                     double y = (double) (jNew * jOrigSize) / jNewSize;
