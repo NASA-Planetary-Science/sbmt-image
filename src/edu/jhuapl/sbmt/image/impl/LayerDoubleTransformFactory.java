@@ -79,10 +79,7 @@ public class LayerDoubleTransformFactory
         }
 
         Function<Layer, Layer> function = layer -> {
-            if (layer == null)
-            {
-                return null;
-            }
+            Preconditions.checkNotNull(layer);
 
             return new ForwardingLayer(layer) {
 
@@ -197,11 +194,7 @@ public class LayerDoubleTransformFactory
     public Function<Layer, Layer> slice(int index, double outOfBoundsValue, Double invalidValue)
     {
         return layer -> {
-            if (layer == null)
-            {
-                return null;
-            }
-
+            Preconditions.checkNotNull(layer);
             Preconditions.checkArgument(0 <= index);
 
             List<Integer> dataSizes = layer.dataSizes();
@@ -241,10 +234,21 @@ public class LayerDoubleTransformFactory
         };
     }
 
+    /**
+     * Returns a function that resamples a layer to produce a layer of a new
+     * size by associating each new layer (I, J) coordinate with a pixel that
+     * has been interpolated from pixels in the original layer that lie around
+     * the new coordinate.
+     *
+     * @param iNewSize the size of the output layer in the I dimension
+     * @param jNewSize the size of the output layer in the J dimension
+     * @return the function
+     */
     public Function<Layer, Layer> linearInterpolate(int iNewSize, int jNewSize)
     {
         return layer -> {
             Preconditions.checkNotNull(layer);
+            Preconditions.checkArgument(layer.isGetAccepts(PixelDouble.class));
 
             int iOrigSize = layer.iSize();
             int jOrigSize = layer.jSize();
@@ -253,6 +257,8 @@ public class LayerDoubleTransformFactory
             {
                 return layer;
             }
+
+            PixelDouble tmpPd = PixelScalarFactory.of(0., Double.NaN, Double.NaN);
 
             return new ResampledLayer(iNewSize, jNewSize) {
 
@@ -263,11 +269,93 @@ public class LayerDoubleTransformFactory
                 }
 
                 @Override
-                protected void getScalar(int i, int j, Pixel pd)
+                protected void getScalar(int iNew, int jNew, Pixel d)
                 {
+                    if (d instanceof PixelDouble pd)
+                    {
+                        // Get coordinates of the new pixel in the old pixel index space.
+                        double x = (double) (iNew * iOrigSize) / iNewSize;
+                        double y = (double) (jNew * jOrigSize) / jNewSize;
+
+                        // Lower bounds in index space.
+                        int i0 = (int) Math.floor(x);
+                        int j0 = (int) Math.floor(y);
+
+                        // Upper bounds in index space.
+                        int i1 = i0 + 1;
+                        int j1 = j0 + 1;
+
+                        // Cast x and y into the range [0.0, 1.0).
+                        x -= i0;
+                        y -= j0;
+
+                        // Get the 4 corner pixel values.
+                        layer.get(i0, j0, tmpPd);
+                        double pd00 = tmpPd.get();
+
+                        layer.get(i0, j1, tmpPd);
+                        double pd01 = tmpPd.get();
+
+                        layer.get(i1, j0, tmpPd);
+                        double pd10 = tmpPd.get();
+
+                        layer.get(i1, j1, tmpPd);
+                        double pd11 = tmpPd.get();
+
+                        // Interpolate the two j0 corners, then the two j1 corners.
+                        double fy0 = interpolate(x, pd00, pd10);
+                        double fy1 = interpolate(x, pd01, pd11);
+
+                        // Interplate the two functions of y.
+                        double fxy = interpolate(y, fy0, fy1);
+
+                        if (Double.isFinite(fxy))
+                        {
+                            pd.set(fxy);
+                            pd.setIsValid(true);
+                        }
+                        else
+                        {
+                            pd.setIsValid(false);
+                        }
+                    }
+                    else
+                    {
+                        Preconditions.checkArgument(d instanceof PixelDouble);
+                    }
 
                 }
 
+                /**
+                 * Interpolate function values at either end of a function. If
+                 * the x position, or either end point is not finite, it is not
+                 * used.
+                 *
+                 * @param x position within a pixel, in the range [0.0, 1.0)
+                 * @param fx0 value of the function when x == 0.0
+                 * @param fx1 value of the function when y == 1.0
+                 * @return fx interpolated at x position
+                 */
+                double interpolate(double x, double fx0, double fx1)
+                {
+                    if (Double.isFinite(x))
+                    {
+                        if (Double.isFinite(fx0) && Double.isFinite(fx1))
+                        {
+                            return (1.0 - x) * fx0 + x * fx1;
+                        }
+                        else if (Double.isFinite(fx0))
+                        {
+                            return fx0;
+                        }
+                        else if (Double.isFinite(fx1))
+                        {
+                            return fx1;
+                        }
+                    }
+
+                    return Double.NaN;
+                }
             };
         };
     }

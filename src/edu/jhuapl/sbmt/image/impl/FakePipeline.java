@@ -602,6 +602,9 @@ public abstract class FakePipeline
 
         System.out.println("Show what happens when a scalar layer is resampled from 6x4 to 4x6, using nearest-neighbors.");
         scalarToScalar(null, TransformFactory.resampleNearestNeighbor(4, 6)).run();
+
+        System.out.println("Show what happens when a scalar layer is resampled from 6x4 to 6x8, using linear interpolation.");
+        scalarToScalar(null, DoubleTransformFactory.linearInterpolate(6, 12)).run();
     }
 
 }
