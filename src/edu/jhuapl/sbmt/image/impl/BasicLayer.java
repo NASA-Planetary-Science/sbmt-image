@@ -107,7 +107,7 @@ public abstract class BasicLayer implements Layer
     @Override
     public boolean isValid(int i, int j)
     {
-        return checkIndices(i, j, null);
+        return true;
     }
 
     /**
