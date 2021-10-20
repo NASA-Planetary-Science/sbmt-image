@@ -22,6 +22,7 @@ import edu.jhuapl.sbmt.image.modules.pointing.SpiceBodyOperator;
 import edu.jhuapl.sbmt.image.modules.pointing.SpiceReaderPublisher;
 import edu.jhuapl.sbmt.image.modules.preview.VtkImagePreview;
 import edu.jhuapl.sbmt.image.modules.preview.VtkRendererPreview;
+import edu.jhuapl.sbmt.image.modules.preview.VtkRendererPreview2;
 import edu.jhuapl.sbmt.image.modules.rendering.LayerLinearInterpolaterOperator;
 import edu.jhuapl.sbmt.image.modules.rendering.LayerRotationOperator;
 import edu.jhuapl.sbmt.image.modules.rendering.RenderableImage;
@@ -49,9 +50,10 @@ public class PipelineTests
 	public PipelineTests() throws Exception
 	{
 //		test1();
-		test2();
+//		test2();
 		test3();
-//		test4();
+		test4();
+		test5();
 	}
 
 	private void test1() throws Exception
@@ -226,4 +228,17 @@ public class PipelineTests
 			.subscribe(preview)
 			.run();
 	}
+
+	private void test5() throws Exception
+	{
+		SpiceInfo spiceInfo = new SpiceInfo("DART", "920065803_FIXED", "DART_SPACECRAFT", "DIDYMOS", new String[] {"DIMORPHOS"}, new String[] {"DART_DRACO_2X2"});
+		String[] bodies = new String[]{"/Users/steelrj1/.sbmt1dart/cache/didymos/ideal-impact1-20200629-v01/shape/shape0.obj",
+			"/Users/steelrj1/.sbmt1dart/cache/dimorphos/ideal-impact1-20200629-v01/shape/shape0.obj"};
+		String[] bodyNames = new String[]{"DIDYMOS", "DIMORPHOS"};
+		String[] imageFiles = new String[] {"/Users/steelrj1/Desktop/dart_717891977_782_01.fits"};
+		String[] pointingFiles = new String[] {"/Users/steelrj1/Desktop/dart_717891977_782_01.INFO"};
+		VtkRendererPreview2 preview = new VtkRendererPreview2(imageFiles, pointingFiles, bodies, bodyNames, spiceInfo, "/Users/steelrj1/dartspice/draco/impact.tm", "DIDYMOS", "2022-10-01T10:25:08.599");
+	}
+
+
 }

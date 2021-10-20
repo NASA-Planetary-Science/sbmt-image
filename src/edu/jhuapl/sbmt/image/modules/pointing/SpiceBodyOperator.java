@@ -35,6 +35,11 @@ public class SpiceBodyOperator extends BasePipelineOperator<Pair<SmallBodyModel,
 		pointingProviders = Lists.newArrayList();
 	}
 
+	public void setTime(double time)
+	{
+		this.time = time;
+	}
+
 	@Override
 	public void processData() throws IOException, Exception
 	{
