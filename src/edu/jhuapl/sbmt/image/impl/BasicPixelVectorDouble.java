@@ -30,7 +30,8 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
         this.pixels = builder.build();
     }
 
-    protected BasicPixelVectorDouble(BasicPixelVectorDouble source) {
+    protected BasicPixelVectorDouble(BasicPixelVectorDouble source)
+    {
         super(source.isValid(), source.isInBounds());
 
         ImmutableList.Builder<ScalarPixel> builder = ImmutableList.builder();
@@ -41,6 +42,7 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
 
         this.pixels = builder.build();
     }
+
     @Override
     public int size()
     {
@@ -50,7 +52,8 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
     @Override
     public ScalarPixel get(int index)
     {
-        if (!checkIndex(index, 0, size()) ) {
+        if (!checkIndex(index, 0, size()))
+        {
             throw new IndexOutOfBoundsException();
         }
 
@@ -100,7 +103,8 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
         @Override
         public boolean isValid()
         {
-            if (super.isValid()) {
+            if (super.isValid())
+            {
                 return BasicPixelVectorDouble.this.isValid();
             }
 
@@ -110,8 +114,9 @@ public abstract class BasicPixelVectorDouble extends BasicPixel implements Pixel
         @Override
         public boolean isInBounds()
         {
-            if (super.isInBounds()) {
-            return BasicPixelVectorDouble.this.isInBounds();
+            if (super.isInBounds())
+            {
+                return BasicPixelVectorDouble.this.isInBounds();
             }
 
             return false;

@@ -138,7 +138,7 @@ public class LayerFromDoubleArray1dFactory extends LayerFromDoubleCollection1dFa
         // renderer. The depth of the layer the renderer expects may or may not
         // match what the layer actually *has*.
         int depthToRender = depthReadFromFile;
-//        depthToRender = 1;
+        // depthToRender = 1;
 
         // If we were actually going to render it using VTK, we would build
         // another 1d array like what we started with, but for purposes of this
@@ -163,7 +163,7 @@ public class LayerFromDoubleArray1dFactory extends LayerFromDoubleCollection1dFa
                 layer.get(i, j, p);
                 if (!p.isValid())
                 {
-//                    p.setIsValid(true);
+                    // p.setIsValid(true);
                 }
 
                 try

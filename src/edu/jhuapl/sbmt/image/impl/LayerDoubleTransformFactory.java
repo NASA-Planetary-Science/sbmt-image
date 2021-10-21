@@ -203,7 +203,8 @@ public class LayerDoubleTransformFactory
             Integer size;
             if (dataSizes.isEmpty())
             {
-                // Slicing a scalar layer is OK, though that will force index to be 0 below.
+                // Slicing a scalar layer is OK, though that will force index to
+                // be 0 below.
                 size = Integer.valueOf(1);
             }
             else
@@ -273,7 +274,8 @@ public class LayerDoubleTransformFactory
                 {
                     if (d instanceof PixelDouble pd)
                     {
-                        // Get coordinates of the new pixel in the old pixel index space.
+                        // Get coordinates of the new pixel in the old pixel
+                        // index space.
                         double x = (double) (iNew * iOrigSize) / iNewSize;
                         double y = (double) (jNew * jOrigSize) / jNewSize;
 
@@ -302,7 +304,8 @@ public class LayerDoubleTransformFactory
                         layer.get(i1, j1, tmpPd);
                         double pd11 = tmpPd.get();
 
-                        // Interpolate the two j0 corners, then the two j1 corners.
+                        // Interpolate the two j0 corners, then the two j1
+                        // corners.
                         double fy0 = interpolate(x, pd00, pd10);
                         double fy1 = interpolate(x, pd01, pd11);
 

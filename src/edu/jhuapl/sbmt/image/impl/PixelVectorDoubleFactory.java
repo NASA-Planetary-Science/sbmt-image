@@ -40,7 +40,8 @@ public class PixelVectorDoubleFactory
 
         double outOfBoundsValue = pixel.getOutOfBoundsValue();
 
-        if (pixel instanceof BasicPixelVectorDouble basicPixel) {
+        if (pixel instanceof BasicPixelVectorDouble basicPixel)
+        {
             return new BasicPixelVectorDouble(basicPixel) {
 
                 @Override
@@ -50,7 +51,9 @@ public class PixelVectorDoubleFactory
                 }
 
             };
-        } else {
+        }
+        else
+        {
             int size = pixel.size();
 
             BasicPixelVectorDouble newPixel = new BasicPixelVectorDouble(size, pixel.isValid(), pixel.isInBounds()) {
@@ -63,7 +66,8 @@ public class PixelVectorDoubleFactory
 
             };
 
-            for (int k = 0; k < size; ++k) {
+            for (int k = 0; k < size; ++k)
+            {
                 newPixel.get(k).set(pixel.get(k));
             }
 
