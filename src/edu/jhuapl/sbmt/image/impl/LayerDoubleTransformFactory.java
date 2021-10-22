@@ -180,10 +180,38 @@ public class LayerDoubleTransformFactory
     }
 
     /**
-     * Returns a function that resamples a layer to produce a layer of a new
-     * size by associating each new layer (I, J) coordinate with a pixel that
-     * has been interpolated from pixels in the original layer that lie around
-     * the new coordinate.
+     * Returns a function that resamples a layer to produce a layer with
+     * different index dimensions. With the exceptions of edges, corners, and
+     * "invalid" pixels, as explained below, most pixels in the new layer are
+     * interpolated from the 4 pixels in the original layer that lie closest to
+     * the new pixel.
+     * <p>
+     * "Edge" pixels (those with index == 0 or index == size - 1, where "size"
+     * is either iSize or jSize, respectively) are matched up exactly between
+     * old and new indices. Most edge pixels will thus be interpolated between
+     * only two pixels.
+     * <p>
+     * Similarly, "corner" pixels (those with both indices either 0 or size - 1)
+     * will usually agree exactly between the two layers, since each output
+     * corner is equal to its corresponding input corner.
+     * <p>
+     * The interpolation may usefully be considered a weighted average of the 4
+     * nearest pixel values. If an input pixel is marked as "invalid" in the
+     * input layer, it is treated as if that particular pixel has no weight,
+     * i.e., only the valid pixels will contribute to the output pixel in the
+     * calculation.
+     * <p>
+     * It follows that:
+     * <ol>
+     * <li>Output layers must have size >= 2 in each dimension so that the
+     * output layer will have 4 edges.
+     * <li>Output pixels are considered to be invalid only if all the
+     * contributing input pixels are marked as invalid. Thus, even if the input
+     * layer and output layer have exactly the same size, the output layer will
+     * likely have fewer invalid pixels. One could thus use a linear
+     * interpolation to do a minimal clean-up of invalid (e.g. "hot") pixels
+     * without otherwise affecting the layer.
+     * </ol>
      *
      * @param iNewSize the size of the output layer in the I dimension
      * @param jNewSize the size of the output layer in the J dimension
@@ -191,17 +219,15 @@ public class LayerDoubleTransformFactory
      */
     public Function<Layer, Layer> linearInterpolate(int iNewSize, int jNewSize)
     {
+        Preconditions.checkArgument(iNewSize > 1);
+        Preconditions.checkArgument(jNewSize > 1);
+
         return layer -> {
             Preconditions.checkNotNull(layer);
             Preconditions.checkArgument(layer.isGetAccepts(PixelDouble.class));
 
             int iOrigSize = layer.iSize();
             int jOrigSize = layer.jSize();
-
-            if (iOrigSize == iNewSize && jOrigSize == jNewSize)
-            {
-                return layer;
-            }
 
             PixelDouble tmpPd = PixelScalarFactory.of(0., Double.NaN, Double.NaN);
 
@@ -220,8 +246,8 @@ public class LayerDoubleTransformFactory
                     {
                         // Get coordinates of the new pixel in the old pixel
                         // index space.
-                        double x = (double) (iNew * iOrigSize) / iNewSize;
-                        double y = (double) (jNew * jOrigSize) / jNewSize;
+                        double x = (double) (iNew * (iOrigSize - 1)) / (iNewSize - 1);
+                        double y = (double) (jNew * (jOrigSize - 1)) / (jNewSize - 1);
 
                         // Lower bounds in index space.
                         int i0 = (int) Math.floor(x);

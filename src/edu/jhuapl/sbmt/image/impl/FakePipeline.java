@@ -9,7 +9,6 @@ import edu.jhuapl.sbmt.image.api.PixelVector;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleFactory.DoubleGetter2d;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleFactory.DoubleGetter3d;
 import edu.jhuapl.sbmt.image.impl.LayerTransformFactory.ForwardingLayer;
-import edu.jhuapl.sbmt.image.impl.ValidityCheckerDoubleFactory.ScalarValidityChecker;
 
 /**
  * Sample/test class for demonstrate how to create and manipulate {@link Layer}s
@@ -644,7 +643,7 @@ public abstract class FakePipeline
         scalarToScalar(null, TransformFactory.resampleNearestNeighbor(4, 6)).run();
 
         System.out.println("Show what happens when a scalar layer is resampled from 6x4 to 6x12, using linear interpolation.");
-        scalarToScalar(null, DoubleTransformFactory.linearInterpolate(6, 12)).run();
+        scalarToScalar(null, DoubleTransformFactory.linearInterpolate(6, 4)).run();
     }
 
 }
