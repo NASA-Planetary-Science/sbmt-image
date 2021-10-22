@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Set;
 
 import edu.jhuapl.sbmt.image.api.Layer;
-import edu.jhuapl.sbmt.image.api.Pixel;
 
 public abstract class ResampledLayer extends BasicLayer
 {
@@ -26,9 +25,6 @@ public abstract class ResampledLayer extends BasicLayer
     {
         return getInputLayer().getPixelTypes();
     }
-
-    @Override
-    protected abstract void getElement(int i, int j, int k, Pixel p);
 
     @Override
     public String toString()
