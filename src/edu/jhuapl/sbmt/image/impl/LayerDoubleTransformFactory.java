@@ -1,6 +1,5 @@
 package edu.jhuapl.sbmt.image.impl;
 
-import java.util.List;
 import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
@@ -8,7 +7,7 @@ import com.google.common.base.Preconditions;
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
 import edu.jhuapl.sbmt.image.api.PixelDouble;
-import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
+import edu.jhuapl.sbmt.image.api.PixelVector;
 import edu.jhuapl.sbmt.image.impl.LayerTransformFactory.ForwardingLayer;
 
 /**
@@ -17,7 +16,7 @@ import edu.jhuapl.sbmt.image.impl.LayerTransformFactory.ForwardingLayer;
  * <p>
  * This factory provides transforms that involve changes to the data associated
  * with a pixel. It can operate on layers that support pixels of type
- * {@link PixelDouble} and {@link PixelVectorDouble}.
+ * {@link PixelDouble} and {@link PixelVector}.
  * <p>
  * The {@link Function#apply(Layer)} methods for all the functions returned by
  * this factory will return null if called with a null layer argument.
@@ -53,9 +52,9 @@ public class LayerDoubleTransformFactory
      * on a {@link Layer} by transforming values within the pixel.
      * <p>
      * The base implementation handles {@link PixelDouble} and
-     * {@link PixelVectorDouble} pixels. When overriding this method, take care
-     * to ensure that out-of-bounds values are not used in computations, and
-     * that the correct {@link DoubleTransform} instance is used for valid and
+     * {@link PixelVector} pixels. When overriding this method, take care to
+     * ensure that out-of-bounds values are not used in computations, and that
+     * the correct {@link DoubleTransform} instance is used for valid and
      * invalid values.
      *
      * @param valueTransform the transform to use on valid values
@@ -90,8 +89,7 @@ public class LayerDoubleTransformFactory
                     {
                         PixelDouble pd = (PixelDouble) p;
 
-                        // Make a copy of the pixel, and get its state from the
-                        // layer.
+                        // Create a pixel in the same state as the input.
                         PixelDouble tmpPd = PixelScalarFactory.of(pd);
                         layer.get(i, j, tmpPd);
 
@@ -124,51 +122,53 @@ public class LayerDoubleTransformFactory
                         pd.setIsValid(valid);
                         pd.setInBounds(inBounds);
                     }
-                    else if (p instanceof PixelVectorDouble)
+                    else if (p instanceof PixelVector pv)
                     {
-                        PixelVectorDouble pvd = (PixelVectorDouble) p;
-
                         // Make a copy of the pixel, and get its state from the
                         // layer.
-                        PixelVectorDouble tmpPvd = PixelVectorFactory.of(pvd);
-                        layer.get(i, j, tmpPvd);
+                        PixelVector tmpPv = PixelVectorFactory.of(pv.size(), Double.NaN, null);
+                        layer.get(i, j, tmpPv);
 
-                        boolean valid = tmpPvd.isValid();
-                        boolean inBounds = tmpPvd.isInBounds();
-                        double outOfBoundsValue = tmpPvd.getOutOfBoundsValue();
-                        int kSize = tmpPvd.size();
+                        boolean valid = tmpPv.isValid();
+                        boolean inBounds = tmpPv.isInBounds();
+                        int kSize = tmpPv.size();
 
                         for (int k = 0; k < kSize; ++k)
                         {
-                            // Handle all the special cases.
-                            double value;
-                            if (!inBounds || !checkIndex(k, 0, kSize))
+                            Pixel pk = pv.get(k);
+                            if (pk instanceof PixelDouble pd)
                             {
-                                // Do not transform an out-of-bounds value,
-                                // ever. Pass through the canonical value.
-                                value = outOfBoundsValue;
-                            }
-                            else if (valid)
-                            {
-                                // Value is in-bounds and valid, so use the
-                                // regular value transform.
-                                value = valueTransform.apply(tmpPvd.get(k).getStoredValue());
-                            }
-                            else
-                            {
-                                // Value is not valid, so use the invalid value
-                                // transform.
-                                value = finalInvalidValueTransform.apply(tmpPvd.get(k).getStoredValue());
+                                // Handle all the special cases.
+                                double value;
+                                if (!inBounds || !checkIndex(k, 0, kSize))
+                                {
+                                    // Do not transform an out-of-bounds value,
+                                    // ever. Pass through the canonical value.
+                                    value = pd.getOutOfBoundsValue();
+                                }
+                                else if (valid)
+                                {
+                                    // Value is in-bounds and valid, so use the
+                                    // regular value transform.
+                                    value = valueTransform.apply(pd.getStoredValue());
+                                }
+                                else
+                                {
+                                    // Value is not valid, so use the invalid
+                                    // value
+                                    // transform.
+                                    value = finalInvalidValueTransform.apply(pd.getStoredValue());
+                                }
+                                pd.set(value);
                             }
 
-                            pvd.get(k).set(value);
-                            pvd.setIsValid(valid);
-                            pvd.setInBounds(inBounds);
+                            pv.setIsValid(valid);
+                            pv.setInBounds(inBounds);
                         }
                     }
                     else
                     {
-                        throw new UnsupportedOperationException();
+                        throw new IllegalArgumentException();
                     }
                 }
 
@@ -177,62 +177,6 @@ public class LayerDoubleTransformFactory
         };
 
         return function;
-    }
-
-    /**
-     * Return a function that extracts one scalar slice from a vector layer.
-     * This exposes a flaw in the interfaces. This operation should be possible
-     * without caring about the type of pixel. See also
-     * {@link LayerTransformFactory#resampleNearestNeighbor(int, int)}, which
-     * should also not care about the nature of the pixels.
-     *
-     * @param index
-     * @param outOfBoundsValue
-     * @param invalidValue
-     * @return
-     */
-    public Function<Layer, Layer> slice(int index, double outOfBoundsValue, Double invalidValue)
-    {
-        return layer -> {
-            Preconditions.checkNotNull(layer);
-            Preconditions.checkArgument(0 <= index);
-
-            List<Integer> dataSizes = layer.dataSizes();
-            Preconditions.checkNotNull(dataSizes);
-
-            Integer size;
-            if (dataSizes.isEmpty())
-            {
-                // Slicing a scalar layer is OK, though that will force index to
-                // be 0 below.
-                size = Integer.valueOf(1);
-            }
-            else
-            {
-                // Slicing a vector layer is OK.
-                Preconditions.checkArgument(dataSizes.size() == 1);
-                size = dataSizes.get(0);
-            }
-
-            // Confirm the layer has at least *some* data.
-            Preconditions.checkNotNull(size);
-            Preconditions.checkArgument(size > index);
-
-            PixelVectorDouble p = PixelVectorFactory.of(size, outOfBoundsValue, invalidValue);
-
-            return new BasicLayerOfDouble(layer.iSize(), layer.jSize()) {
-
-                @Override
-                protected double doGetDouble(int i, int j)
-                {
-                    layer.get(i, j, p);
-
-                    return p.get(index).get();
-                }
-
-            };
-
-        };
     }
 
     /**
@@ -270,7 +214,7 @@ public class LayerDoubleTransformFactory
                 }
 
                 @Override
-                protected void getScalar(int iNew, int jNew, Pixel d)
+                protected void getElement(int iNew, int jNew, int k, Pixel d)
                 {
                     if (d instanceof PixelDouble pd)
                     {
@@ -325,6 +269,7 @@ public class LayerDoubleTransformFactory
                     else
                     {
                         Preconditions.checkArgument(d instanceof PixelDouble);
+                        throw new UnsupportedOperationException("need to implement interpolation for vector case");
                     }
 
                 }

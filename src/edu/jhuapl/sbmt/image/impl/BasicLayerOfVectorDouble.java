@@ -7,19 +7,11 @@ import com.google.common.collect.ImmutableSet;
 import edu.jhuapl.sbmt.image.api.Pixel;
 import edu.jhuapl.sbmt.image.api.PixelDouble;
 import edu.jhuapl.sbmt.image.api.PixelVector;
-import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
 
 /**
- * Abstract base implementation of {@link LayerOfDouble} that assumes the native
- * form of the underlying data is a one-dimensional array double[]. The single
- * index values of this one-dimensional array are derived from the layer's (I,
- * J) indices.
- * <p>
- * The base implementation of {@link #getDouble(int, int)} never throws an
- * exception, but instead returns {@link Double#NaN} if the specified indices
- * are invalid. This behavior may be overridden in subclasses by overriding
- * either {@link #getDouble(int, int)} or {@link #getOutOfBoundsValue()}, as
- * described below.
+ * Abstract extension of {@link BasicLayer} that assumes the native form of the
+ * underlying data can be expressed as a double value that is looked up using a
+ * set of 3 indices (I, J, K).
  *
  * @author James Peachey
  *
@@ -27,13 +19,11 @@ import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
 public abstract class BasicLayerOfVectorDouble extends BasicLayer
 {
 
-    private static final Set<Class<?>> AcceptedPixelTypes = ImmutableSet.of(PixelDouble.class, PixelVectorDouble.class);
+    private static final Set<Class<?>> AcceptedPixelTypes = ImmutableSet.of(PixelDouble.class, PixelVector.class);
 
     /**
-     * Constructor that creates a layer using the specified dimensions and
-     * validity checker. The caller must ensure iSize and jSize are
-     * non-negative. The isValid argument may be null, in which case all
-     * in-bounds values are considered valid.
+     * Constructor that creates a layer using the specified dimensions. The
+     * caller must ensure iSize and jSize are non-negative.
      *
      * @param iSize the number of in-bounds values of the I index
      * @param jSize the number of in-bounds values of the J index
@@ -43,56 +33,64 @@ public abstract class BasicLayerOfVectorDouble extends BasicLayer
         super(iSize, jSize);
     }
 
+    /**
+     * Returns a set containing <code>{@link PixelDouble}.class</code> and
+     * <code>{@link PixelVector}.class</code>. Note that the
+     * {@link #get(int, int, Pixel)} implementation will only succeed for vector
+     * pixels if they consist of all {@link PixelDouble} instances.
+     */
     @Override
     public Set<Class<?>> getPixelTypes()
     {
         return AcceptedPixelTypes;
     }
 
+    /**
+     * Handle all scalars whether in-or-out of bounds in the K index.
+     */
     @Override
-    protected void getScalar(int i, int j, Pixel p)
+    protected void getElement(int i, int j, int k, Pixel p)
     {
+        int kSize = kSize(i, j);
+
         if (p instanceof PixelDouble pd)
         {
-            double value = doGetDouble(i, j, 0);
+            // Handle the case in which the number of elements in the pixel
+            // exceeds the number in this layer at this position.
+            boolean inBounds = checkIndex(k, 0, kSize);
+
+            double value = inBounds ? doGetDouble(i, j, k) : pd.getOutOfBoundsValue();
             pd.set(value);
+            pd.setIsValid(isValid(i, j, 0, value));
+            pd.setInBounds(inBounds);
         }
         else
         {
-            super.getScalar(i, j, p);
+            throw new IllegalArgumentException();
         }
     }
 
+    /*
+     * Override to circumvent bounds checking at this level -- getScalar handles
+     * that for each sub-pixel in this implementation.
+     */
     @Override
     protected void getVector(int i, int j, PixelVector pv)
     {
-        if (pv instanceof PixelVectorDouble pvd)
+        for (int k = 0; k < pv.size(); ++k)
         {
-            double outOfBoundsValue = pvd.getOutOfBoundsValue();
-
-            for (int k = 0; k < pvd.size(); ++k)
-            {
-                // Now need to ensure the number of items in the pixel does not
-                // exceed the number in this layer.
-                boolean isInBounds = checkIndex(k, 0, kSize(i, j));
-
-                double value = isInBounds ? doGetDouble(i, j, k) : outOfBoundsValue;
-                pvd.get(k).set(value);
-            }
+            getElement(i, j, k, pv.get(k));
         }
-        else
-        {
-            super.getVector(i, j, pv);
-        }
-
     }
 
     protected abstract double doGetDouble(int i, int j, int k);
 
+    protected abstract boolean isValid(int i, int j, int k, double value);
+
     @Override
     public String toString()
     {
-        return "LayerOfVectorDouble(" + iSize() + ", " + jSize() + ")";
+        return "Vector Double Layer(" + iSize() + ", " + jSize() + ") x " + dataSizes().get(0);
     }
 
 }

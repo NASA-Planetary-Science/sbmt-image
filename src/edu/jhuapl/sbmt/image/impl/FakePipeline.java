@@ -5,9 +5,11 @@ import java.util.function.Function;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
+import edu.jhuapl.sbmt.image.api.PixelVector;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleFactory.DoubleGetter2d;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleFactory.DoubleGetter3d;
 import edu.jhuapl.sbmt.image.impl.LayerTransformFactory.ForwardingLayer;
+import edu.jhuapl.sbmt.image.impl.ValidityCheckerDoubleFactory.ScalarValidityChecker;
 
 /**
  * Sample/test class for demonstrate how to create and manipulate {@link Layer}s
@@ -97,12 +99,12 @@ public abstract class FakePipeline
 
     protected Layer createScalarLayer()
     {
-        return ofScalar(TestISize, TestJSize, TestChecker);
+        return ofScalar(TestISize, TestJSize, testScalarChecker(TestISize));
     }
 
     protected Layer createVectorLayer()
     {
-        return ofVector(TestISize, TestJSize, TestKSize, TestChecker);
+        return ofVector(TestISize, TestJSize, TestKSize, testVectorChecker(TestISize, TestJSize));
     }
 
     /**
@@ -121,7 +123,7 @@ public abstract class FakePipeline
      * @param checker validity checker, or null for all in-bound data valid
      * @return the layer
      */
-    protected Layer ofScalar(int iSize, int jSize, LayerValidityChecker checker)
+    protected Layer ofScalar(int iSize, int jSize, ValidityCheckerDoubleFactory.ScalarValidityChecker checker)
     {
         DoubleGetter2d doubleGetter = (i, j) -> {
             return LayerFromDoubleCollection1dFactory.ColumnIRowJ.getIndex(i, j, iSize, jSize);
@@ -150,7 +152,18 @@ public abstract class FakePipeline
      * @param checker validity checker, or null for all in-bound data valid
      * @return the layer
      */
-    protected Layer ofVector(int iSize, int jSize, int kSize, LayerValidityChecker checker)
+    protected Layer ofVector(int iSize, int jSize, int kSize, ValidityCheckerDoubleFactory.ScalarValidityChecker checker)
+    {
+        DoubleGetter3d doubleGetter = (i, j, k) -> {
+            return kSize * LayerFromDoubleCollection1dFactory.ColumnIRowJ.getIndex(i, j, iSize, jSize) + k;
+        };
+
+        return checker != null ? //
+                LayerFactory.ofVector(doubleGetter, iSize, jSize, kSize, checker) : //
+                LayerFactory.ofVector(doubleGetter, iSize, jSize, kSize);
+    }
+
+    protected Layer ofVector(int iSize, int jSize, int kSize, ValidityCheckerDoubleFactory.VectorValidityChecker checker)
     {
         DoubleGetter3d doubleGetter = (i, j, k) -> {
             return kSize * LayerFromDoubleCollection1dFactory.ColumnIRowJ.getIndex(i, j, iSize, jSize) + k;
@@ -239,11 +252,34 @@ public abstract class FakePipeline
     protected static final double TestInvalidValueSubstitute = -200.0;
 
     /**
-     * Arbitrary validity checker -- mark every 5th column "invalid", starting
-     * with column 4.
+     * Arbitrary scalar validity checker -- mark every 5th position "invalid",
+     * starting with column 4.
      */
-    protected static final LayerValidityChecker TestChecker = (layer, i, j) -> {
-        return (j * layer.iSize() + i + 1) % 5 != 0;
+    protected ValidityCheckerDoubleFactory.ScalarValidityChecker testScalarChecker(int iSize)
+    {
+        return (i, j, value) -> {
+            boolean isValid = (j * iSize + i + 1) % 5 != 0;
+            return isValid;
+        };
+    };
+
+    /**
+     * Arbitrary vector validity checker. Use the scalar checker but also
+     * invalidate every value that is a multiple of 5.
+     */
+    protected ValidityCheckerDoubleFactory.VectorValidityChecker testVectorChecker(int iSize, int jSize)
+    {
+        ValidityCheckerDoubleFactory.ScalarValidityChecker scalarChecker = testScalarChecker(iSize);
+
+        return (i, j, k, value) -> {
+            // Return false if the scalar checker returns false.
+            if (!scalarChecker.test(i, j, value))
+            {
+                return false;
+            }
+
+            return (int) (value % 5.0) != 0;
+        };
     };
 
     protected static final Function<Layer, Layer> TouchLayer = layer -> {
@@ -537,14 +573,14 @@ public abstract class FakePipeline
         // values and more "K" values than are present in the layer. This
         // simulates handing data of unknown structure to a renderer that can
         // handle layers with depth.
-        System.out.println("Create and show vector layer. At each (i, j) is an array of size " + TestKSize + ".");
-        vectorToVector(TestKSize, null).run();
+        System.out.println("Create and show vector layer, with invalid values substituted. At each (i, j) is an array of size " + TestKSize + ".");
+        vectorToVector(TestKSize, TestInvalidValueSubstitute).run();
 
-        System.out.println("Create and show vector layer, but only the first " + (TestKSize - 1) + " values out of " + TestKSize + ".");
+        System.out.println("Create vector layer, but only show the first " + (TestKSize - 1) + " values out of " + TestKSize + ".");
         System.out.println("Notice there are skips in the sequences. This is right!");
         vectorToVector(TestKSize - 1, null).run();
 
-        System.out.println("Create and show vector layer, but try to access MORE elements than are in the layer, " + (TestKSize + 1) + " instead of " + TestKSize + ".");
+        System.out.println("Create vector layer, but try to access and show MORE elements than are in the layer, " + (TestKSize + 1) + " instead of " + TestKSize + ".");
         System.out.println("The missing elements are shown with \"" + (int) TestOOBValue + "\"");
         vectorToVector(TestKSize + 1, null).run();
         System.out.println();
@@ -573,6 +609,9 @@ public abstract class FakePipeline
         System.out.println("Show effect of clockwise rotation");
         scalarToScalar(null, TransformFactory.rotateCW()).run();
 
+        System.out.println("Show effect of counterclockwise rotation on a vector");
+        vectorToVector(TestKSize, null, TransformFactory.rotateCCW()).run();
+
         System.out.println("Show that flipping about X AND Y, and then rotating half-way around, gets you back to the original layer");
         scalarToScalar(null, TransformFactory.rotateHalfway().compose(TransformFactory.flipAboutXY())).run();
 
@@ -589,7 +628,8 @@ public abstract class FakePipeline
         }, null)).run();
 
         System.out.println("Show what happens when one slices a vector, pulling out the middle element of the 3");
-        vectorToVector(TestKSize, null, DoubleTransformFactory.slice(1, TestOOBValue, null)).run();
+        PixelVector pv = PixelVectorFactory.of(3, TestOOBValue, null);
+        vectorToVector(TestKSize, null, TransformFactory.slice(pv, 1)).run();
 
         System.out.println("Show what happens when a subset of a scalar layer I range = [1, 4), J range = [1, 3) is taken");
         scalarToScalar(null, TransformFactory.subset(1, 4, 1, 3)).run();
@@ -603,7 +643,7 @@ public abstract class FakePipeline
         System.out.println("Show what happens when a scalar layer is resampled from 6x4 to 4x6, using nearest-neighbors.");
         scalarToScalar(null, TransformFactory.resampleNearestNeighbor(4, 6)).run();
 
-        System.out.println("Show what happens when a scalar layer is resampled from 6x4 to 6x8, using linear interpolation.");
+        System.out.println("Show what happens when a scalar layer is resampled from 6x4 to 6x12, using linear interpolation.");
         scalarToScalar(null, DoubleTransformFactory.linearInterpolate(6, 12)).run();
     }
 

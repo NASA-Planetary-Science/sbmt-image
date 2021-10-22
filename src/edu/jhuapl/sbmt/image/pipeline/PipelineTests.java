@@ -58,7 +58,7 @@ public class PipelineTests
 
 	private void test1() throws Exception
 	{
-		IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/M0125990473F4_2P_IOF_DBL.FIT", new Float[] {});
+		IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/M0125990473F4_2P_IOF_DBL.FIT", new double[] {});
 		LayerLinearInterpolaterOperator linearInterpolator = new LayerLinearInterpolaterOperator(537, 412);
 //		LayerMaskOperator maskOperator = new LayerMaskOperator(14, 14, 2, 2);
 //		LayerTrimOperator trimOperator = new LayerTrimOperator(14, 14, 2, 2);
@@ -83,7 +83,7 @@ public class PipelineTests
 		//***********************
 		//generate image layer
 		//***********************
-		IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/M0125990473F4_2P_IOF_DBL.FIT", new Float[] {});
+		IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/M0125990473F4_2P_IOF_DBL.FIT", new double[] {});
 		LayerLinearInterpolaterOperator linearInterpolator = new LayerLinearInterpolaterOperator(537, 412);
 
 		List<Layer> updatedLayers = Lists.newArrayList();
@@ -145,7 +145,7 @@ public class PipelineTests
 		//***********************
 		//generate image layer
 		//***********************
-		IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/dart_717891977_782_01.fits", new Float[] {-32768.0f, -32767.0f, 4095.0f});
+		IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/dart_717891977_782_01.fits", new double[] {-32768.0, -32767.0, 4095.0});
 		LayerRotationOperator rotationOperator = new LayerRotationOperator();
 
 		List<Layer> updatedLayers = Lists.newArrayList();
@@ -222,7 +222,7 @@ public class PipelineTests
 
 	private void test4() throws Exception
 	{
-		IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/dart_717891977_782_01.fits", new Float[] {-32768.0f, -32767.0f, 4095.0f});
+		IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/dart_717891977_782_01.fits", new double[] {-32768.0, -32767.0, 4095.0});
 		VtkImagePreview preview = new VtkImagePreview();
 		reader
 			.subscribe(preview)

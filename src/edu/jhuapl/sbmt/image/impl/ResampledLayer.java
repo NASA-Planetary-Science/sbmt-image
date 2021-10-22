@@ -28,7 +28,7 @@ public abstract class ResampledLayer extends BasicLayer
     }
 
     @Override
-    protected abstract void getScalar(int i, int j, Pixel p);
+    protected abstract void getElement(int i, int j, int k, Pixel p);
 
     @Override
     public String toString()

@@ -73,7 +73,7 @@ public class VtkRendererPreview2 implements IPipelineSubscriber<vtkActor>
 
 		public RenderableImagesPipeline(String[] imageFiles, String[] pointingFiles) throws Exception
 		{
-			IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/dart_717891977_782_01.fits", new Float[] {-32768.0f, -32767.0f, 4095.0f});
+			IPipelinePublisher<Layer> reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/dart_717891977_782_01.fits", new double[] {-32768.0, -32767.0, 4095.0});
 			LayerRotationOperator rotationOperator = new LayerRotationOperator();
 
 			List<Layer> updatedLayers = Lists.newArrayList();

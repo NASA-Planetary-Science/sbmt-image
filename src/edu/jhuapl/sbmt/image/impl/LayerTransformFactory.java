@@ -5,9 +5,11 @@ import java.util.Set;
 import java.util.function.Function;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
+import edu.jhuapl.sbmt.image.api.PixelVector;
 
 /**
  * Factory class for creating {@link Layer} transforms (that is,
@@ -423,6 +425,82 @@ public class LayerTransformFactory
     }
 
     /**
+     * Return a function that extracts one scalar slice from a vector layer.
+     *
+     * @param slicePixel
+     * @param index
+     * @return the function
+     */
+    public Function<Layer, Layer> slice(PixelVector slicePixel, int index)
+    {
+        Preconditions.checkNotNull(slicePixel);
+        Preconditions.checkArgument(index >= 0);
+        Preconditions.checkArgument(slicePixel.size() > index);
+
+        return layer -> {
+            Preconditions.checkNotNull(layer);
+
+            List<Integer> dataSizes = layer.dataSizes();
+            Preconditions.checkNotNull(dataSizes);
+
+            Integer size;
+            if (dataSizes.isEmpty())
+            {
+                // Slicing a scalar layer is OK, though that will force index to
+                // be 0 below.
+                size = Integer.valueOf(1);
+            }
+            else
+            {
+                // Slicing a vector layer is OK.
+                Preconditions.checkArgument(dataSizes.size() == 1);
+                size = dataSizes.get(0);
+            }
+
+            // Confirm the layer has at least *some* data.
+            Preconditions.checkNotNull(size);
+            Preconditions.checkArgument(size > index);
+
+            return new BasicLayer(layer.iSize(), layer.jSize()) {
+
+                @Override
+                public List<Integer> dataSizes()
+                {
+                    return ImmutableList.of(Integer.valueOf(1));
+                }
+
+                @Override
+                public Set<Class<?>> getPixelTypes()
+                {
+                    return layer.getPixelTypes();
+                }
+
+                @Override
+                protected void getElement(int i, int j, int k, Pixel p)
+                {
+                    layer.get(i, j, slicePixel);
+                    p.assignFrom(slicePixel.get(index));
+                }
+
+                @Override
+                protected void getVector(int i, int j, PixelVector pv)
+                {
+                    layer.get(i, j, slicePixel);
+
+                    pv.get(0).assignFrom(slicePixel.get(index));
+
+                    for (int k = 1; k < pv.size(); ++k)
+                    {
+                        Pixel p = pv.get(k);
+                        p.setInBounds(false);
+                    }
+                }
+            };
+
+        };
+    }
+
+    /**
      * Return a function that masks pixels off the edges of a layer.
      * <p>
      * This differs from {@link #trim(int, int, int, int)} in that masking
@@ -451,17 +529,6 @@ public class LayerTransformFactory
             Preconditions.checkNotNull(layer);
 
             return new ForwardingLayer(layer) {
-
-                @Override
-                public boolean isValid(int i, int j)
-                {
-                    if (!isWithinFrame(i, j))
-                    {
-                        return false;
-                    }
-
-                    return super.isValid(i, j);
-                }
 
                 @Override
                 public boolean isInBounds(int i, int j)
@@ -542,7 +609,7 @@ public class LayerTransformFactory
                 }
 
                 @Override
-                protected void getScalar(int iNew, int jNew, Pixel pd)
+                protected void getElement(int iNew, int jNew, int k, Pixel pd)
                 {
                     double x = (double) (iNew * iOrigSize) / iNewSize;
                     double y = (double) (jNew * jOrigSize) / jNewSize;
@@ -610,15 +677,15 @@ public class LayerTransformFactory
                 return jNewSize;
             }
 
-            @Override
-            public boolean isValid(int i, int j)
-            {
-                i = toOutputIndex(i, iMin, iOrigSize, iNewSize);
-                j = toOutputIndex(j, jMin, jOrigSize, jNewSize);
-
-                return super.isValid(i, j);
-            }
-
+            // @Override
+            // public boolean isValid(int i, int j)
+            // {
+            // i = toOutputIndex(i, iMin, iOrigSize, iNewSize);
+            // j = toOutputIndex(j, jMin, jOrigSize, jNewSize);
+            //
+            // return super.isValid(i, j);
+            // }
+            //
             @Override
             public boolean isInBounds(int i, int j)
             {
@@ -711,12 +778,12 @@ public class LayerTransformFactory
             return target.dataSizes();
         }
 
-        @Override
-        public boolean isValid(int i, int j)
-        {
-            return target.isValid(i, j);
-        }
-
+        // @Override
+        // public boolean isValid(int i, int j)
+        // {
+        // return target.isValid(i, j);
+        // }
+        //
         @Override
         public boolean isInBounds(int i, int j)
         {

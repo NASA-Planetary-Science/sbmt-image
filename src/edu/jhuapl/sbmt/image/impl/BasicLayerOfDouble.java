@@ -1,27 +1,25 @@
 package edu.jhuapl.sbmt.image.impl;
 
-import java.util.List;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
 import edu.jhuapl.sbmt.image.api.PixelDouble;
-import edu.jhuapl.sbmt.image.api.PixelVectorDouble;
+import edu.jhuapl.sbmt.image.api.PixelVector;
 
 /**
  * Abstract base implementation of {@link Layer} that assumes each pixel
  * contains one scalar double value. Supported {@link Pixel} sub-types are
- * {@link PixelDouble} and {@link PixelVectorDouble}.
+ * {@link PixelDouble} and {@link PixelVector}.
  *
  * @author James Peachey
  *
  */
 public abstract class BasicLayerOfDouble extends BasicLayer
 {
-    private static final Set<Class<?>> AcceptedPixelTypes = ImmutableSet.of(PixelDouble.class, PixelVectorDouble.class);
+    private static final Set<Class<?>> AcceptedPixelTypes = ImmutableSet.of(PixelDouble.class, PixelVector.class);
 
     /**
      * Constructor that creates a layer using the specified dimensions. The
@@ -35,16 +33,11 @@ public abstract class BasicLayerOfDouble extends BasicLayer
         super(iSize, jSize);
     }
 
-    @Override
-    public List<Integer> dataSizes()
-    {
-        return ImmutableList.of(Integer.valueOf(1));
-    }
-
     /**
-     * Returns a set containing supported pixel types
-     * {@link PixelDouble}<code>.class</code> and
-     * {@link PixelVectorDouble}<code>.class</code>.
+     * Returns a set containing <code>{@link PixelDouble}.class</code> and
+     * <code>{@link PixelVector}.class</code>. Note that the
+     * {@link #get(int, int, Pixel)} implementation will only succeed for vector
+     * pixels if their 0-th element is a {@link PixelDouble} instance.
      */
     @Override
     public Set<Class<?>> getPixelTypes()
@@ -53,26 +46,31 @@ public abstract class BasicLayerOfDouble extends BasicLayer
     }
 
     @Override
-    protected void getScalar(int i, int j, Pixel p)
+    protected void getElement(int i, int j, int k, Pixel p)
     {
         if (p instanceof PixelDouble pd)
         {
-            pd.set(doGetDouble(i, j));
-            pd.setIsValid(isValid(i, j));
-            pd.setInBounds(isInBounds(i, j));
+            double value = doGetDouble(i, j);
+            pd.set(value);
+            pd.setIsValid(isValid(i, j, value));
         }
         else
         {
-            super.getScalar(i, j, p);
+            throw new IllegalArgumentException();
         }
     }
 
     protected abstract double doGetDouble(int i, int j);
 
+    protected boolean isValid(int i, int j, double value)
+    {
+        return true;
+    }
+
     @Override
     public String toString()
     {
-        return "Layer of double (" + iSize() + ", " + jSize() + ")";
+        return "Double Layer(" + iSize() + ", " + jSize() + ")";
     }
 
 }

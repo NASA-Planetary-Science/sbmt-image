@@ -26,12 +26,12 @@ public class PixelDoubleFactory
             @Override
             public double get()
             {
-                if (!isInBounds())
+                if (invalidValue != null && !isValid() && isInBounds())
                 {
-                    return getOutOfBoundsValue();
+                    return invalidValue.doubleValue();
                 }
 
-                return isValid() || invalidValue == null ? getStoredValue() : invalidValue;
+                return super.get();
             }
 
             @Override

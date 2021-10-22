@@ -37,10 +37,10 @@ public interface Layer
      * Return the dimensionality and sizes of data elements located at each pair
      * of indices (I, J). Scalar implementations shall return a list with just
      * one element, equal to the integer 1. Vector implementations shall return
-     * a list wieh just one element; the number indicates the maximum size of
-     * any vector in the layer. Higher-dimensional data structures shall return
-     * a list with one entry for each dimension. No implementation shall return
-     * a null list, nor shall any list entry be null or non-positive.
+     * a list with just one element: an integer that indicates the maximum size
+     * of any vector in the layer. Higher-dimensional data structures shall
+     * return a list with one entry for each dimension. No implementation shall
+     * return a null list, nor shall any list entry be null or non-positive.
      * <p>
      * Data associated with a particular pair of indices are permitted to have
      * variable size in any dimesion. The sizes in the returned list give the
@@ -51,25 +51,8 @@ public interface Layer
     List<Integer> dataSizes();
 
     /**
-     * Return a flag that indicates whether the data identified by the specified
-     * indices are valid to use when performing operations with this layer. The
-     * default implementation simply returns the result of calling
-     * {@link #isInBounds(int, int)}.
-     * <p>
-     * When overriding the default behavior, implementations are free to return
-     * false for additional conditions, such as missing, infinite, or special
-     * values, but the contract of this method requires that all implementations
-     * always return false whenever {@link #isInBounds(int, int)} returns false.
-     *
-     * @param i the I index
-     * @param j the J index
-     * @return true if the data associated with these indices are valid/usable
-     */
-    boolean isValid(int i, int j);
-
-    /**
      * Return a flag that indicates whether the specified indices are in-bounds
-     * (true) or out-of-bounds (false).
+     * (true) or out-of-bounds (false) within the {@link Layer}.
      * <p>
      * The I index is in-bounds if it is in the half-open range [0, iSize() ).
      * The J index is in-bounds if it is in the half-open range [0, jSize() ).
@@ -84,11 +67,11 @@ public interface Layer
     }
 
     /**
-     * Return a set of the types of sub-interfaces that the
+     * Return a set of the types of {@link Pixel} sub-interfaces that the
      * {@link #get(int, int, Pixel)} method accepts for the pixel argument.
      * <p>
      * Implementations are free to return an empty set, but they may not return
-     * null
+     * null.
      *
      * @return the interface types
      */
@@ -116,14 +99,13 @@ public interface Layer
      * <p>
      * If an implementation cannot or does not know how to set the values of the
      * specified {@link Pixel} instance using its data, it shall throw an
-     * UnsupportedOperationException.
+     * {@link IllegalArgumentException}.
      *
      * @param i the I index
      * @param j the J index
      * @param p the pixel, which will be mutated by this method
-     * @param throws UnsupportedOperationException if the layer implementation
-     *            does not know how to handle the specified instance of the
-     *            pixel
+     * @param throws IllegalArgumentException if the layer implementation does
+     *            not know how to handle the specified instance of the pixel
      */
     void get(int i, int j, Pixel p);
 

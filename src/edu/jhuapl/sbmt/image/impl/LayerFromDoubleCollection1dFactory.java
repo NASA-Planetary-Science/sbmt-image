@@ -37,7 +37,7 @@ public class LayerFromDoubleCollection1dFactory extends LayerFromCollection1dFac
         return getLayerFactory().ofScalar(doubleGetter2d, iSize, jSize);
     }
 
-    public Layer ofScalar(DoubleGetter1d doubleGetter, IJtoSingleIndex reIndexer, int iSize, int jSize, LayerValidityChecker checker)
+    public Layer ofScalar(DoubleGetter1d doubleGetter, IJtoSingleIndex reIndexer, int iSize, int jSize, ValidityCheckerDoubleFactory.ScalarValidityChecker checker)
     {
         DoubleGetter2d doubleGetter2d = (i, j) -> {
             return doubleGetter.get(reIndexer.getIndex(i, j, iSize, jSize));
@@ -55,7 +55,7 @@ public class LayerFromDoubleCollection1dFactory extends LayerFromCollection1dFac
         return getLayerFactory().ofVector(doubleGetter3d, iSize, jSize, kSize);
     }
 
-    public Layer ofVector(DoubleGetter1d doubleGetter, IJKtoSingleIndex reIndexer, int iSize, int jSize, int kSize, LayerValidityChecker checker)
+    public Layer ofVector(DoubleGetter1d doubleGetter, IJKtoSingleIndex reIndexer, int iSize, int jSize, int kSize, ValidityCheckerDoubleFactory.ScalarValidityChecker checker)
     {
         DoubleGetter3d doubleGetter3d = (i, j, k) -> {
             return doubleGetter.get(reIndexer.getIndex(i, j, k, iSize, jSize, kSize));

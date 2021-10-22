@@ -63,7 +63,7 @@ public class LayerDoubleFactory
         };
     }
 
-    public Layer ofScalar(DoubleGetter2d doubleGetter, int iSize, int jSize, LayerValidityChecker checker)
+    public Layer ofScalar(DoubleGetter2d doubleGetter, int iSize, int jSize, ValidityCheckerDoubleFactory.ScalarValidityChecker checker)
     {
         Preconditions.checkNotNull(doubleGetter);
         Preconditions.checkNotNull(checker);
@@ -79,9 +79,9 @@ public class LayerDoubleFactory
             }
 
             @Override
-            public boolean isValid(int i, int j)
+            public boolean isValid(int i, int j, double value)
             {
-                return checker.test(this, i, j);
+                return checker.test(i, j, value);
             }
 
         };
@@ -110,10 +110,16 @@ public class LayerDoubleFactory
                 return doubleGetter.get(i, j, k);
             }
 
+            @Override
+            protected boolean isValid(int i, int j, int k, double value)
+            {
+                return true;
+            }
+
         };
     }
 
-    public Layer ofVector(DoubleGetter3d doubleGetter, int iSize, int jSize, int kSize, LayerValidityChecker checker)
+    public Layer ofVector(DoubleGetter3d doubleGetter, int iSize, int jSize, int kSize, ValidityCheckerDoubleFactory.ScalarValidityChecker checker)
     {
         Preconditions.checkNotNull(doubleGetter);
         Preconditions.checkNotNull(checker);
@@ -138,9 +144,42 @@ public class LayerDoubleFactory
             }
 
             @Override
-            public boolean isValid(int i, int j)
+            protected boolean isValid(int i, int j, int k, double value)
             {
-                return checker.test(this, i, j);
+                return checker.test(i, j, value);
+            }
+
+        };
+    }
+
+    public Layer ofVector(DoubleGetter3d doubleGetter, int iSize, int jSize, int kSize, ValidityCheckerDoubleFactory.VectorValidityChecker checker)
+    {
+        Preconditions.checkNotNull(doubleGetter);
+        Preconditions.checkNotNull(checker);
+        Preconditions.checkArgument(iSize >= 0);
+        Preconditions.checkArgument(jSize >= 0);
+        Preconditions.checkArgument(kSize >= 0);
+
+        List<Integer> dataSizes = ImmutableList.of(Integer.valueOf(kSize));
+
+        return new BasicLayerOfVectorDouble(iSize, jSize) {
+
+            @Override
+            public List<Integer> dataSizes()
+            {
+                return dataSizes;
+            }
+
+            @Override
+            protected double doGetDouble(int i, int j, int k)
+            {
+                return doubleGetter.get(i, j, k);
+            }
+
+            @Override
+            protected boolean isValid(int i, int j, int k, double value)
+            {
+                return checker.test(i, j, k, value);
             }
 
         };

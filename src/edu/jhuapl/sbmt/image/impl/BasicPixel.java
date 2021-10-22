@@ -4,13 +4,12 @@ import edu.jhuapl.sbmt.image.api.Pixel;
 
 /**
  * Basic implementation of the {@link Pixel} interface that uses simple fields
- * to store the relevant flags. It is not abstract, but is mainly useful as a
- * base class for more specific pixel implementations.
+ * to store the relevant flags.
  *
  * @author James Peachey
  *
  */
-public class BasicPixel implements Pixel
+public abstract class BasicPixel implements Pixel
 {
 
     private volatile boolean isValid;
@@ -27,12 +26,7 @@ public class BasicPixel implements Pixel
     @Override
     public boolean isValid()
     {
-        if (!isInBounds())
-        {
-            return false;
-        }
-
-        return isValid;
+        return isValid && isInBounds();
     }
 
     @Override
@@ -51,7 +45,6 @@ public class BasicPixel implements Pixel
     public void setInBounds(boolean inBounds)
     {
         this.inBounds = inBounds;
-
     }
 
 }

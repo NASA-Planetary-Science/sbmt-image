@@ -2,19 +2,16 @@ package edu.jhuapl.sbmt.image.modules.io.builtIn;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import edu.jhuapl.sbmt.image.api.Layer;
 import edu.jhuapl.sbmt.image.api.Pixel;
-import edu.jhuapl.sbmt.image.api.PixelDouble;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleFactory;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleFactory.DoubleGetter2d;
 import edu.jhuapl.sbmt.image.impl.LayerDoubleTransformFactory;
 import edu.jhuapl.sbmt.image.impl.LayerTransformFactory;
-import edu.jhuapl.sbmt.image.impl.LayerValidityChecker;
 import edu.jhuapl.sbmt.image.impl.PixelDoubleFactory;
 import edu.jhuapl.sbmt.image.impl.PixelVectorDoubleFactory;
+import edu.jhuapl.sbmt.image.impl.ValidityCheckerDoubleFactory;
 import edu.jhuapl.sbmt.image.pipeline.publisher.BasePipelinePublisher;
 
 import nom.tam.fits.BasicHDU;
@@ -26,7 +23,7 @@ public class BuiltInFitsReader extends BasePipelinePublisher<Layer>
 
     public static void main(String[] args) throws FitsException, IOException
     {
-        BuiltInFitsReader reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/M0125990473F4_2P_IOF_DBL.FIT", new Float[] {});
+        BuiltInFitsReader reader = new BuiltInFitsReader("/Users/steelrj1/Desktop/M0125990473F4_2P_IOF_DBL.FIT", new double[] {});
     }
 
     private String filename;
@@ -46,26 +43,16 @@ public class BuiltInFitsReader extends BasePipelinePublisher<Layer>
     // 2
     int fitsWidth = 0;
 
-    public BuiltInFitsReader(String filename, Float[] fill) throws FitsException, IOException
+    public BuiltInFitsReader(String filename, double[] fill) throws FitsException, IOException
     {
         this.filename = filename;
         loadData();
-        PixelDouble pd = new PixelDoubleFactory().of(0.0, Double.NaN, Double.NaN);
         Layer layer;
         if (fill.length == 0)
             layer = ofScalar(fitsHeight, fitsWidth, null);
         else
         {
-            layer = ofScalar(fitsHeight, fitsWidth, new LayerValidityChecker() {
-
-                @Override
-                public boolean test(Layer layer, int i, int j)
-                {
-                    List<Float> fillValues = Arrays.asList(fill);
-                    pd.set(array2D[i][j]);
-                    return !fillValues.contains((float) pd.getStoredValue());
-                }
-            });
+            layer = ofScalar(fitsHeight, fitsWidth, new ValidityCheckerDoubleFactory().of(fill));
         }
         layer = TransformFactory.rotateCCW().apply(layer);
         // layer = DoubleTransformFactory.linearInterpolate(537,
@@ -167,7 +154,7 @@ public class BuiltInFitsReader extends BasePipelinePublisher<Layer>
 
     }
 
-    protected Layer ofScalar(int iSize, int jSize, LayerValidityChecker checker)
+    protected Layer ofScalar(int iSize, int jSize, ValidityCheckerDoubleFactory.ScalarValidityChecker checker)
     {
         DoubleGetter2d doubleGetter = (i, j) -> {
             return array2D[i][j];
