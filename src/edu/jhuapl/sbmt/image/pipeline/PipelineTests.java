@@ -51,8 +51,8 @@ public class PipelineTests
 	{
 //		test1();
 //		test2();
-		test3();
-		test4();
+//		test3();
+//		test4();
 		test5();
 	}
 
@@ -186,8 +186,8 @@ public class PipelineTests
 		//*********************************
 		//Use SPICE to position the bodies
 		//*********************************
-		SpiceInfo spiceInfo = new SpiceInfo("DART", "920065803_FIXED", "DART_SPACECRAFT", "DIDYMOS", new String[] {"DIMORPHOS"}, new String[] {"DART_DRACO_2X2"});
-		IPipelinePublisher<SpicePointingProvider> pointingProviders = new SpiceReaderPublisher("/Users/steelrj1/dartspice/draco/impact.tm", spiceInfo);
+		SpiceInfo spiceInfo = new SpiceInfo("DART", "920065803_FIXED", "DART_SPACECRAFT", "DIDYMOS", new String[] {"DIMORPHOS"}, new String[] {"DART_DRACO_2X2", "120065803_FIXED"});
+		IPipelinePublisher<SpicePointingProvider> pointingProviders = new SpiceReaderPublisher("/Users/steelrj1/dartspice/draco/impact.tm", spiceInfo, "DART_DRACO_2X2");
 //		IPipelinePublisher<List<Object>> spiceBodyObjects = Publishers.mergeLists(vtkReader, pointingProviders);
 		IPipelinePublisher<Pair<SmallBodyModel, SpicePointingProvider>> spiceBodyObjects = Publishers.formPair(vtkReader, pointingProviders);
 		IPipelineOperator<Pair<SmallBodyModel, SpicePointingProvider>, SmallBodyModel> spiceBodyOperator = new SpiceBodyOperator("DIDYMOS", TimeUtil.str2et("2022-10-01T10:25:08.599"));
@@ -231,13 +231,15 @@ public class PipelineTests
 
 	private void test5() throws Exception
 	{
-		SpiceInfo spiceInfo = new SpiceInfo("DART", "920065803_FIXED", "DART_SPACECRAFT", "DIDYMOS", new String[] {"DIMORPHOS"}, new String[] {"DART_DRACO_2X2"});
+		SpiceInfo spiceInfo1 = new SpiceInfo("DART", "920065803_FIXED", "DART_SPACECRAFT", "DIDYMOS", new String[] {"DIMORPHOS"}, new String[] {"DART_DRACO_2X2", "120065803_FIXED"});
+		SpiceInfo spiceInfo2 = new SpiceInfo("DART", "120065803_FIXED", "DART_SPACECRAFT", "DIMORPHOS", new String[] {"DIDYMOS"}, new String[] {"DART_DRACO_2X2", "920065803_FIXED"});
+		SpiceInfo[] spiceInfos = new SpiceInfo[] {spiceInfo1, spiceInfo2};
 		String[] bodies = new String[]{"/Users/steelrj1/.sbmt1dart/cache/didymos/ideal-impact1-20200629-v01/shape/shape0.obj",
 			"/Users/steelrj1/.sbmt1dart/cache/dimorphos/ideal-impact1-20200629-v01/shape/shape0.obj"};
 		String[] bodyNames = new String[]{"DIDYMOS", "DIMORPHOS"};
 		String[] imageFiles = new String[] {"/Users/steelrj1/Desktop/dart_717891977_782_01.fits"};
 		String[] pointingFiles = new String[] {"/Users/steelrj1/Desktop/dart_717891977_782_01.INFO"};
-		VtkRendererPreview2 preview = new VtkRendererPreview2(imageFiles, pointingFiles, bodies, bodyNames, spiceInfo, "/Users/steelrj1/dartspice/draco/impact.tm", "DIDYMOS", "2022-10-01T10:25:08.599");
+		VtkRendererPreview2 preview = new VtkRendererPreview2(imageFiles, pointingFiles, bodies, bodyNames, spiceInfos, "/Users/steelrj1/dartspice/draco/impact.tm", "DIDYMOS", "2022-10-01T10:25:08.599", "DART_DRACO_2X2");
 	}
 
 

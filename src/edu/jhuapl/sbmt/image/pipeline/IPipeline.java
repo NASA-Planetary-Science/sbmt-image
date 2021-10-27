@@ -1,8 +1,10 @@
 package edu.jhuapl.sbmt.image.pipeline;
 
-import java.util.function.Function;
+import java.util.List;
 
-public interface IPipeline<Input, Output>
+public interface IPipeline<T>
 {
-	public void runPipeline(Function<Input, Output> function);
+	public void run() throws Exception;
+
+	public List<T> getOutput();
 }

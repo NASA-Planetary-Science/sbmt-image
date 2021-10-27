@@ -14,11 +14,13 @@ public class SpiceReaderPublisher extends BasePipelinePublisher<SpicePointingPro
 	private SpicePointingProvider pointingProvider;
 	private SpiceInfo spiceInfo;
 	private String mkFilename;
+	private String instFrame;
 
-	public SpiceReaderPublisher(String mkFilename, SpiceInfo spiceInfo)
+	public SpiceReaderPublisher(String mkFilename, SpiceInfo spiceInfo, String instFrame)
 	{
 		this.spiceInfo = spiceInfo;
 		this.mkFilename = mkFilename;
+		this.instFrame = instFrame;
 		try
 		{
 			loadPointing();
@@ -47,5 +49,6 @@ public class SpiceReaderPublisher extends BasePipelinePublisher<SpicePointingPro
 		}
 
         pointingProvider = builder.build();
+        pointingProvider.setCurrentInstFrameName(instFrame);
 	}
 }

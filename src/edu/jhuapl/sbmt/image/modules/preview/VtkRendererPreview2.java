@@ -10,15 +10,18 @@ import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
-import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -44,28 +47,34 @@ import edu.jhuapl.sbmt.image.modules.io.builtIn.BuiltInOBJReader;
 import edu.jhuapl.sbmt.image.modules.pointing.InfofileReaderPublisher;
 import edu.jhuapl.sbmt.image.modules.pointing.SpiceBodyOperator;
 import edu.jhuapl.sbmt.image.modules.pointing.SpiceReaderPublisher;
+import edu.jhuapl.sbmt.image.modules.preview.VtkRendererPreview2.BodyPositionPipeline;
+import edu.jhuapl.sbmt.image.modules.preview.VtkRendererPreview2.RenderableImagesPipeline;
 import edu.jhuapl.sbmt.image.modules.rendering.LayerRotationOperator;
 import edu.jhuapl.sbmt.image.modules.rendering.RenderableImage;
 import edu.jhuapl.sbmt.image.modules.rendering.RenderableImageGenerator;
 import edu.jhuapl.sbmt.image.modules.rendering.SceneBuilderOperator;
+import edu.jhuapl.sbmt.image.pipeline.IPipeline;
 import edu.jhuapl.sbmt.image.pipeline.operator.IPipelineOperator;
 import edu.jhuapl.sbmt.image.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.image.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.image.pipeline.publisher.Publishers;
-import edu.jhuapl.sbmt.image.pipeline.subscriber.IPipelineSubscriber;
+import edu.jhuapl.sbmt.image.pipeline.subscriber.BasePipelineSubscriber;
 import edu.jhuapl.sbmt.image.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.model.image.InfoFileReader;
 import edu.jhuapl.sbmt.pointing.spice.SpiceInfo;
 import edu.jhuapl.sbmt.pointing.spice.SpicePointingProvider;
 import edu.jhuapl.sbmt.util.TimeUtil;
 
-public class VtkRendererPreview2 implements IPipelineSubscriber<vtkActor>
+public class VtkRendererPreview2 extends BasePipelineSubscriber<vtkActor>
 {
 	private IPipelinePublisher<vtkActor> publisher;
 	private SmallBodyModel smallBodyModel;
 	IPipelinePublisher<Pair<List<SmallBodyModel>, List<RenderableImage>>> sceneObjects;
+	RenderableImagesPipeline renderableImagesPipeline;
+	BodyPositionPipeline bodyPositionPipeline;
+	double startTime;
 
-	class RenderableImagesPipeline
+	class RenderableImagesPipeline implements IPipeline<RenderableImage>
 	{
 		List<RenderableImage> renderableImages = Lists.newArrayList();
 		IPipelinePublisher<Triple<Layer, HashMap<String, String>, InfoFileReader>> imageComponents;
@@ -99,92 +108,131 @@ public class VtkRendererPreview2 implements IPipelineSubscriber<vtkActor>
 			//***************************************************************************************
 			//generate image polydata with texture coords (in: RenderableImage, out: vtkPolydata)
 			//***************************************************************************************
-
+			renderableImages.clear();
 			imageComponents
 				.operate(renderableImageGenerator)
 				.subscribe(Sink.of(renderableImages))
 				.run();
 		}
 
-		public List<RenderableImage> getRenderableImages()
+		public List<RenderableImage> getOutput()
 		{
 			return renderableImages;
 		}
 	}
 
-	class BodyPositionPipeline
+	class BodyPositionPipeline implements IPipeline<SmallBodyModel>
 	{
 		List<SmallBodyModel> updatedBodies = Lists.newArrayList();
 		IPipelinePublisher<Pair<SmallBodyModel, SpicePointingProvider>> spiceBodyObjects;
 		IPipelineOperator<Pair<SmallBodyModel, SpicePointingProvider>, SmallBodyModel> spiceBodyOperator;
+		IPipelinePublisher<SmallBodyModel> vtkReader;
+		IPipelinePublisher<SpicePointingProvider> pointingProviders;
+		String[] bodyFiles;
+		String[] bodyNames;
+		SpiceInfo[] spiceInfos;
+		String mkPath;
+		String centerBodyName;
+		String initialTime;
+		String instFrame;
+		SpiceInfo activeSpiceInfo;
 
-		public BodyPositionPipeline(String[] bodyFiles, String[] bodyNames, SpiceInfo spiceInfo, String mkPath, String centerBodyName, String initialTime) throws Exception
+		public BodyPositionPipeline(String[] bodyFiles, String[] bodyNames, SpiceInfo[] spiceInfos, String mkPath, String centerBodyName, String initialTime, String instFrame) throws Exception
+		{
+			this.bodyFiles = bodyFiles;
+			this.bodyNames = bodyNames;
+			this.spiceInfos = spiceInfos;
+			this.mkPath = mkPath;
+			this.centerBodyName = centerBodyName;
+			this.initialTime = initialTime;
+			this.instFrame = instFrame;
+//			//***********************
+//			//generate body polydata
+//			//***********************
+			vtkReader = new BuiltInOBJReader(bodyFiles, bodyNames);
+//			System.out.println("VtkRendererPreview2.BodyPositionPipeline: BodyPositionPipeline: num vtk " + vtkReader.getOutputs().size());
+//			//*********************************
+//			//Use SPICE to position the bodies
+//			//*********************************
+			activeSpiceInfo = Arrays.asList(spiceInfos).stream().filter(info -> info.getBodyName().equals(centerBodyName)).collect(Collectors.toList()).get(0);
+			pointingProviders = new SpiceReaderPublisher(mkPath, activeSpiceInfo, instFrame);
+			spiceBodyObjects = Publishers.formPair(vtkReader, pointingProviders);
+
+			spiceBodyOperator = new SpiceBodyOperator(centerBodyName, TimeUtil.str2et(initialTime));
+
+		}
+
+		private IPipelinePublisher<SmallBodyModel> of()
 		{
 			//***********************
 			//generate body polydata
 			//***********************
-			IPipelinePublisher<SmallBodyModel> vtkReader = new BuiltInOBJReader(bodyFiles, bodyNames);
-
+			vtkReader = new BuiltInOBJReader(bodyFiles, bodyNames);
 			//*********************************
 			//Use SPICE to position the bodies
 			//*********************************
-			IPipelinePublisher<SpicePointingProvider> pointingProviders = new SpiceReaderPublisher(mkPath, spiceInfo);
+			pointingProviders = new SpiceReaderPublisher(mkPath, activeSpiceInfo, instFrame);
 			spiceBodyObjects = Publishers.formPair(vtkReader, pointingProviders);
-			spiceBodyOperator = new SpiceBodyOperator(centerBodyName, TimeUtil.str2et(initialTime));
+
+			return spiceBodyObjects
+				.operate(spiceBodyOperator)
+				.subscribe(Sink.of(updatedBodies));
+		}
+
+		private IPipelinePublisher<SmallBodyModel> of(double time)
+		{
+			//***********************
+			//generate body polydata
+			//***********************
+			vtkReader = new BuiltInOBJReader(bodyFiles, bodyNames);
+			//*********************************
+			//Use SPICE to position the bodies
+			//*********************************
+			pointingProviders = new SpiceReaderPublisher(mkPath, activeSpiceInfo, instFrame);
+			spiceBodyObjects = Publishers.formPair(vtkReader, pointingProviders);
+			spiceBodyOperator = new SpiceBodyOperator(centerBodyName, time);
+			return spiceBodyObjects
+				.operate(spiceBodyOperator)
+				.subscribe(Sink.of(updatedBodies));
 		}
 
 		public void run() throws Exception
 		{
-			spiceBodyObjects
-				.operate(spiceBodyOperator)
-				.subscribe(Sink.of(updatedBodies))
-				.run();
+			updatedBodies.clear();
+			of().run();
 		}
 
 		public void run(double time) throws Exception
 		{
 			((SpiceBodyOperator)spiceBodyOperator).setTime(time);
-			spiceBodyObjects
-				.operate(spiceBodyOperator)
-				.subscribe(Sink.of(updatedBodies))
-				.run();
+			updatedBodies.clear();
+//			System.out.println("VtkRendererPreview2.BodyPositionPipeline: run: updated time is " + TimeUtil.et2str(time));
+			of(time).run();
+//			spiceBodyObjects
+//				.operate(spiceBodyOperator)
+//				.subscribe(Sink.of(updatedBodies))
+//				.run();
 		}
 
-		public List<SmallBodyModel> getBodies()
+		public List<SmallBodyModel> getOutput()
 		{
 			return updatedBodies;
 		}
 	}
 
-	public VtkRendererPreview2(String[] imageFiles, String[] pointingFiles, String[] bodyFiles, String[] bodyNames, SpiceInfo spiceInfo, String mkPath, String centerBodyName, String initialTime) throws Exception
+	public VtkRendererPreview2(String[] imageFiles, String[] pointingFiles, String[] bodyFiles, String[] bodyNames, SpiceInfo[] spiceInfos, String mkPath, String centerBodyName, String initialTime, String instFrame) throws Exception
 	{
-		RenderableImagesPipeline renderableImagesPipeline = new RenderableImagesPipeline(imageFiles, pointingFiles);
-		renderableImagesPipeline.run();
-		List<RenderableImage> renderableImages = renderableImagesPipeline.getRenderableImages();
+		this.startTime = TimeUtil.str2et(initialTime);
 
-		BodyPositionPipeline bodyPositionPipeline = new BodyPositionPipeline(bodyFiles, bodyNames, spiceInfo, mkPath, centerBodyName, initialTime);
+		renderableImagesPipeline = new RenderableImagesPipeline(imageFiles, pointingFiles);
+//		renderableImagesPipeline.run();
+//		List<RenderableImage> renderableImages = renderableImagesPipeline.getOutput();
+
+		bodyPositionPipeline = new BodyPositionPipeline(bodyFiles, bodyNames, spiceInfos, mkPath, centerBodyName, initialTime, instFrame);
 		bodyPositionPipeline.run();
-		List<SmallBodyModel> updatedBodies = bodyPositionPipeline.getBodies();
+		List<SmallBodyModel> updatedBodies = bodyPositionPipeline.getOutput();
 
-		//*************************
-		//zip the sources together
-		//*************************
-		sceneObjects = Publishers.formPair(Just.of(updatedBodies), Just.of(renderableImages));
-
-		RendererPreviewPanel2 preview = new RendererPreviewPanel2(smallBodyModel, sceneObjects);
-
-		//***************************************************************************
-		//Pass them into the scene builder to perform intersection calculations
-		//***************************************************************************
-//		IPipelineOperator<Pair<List<SmallBodyModel>, List<RenderableImage>>, vtkActor> sceneBuilder = new SceneBuilderOperator();
-//
-//		//*******************************
-//		//Throw them to the preview tool
-//		//*******************************
-//		sceneObjects
-//			.operate(sceneBuilder) 	//feed the zipped sources to scene builder operator
-////			.subscribe(preview)		//subscribe to the scene builder with the preview
-//			.run();
+		RendererPreviewPanel2 preview = new RendererPreviewPanel2(updatedBodies.get(0), renderableImagesPipeline, bodyPositionPipeline, startTime);
 	}
 
 	@Override
@@ -192,7 +240,7 @@ public class VtkRendererPreview2 implements IPipelineSubscriber<vtkActor>
 	{
 		try
 		{
-			RendererPreviewPanel2 preview = new RendererPreviewPanel2(smallBodyModel, sceneObjects);
+			RendererPreviewPanel2 preview = new RendererPreviewPanel2(smallBodyModel, renderableImagesPipeline, bodyPositionPipeline, startTime);
 		}
 		catch (Exception e)
 		{
@@ -200,47 +248,64 @@ public class VtkRendererPreview2 implements IPipelineSubscriber<vtkActor>
 			e.printStackTrace();
 		}
 	}
-
-	@Override
-	public void setPublisher(IPipelinePublisher<vtkActor> publisher)
-	{
-		this.publisher = publisher;
-	}
-
-	@Override
-	public void run() throws IOException, Exception
-	{
-		publisher.run();
-	}
 }
 
-class RendererPreviewPanel2 extends ModelInfoWindow implements MouseListener, MouseMotionListener, PropertyChangeListener
+class RendererPreviewPanel2 extends ModelInfoWindow implements MouseListener, MouseMotionListener, PropertyChangeListener, VtkPropProvider
 {
 	public static final double VIEWPOINT_DELTA = 1.0;
 	public static final double ROTATION_DELTA = 5.0;
 
 //	private vtkJoglPanelComponent renWin;
 	private Renderer renderer;
+	RenderableImagesPipeline renderableImagesPipeline;
+	BodyPositionPipeline bodyPositionPipeline;
+	PlaybackPanelController playbackController;
+	List<vtkActor> inputs;
+	List<vtkProp> props = Lists.newArrayList();
 
-	public RendererPreviewPanel2(SmallBodyModel smallBodyModel, IPipelinePublisher<Pair<List<SmallBodyModel>, List<RenderableImage>>> sceneObjects) throws Exception
+//	public RendererPreviewPanel2(SmallBodyModel smallBodyModel, IPipelinePublisher<Pair<List<SmallBodyModel>, List<RenderableImage>>> sceneObjects) throws Exception
+	public RendererPreviewPanel2(SmallBodyModel smallBodyModel, RenderableImagesPipeline renderableImagesPipeline, BodyPositionPipeline bodyPositionPipeline, double startTime) throws Exception
 	{
-		this.renderer = new Renderer(sceneObjects.getOutputs().get(0).getLeft().get(0));
+		this.bodyPositionPipeline = bodyPositionPipeline;
+		this.renderableImagesPipeline = renderableImagesPipeline;
+		this.playbackController = new PlaybackPanelController(startTime, startTime + 180, new Function<Double, Void>()
+		{
+
+			@Override
+			public Void apply(Double t)
+			{
+				try
+				{
+					bodyPositionPipeline.run(t);
+					List<vtkActor> inputs = Lists.newArrayList();
+					runBodyPositionUpdate(inputs);
+					loadActors(inputs);
+					SwingUtilities.invokeLater(new Runnable()
+					{
+
+						@Override
+						public void run()
+						{
+							renderer.notifySceneChange();
+						}
+					});
+
+				}
+				catch (Exception e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				return null;
+			}
+		});
+		inputs = Lists.newArrayList();
+		this.renderer = new Renderer(smallBodyModel);
 		renderer.setLightCfg(LightUtil.getSystemLightCfg());
+		renderer.addVtkPropProvider(this);
 		initComponents();
 
-		List<vtkActor> inputs = Lists.newArrayList();
-		//***************************************************************************
-		//Pass them into the scene builder to perform intersection calculations
-		//***************************************************************************
-		IPipelineOperator<Pair<List<SmallBodyModel>, List<RenderableImage>>, vtkActor> sceneBuilder = new SceneBuilderOperator();
-
-		//*******************************
-		//Throw them to the preview tool
-		//*******************************
-		sceneObjects
-			.operate(sceneBuilder) 	//feed the zipped sources to scene builder operator
-			.subscribe(Sink.of(inputs))		//subscribe to the scene builder with the preview
-			.run();
+		runBodyPositionUpdate(inputs);
 
 		loadActors(inputs);
 
@@ -264,20 +329,84 @@ class RendererPreviewPanel2 extends ModelInfoWindow implements MouseListener, Mo
 		});
 	}
 
+	private void runBodyPositionUpdate(List<vtkActor> inputs) throws Exception
+	{
+		//run the pipelines
+		renderableImagesPipeline.run();
+		List<RenderableImage> renderableImages = renderableImagesPipeline.getOutput();
+
+		bodyPositionPipeline.run();
+		List<SmallBodyModel> updatedBodies = bodyPositionPipeline.getOutput();
+
+		//*************************
+		//zip the sources together
+		//*************************
+		IPipelinePublisher<Pair<List<SmallBodyModel>, List<RenderableImage>>> sceneObjects = Publishers.formPair(Just.of(updatedBodies), Just.of(renderableImages));
+
+		//***************************************************************************
+		//Pass them into the scene builder to perform intersection calculations
+		//***************************************************************************
+		IPipelineOperator<Pair<List<SmallBodyModel>, List<RenderableImage>>, vtkActor> sceneBuilder = new SceneBuilderOperator();
+
+		//*****************************************
+		//Throw them to inputs for the preview tool
+		//*****************************************
+		sceneObjects
+			.operate(sceneBuilder) 	//feed the zipped sources to scene builder operator
+			.subscribe(Sink.of(inputs))		//subscribe to the scene builder with the preview
+			.run();
+	}
+
+//	private void runBodyPositionUpdate(double time, List<vtkActor> inputs) throws Exception
+//	{
+//		//run the pipelines
+//		renderableImagesPipeline.run();
+//		List<RenderableImage> renderableImages = renderableImagesPipeline.getOutput();
+//
+//		bodyPositionPipeline.run(time);
+//		List<SmallBodyModel> updatedBodies = bodyPositionPipeline.getOutput();
+//
+//		//*************************
+//		//zip the sources together
+//		//*************************
+//		IPipelinePublisher<Pair<List<SmallBodyModel>, List<RenderableImage>>> sceneObjects = Publishers.formPair(Just.of(updatedBodies), Just.of(renderableImages));
+//
+//		//***************************************************************************
+//		//Pass them into the scene builder to perform intersection calculations
+//		//***************************************************************************
+//		IPipelineOperator<Pair<List<SmallBodyModel>, List<RenderableImage>>, vtkActor> sceneBuilder = new SceneBuilderOperator();
+//
+//		//*******************************
+//		//Throw them to the preview tool
+//		//*******************************
+//		sceneObjects
+//			.operate(sceneBuilder) 	//feed the zipped sources to scene builder operator
+//			.subscribe(Sink.of(inputs))		//subscribe to the scene builder with the preview
+//			.run();
+//	}
+
+	@Override
+	public Collection<vtkProp> getProps()
+	{
+		return props;
+	}
+
 	private void loadActors(List<vtkActor> inputs)
 	{
-		List<vtkProp> props = Lists.newArrayList();
+//		List<vtkProp> props = Lists.newArrayList();
+		props.clear();
 		for (vtkActor actor : inputs)
 			props.add(actor);
-		renderer.addVtkPropProvider(new VtkPropProvider()
-		{
-
-			@Override
-			public Collection<vtkProp> getProps()
-			{
-				return props;
-			}
-		});
+		renderer.notifySceneChange();
+//		renderer.addVtkPropProvider(new VtkPropProvider()
+//		{
+//
+//			@Override
+//			public Collection<vtkProp> getProps()
+//			{
+//				return props;
+//			}
+//		});
 	}
 
 	@Override
@@ -346,6 +475,14 @@ class RendererPreviewPanel2 extends ModelInfoWindow implements MouseListener, Mo
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		getContentPane().add(renderer, gridBagConstraints);
+		gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 4;
+		gridBagConstraints.gridwidth = 2;
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
+		gridBagConstraints.weightx = 1.0;
+//		gridBagConstraints.weighty = 1.0;
+		getContentPane().add(playbackController.getView(), gridBagConstraints);
 	}
 
 	private void createMenus()
