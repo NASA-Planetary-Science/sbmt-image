@@ -1,8 +1,8 @@
-package edu.jhuapl.sbmt.image.keys;
+package edu.jhuapl.sbmt.image.core.keys;
 
 import java.io.File;
 
-import edu.jhuapl.sbmt.model.image.ImageKeyInterface;
+import edu.jhuapl.sbmt.image.common.ImageKeyInterface;
 
 public class ColorImageKey
 {
