@@ -36,6 +36,7 @@ public class PerspectiveImageOfflimbPlaneHelper
     private IntensityRange offLimbDisplayedRange = null;
     private boolean contrastSynced = false; // by default, the contrast of offlimb is not synced with on limb
     OffLimbPlaneCalculator calculator = new OffLimbPlaneCalculator();
+	List<vtkProp> footprintActors = new ArrayList<vtkProp>();
 
 
 	public PerspectiveImageOfflimbPlaneHelper(PerspectiveImage image)
@@ -45,7 +46,7 @@ public class PerspectiveImageOfflimbPlaneHelper
 
 	public List<vtkProp> getProps()
     {
-		List<vtkProp> footprintActors = new ArrayList<vtkProp>();
+//		footprintActors = new ArrayList<vtkProp>();
 		getOffLimbTexture();
 		if (offLimbActor == null && offLimbTexture != null)
         {
@@ -131,13 +132,13 @@ public class PerspectiveImageOfflimbPlaneHelper
         offLimbBoundaryVisibility = visible;
         if (offLimbVisibility && offLimbActor == null)
             loadOffLimbPlane();
-
         if (offLimbActor != null)
         {
             offLimbActor.SetVisibility(visible ? 1 : 0);
             offLimbBoundaryActor.SetVisibility(visible ? 1 : 0);
         }
-
+        offLimbActor.Modified();
+        offLimbBoundaryActor.Modified();
         image.firePropertyChange(Properties.MODEL_CHANGED, null, null);
     }
 

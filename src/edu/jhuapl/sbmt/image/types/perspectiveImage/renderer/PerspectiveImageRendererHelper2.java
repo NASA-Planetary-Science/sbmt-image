@@ -36,7 +36,7 @@ public class PerspectiveImageRendererHelper2
     vtkPolyData[] shiftedFootprint;
     private vtkActor footprintActor;
     private List<vtkProp> footprintActors = new ArrayList<vtkProp>();
-//    private List<vtkProp> footprintOnBodyActors = new ArrayList<vtkProp>();
+    private List<vtkProp> footprintOfflimbActors = new ArrayList<vtkProp>();
 //    vtkPolyData frustumPolyData;
     private vtkActor frustumActor;
 
@@ -73,15 +73,12 @@ public class PerspectiveImageRendererHelper2
     // used by the GUI.
     private static boolean generateFootprint = true;
 
-//    private ModelManager modelManager;
     private List<SmallBodyModel> smallBodyModels;
 
 	public PerspectiveImageRendererHelper2(PerspectiveImage image, List<SmallBodyModel> smallBodyModels)
 	{
 		this.image = image;
 		this.smallBodyModels = smallBodyModels;
-//		smallBodyModels = modelManager.getModel(ModelNames.SMALL_BODY).stream().map(body -> { return (SmallBodyModel)body; }).toList();
-
 		footprintCacheOperator = new PerspectiveImageFootprintCacheOperator();
 		illuminationOperator = new PerspectiveImageIlluminationOperator(image);
 		intensityOperator = new PerspectiveImageIntensityOperator(image);
@@ -99,16 +96,12 @@ public class PerspectiveImageRendererHelper2
 
         footprint = new vtkPolyData[numParts];
         footprint[0] = new vtkPolyData();
-//        footprintGenerated = new boolean[numParts];
 	}
 
 	public List<vtkProp> getProps()
     {
         if (footprintActor == null)
         {
-//        	footprintActors.clear();
-//        	footprintOnBodyActors.clear();
-//            footprintRendererOperator.loadFootprint();
             loadFootprint();
             imageTexture = new vtkTexture();
             imageTexture.InterpolateOn();
@@ -125,11 +118,9 @@ public class PerspectiveImageRendererHelper2
 	            footprintActor.SetTexture(imageTexture);
 	            vtkProperty footprintProperty = footprintActor.GetProperty();
 	            footprintProperty.LightingOff();
-//	            footprintOnBodyActors.add(footprintActor);
 	            footprintActors.add(footprintActor);
             }
         }
-//        System.out.println("PerspectiveImageRendererHelper2: getProps: number of on body actors " + footprintOnBodyActors.size());
         if (frustumActor == null)
         {
 
@@ -146,9 +137,8 @@ public class PerspectiveImageRendererHelper2
         }
 
         // for offlimb
+        footprintOfflimbActors.addAll(image.getOfflimbPlaneHelper().getProps());
         footprintActors.addAll(image.getOfflimbPlaneHelper().getProps());
-//        System.out.println("PerspectiveImageRendererHelper2: getProps: final number of fp on body actors " + footprintOnBodyActors.size());
-//        System.out.println("PerspectiveImageRendererHelper2: getProps: final number of fp actors " + footprintActors.size());
         return footprintActors;
     }
 
@@ -360,8 +350,8 @@ public class PerspectiveImageRendererHelper2
     {
     	for (vtkProp footprintActor : footprintActors)
     	{
-//    		System.out.println("PerspectiveImageRendererHelper2: setVisible: set visiblity to " + b);
-    		footprintActor.SetVisibility(b ? 1 : 0);
+    		if (!footprintOfflimbActors.contains(footprintActor))
+    			footprintActor.SetVisibility(b ? 1 : 0);
     	}
     }
 

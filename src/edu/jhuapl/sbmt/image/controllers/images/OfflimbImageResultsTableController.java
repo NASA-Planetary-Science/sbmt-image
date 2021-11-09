@@ -272,7 +272,6 @@ public class OfflimbImageResultsTableController extends ImageResultsTableControl
         {
         	int actualRow = imageResultsTableView.getResultList().getRowSorter().convertRowIndexToView(e.getFirstRow());
             int row = (Integer) imageResultsTableView.getResultList().getValueAt(actualRow, imageResultsTableView.getIdColumnIndex()) - 1;
-
             if (e.getColumn() == offlimbTableView.getMapColumnIndex())
             {
             	updateBodyPositions(row, new Runnable()
@@ -298,6 +297,8 @@ public class OfflimbImageResultsTableController extends ImageResultsTableControl
                 setOffLimbFootprintVisibility(namePrefix, visible);
                 super.tableChanged(e);
             }
+            else
+            	super.tableChanged(e);
         }
     }
 

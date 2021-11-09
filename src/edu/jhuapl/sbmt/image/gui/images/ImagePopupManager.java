@@ -21,9 +21,9 @@ public class ImagePopupManager extends PopupManager
 	{
 		super(modelManager);
 
-		ImageCollection imageCollection = (ImageCollection) modelManager.getModel(ModelNames.IMAGES);
+		ImageCollection imageCollection = (ImageCollection) modelManager.getModel(ModelNames.IMAGES).get(0);
 		PerspectiveImageBoundaryCollection imageBoundaries = (PerspectiveImageBoundaryCollection) modelManager
-				.getModel(ModelNames.PERSPECTIVE_IMAGE_BOUNDARIES);
+				.getModel(ModelNames.PERSPECTIVE_IMAGE_BOUNDARIES).get(0);
 		PopupMenu popupMenu = new ImagePopupMenu(modelManager, imageCollection, imageBoundaries, infoPanelManager,
 				spectrumPanelManager, renderer, renderer);
 		registerPopup(modelManager.getModel(ModelNames.IMAGES).get(0), popupMenu);
