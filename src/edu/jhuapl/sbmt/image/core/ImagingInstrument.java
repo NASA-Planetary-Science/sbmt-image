@@ -33,7 +33,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
     private double rotation;
     private String flip;
     private Set<Float> fillValues;
-
+    private boolean isTranspose;
 
     public ImagingInstrument()
     {
@@ -66,6 +66,11 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
 
     public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, ImageSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues)
     {
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, fillValues, true);
+    }
+
+    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, ImageSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, boolean isTranspose)
+    {
         this.spectralMode = spectralMode;
         this.searchQuery = searchQuery;
         this.type = type;
@@ -74,6 +79,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         this.rotation = rotation;
         this.flip = flip;
         this.fillValues = fillValues != null ? new LinkedHashSet<>(fillValues) : null;
+        this.isTranspose = isTranspose;
     }
 
 //    c.imagingInstruments = new ImagingInstrument[] {

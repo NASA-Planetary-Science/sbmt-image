@@ -27,6 +27,7 @@ public class ImagingInstrumentConfiguration extends ExtensibleTypedLookup implem
     public static final Key<ImageType> IMAGE_TYPE = Key.of("Image type");
     public static final Key<String> GALLERY_PATH = Key.of("Gallery path"); // If there is a gallery. Relative to image directory.
     public static final Key<String> DISPLAY_NAME = Key.of("Display name"); // If different from instrument.toString().
+    public static final Key<Boolean> TRANSPOSE = Key.of("Transpose image");
 
     // Use this one for sbmt2 branch.
     public static Builder<ImagingInstrumentConfiguration> builder(

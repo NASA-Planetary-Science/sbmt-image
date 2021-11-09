@@ -1,11 +1,8 @@
 package edu.jhuapl.sbmt.image.gui.images;
 
-import java.awt.AWTException;
-
 import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.model.ModelNames;
-import edu.jhuapl.saavtk.popup.GraticulePopupMenu;
 import edu.jhuapl.saavtk.popup.PopupManager;
 import edu.jhuapl.saavtk.popup.PopupMenu;
 import edu.jhuapl.sbmt.image.SbmtInfoWindowManager;
@@ -24,22 +21,12 @@ public class ImagePopupManager extends PopupManager
 	{
 		super(modelManager);
 
-		try
-		{
-			PopupMenu popupMenu = new GraticulePopupMenu(modelManager, renderer);
-			modelManager.getModel(ModelNames.GRATICULE).forEach(model -> registerPopup(model, popupMenu));
-		}
-		catch (AWTException e)
-		{
-			e.printStackTrace();
-		}
-
-		ImageCollection imageCollection = (ImageCollection) modelManager.getModel(ModelNames.IMAGES).get(0);
+		ImageCollection imageCollection = (ImageCollection) modelManager.getModel(ModelNames.IMAGES);
 		PerspectiveImageBoundaryCollection imageBoundaries = (PerspectiveImageBoundaryCollection) modelManager
-				.getModel(ModelNames.PERSPECTIVE_IMAGE_BOUNDARIES).get(0);
+				.getModel(ModelNames.PERSPECTIVE_IMAGE_BOUNDARIES);
 		PopupMenu popupMenu = new ImagePopupMenu(modelManager, imageCollection, imageBoundaries, infoPanelManager,
 				spectrumPanelManager, renderer, renderer);
-		modelManager.getModel(ModelNames.IMAGES).forEach(model -> registerPopup(model, popupMenu));
+		registerPopup(modelManager.getModel(ModelNames.IMAGES).get(0), popupMenu);
 	}
 
 }
