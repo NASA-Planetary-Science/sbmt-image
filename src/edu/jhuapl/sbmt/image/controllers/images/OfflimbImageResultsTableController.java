@@ -248,7 +248,8 @@ public class OfflimbImageResultsTableController extends ImageResultsTableControl
     	sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
     	try
 		{
-			positionOrientationManager.run(TimeUtil.str2et(sdf.format(dt)));
+    		if (positionOrientationManager != null)
+    			positionOrientationManager.run(TimeUtil.str2et(sdf.format(dt)));
         	String name = imageRawResults.get(row).get(0);
             ImageKeyInterface key = imageSearchModel.createImageKey(name.substring(0, name.length()-4), imageSearchModel.getImageSourceOfLastQuery(), instrument);
         	Image image = (imageCollection.getImage(key));
