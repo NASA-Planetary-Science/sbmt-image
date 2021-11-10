@@ -7,7 +7,6 @@ import edu.jhuapl.saavtk.model.Controller;
 import edu.jhuapl.saavtk.model.IPositionOrientationManager;
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.pick.PickManager;
-import edu.jhuapl.sbmt.client.SmallBodyModel;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.image.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.SbmtSpectrumWindowManager;
@@ -43,8 +42,7 @@ public class ImagingSearchController implements Controller<ImageSearchModel, Ima
             SbmtInfoWindowManager infoPanelManager,
             SbmtSpectrumWindowManager spectrumPanelManager,
             final PickManager pickManager, Renderer renderer,
-            ImagingInstrument instrument,
-            IPositionOrientationManager<SmallBodyModel> positionOrientationManager)
+            ImagingInstrument instrument)
     {
         this.modelManager = modelManager;
         this.renderer = renderer;
@@ -53,7 +51,7 @@ public class ImagingSearchController implements Controller<ImageSearchModel, Ima
         ImageCollection imageCollection = (ImageCollection)modelManager.getModel(imageSearchModel.getImageCollectionModelName()).get(0);
         PerspectiveImageBoundaryCollection imageBoundaryCollection = (PerspectiveImageBoundaryCollection)modelManager.getModel(imageSearchModel.getImageBoundaryCollectionModelName()).get(0);
 
-        this.imageResultsTableController = new OfflimbImageResultsTableController(instrument, imageCollection, imageSearchModel, renderer, infoPanelManager, spectrumPanelManager, positionOrientationManager);
+        this.imageResultsTableController = new OfflimbImageResultsTableController(instrument, imageCollection, imageSearchModel, renderer, infoPanelManager, spectrumPanelManager);
         this.imageResultsTableController.setImageResultsPanel();
 
         this.searchParametersController = new ImageSearchParametersController(imageSearchModel, pickManager);
@@ -97,5 +95,10 @@ public class ImagingSearchController implements Controller<ImageSearchModel, Ima
 	public ImagingSearchPanel getView()
 	{
 		return panel;
+	}
+
+	public void setPositionOrientationManager(IPositionOrientationManager manager)
+	{
+		imageResultsTableController.setPositionOrientationManager(manager);
 	}
 }

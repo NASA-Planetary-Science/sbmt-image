@@ -93,8 +93,7 @@ public class ImageResultsTableController
     int modifiedTableRow = -1;
 
     public ImageResultsTableController(ImagingInstrument instrument, ImageCollection imageCollection, ImageSearchModel model,
-    									Renderer renderer, SbmtInfoWindowManager infoPanelManager, SbmtSpectrumWindowManager spectrumPanelManager,
-    									IPositionOrientationManager<SmallBodyModel> positionOrientationManager)
+    									Renderer renderer, SbmtInfoWindowManager infoPanelManager, SbmtSpectrumWindowManager spectrumPanelManager)
     {
     	this.positionOrientationManager = positionOrientationManager;
         this.modelManager = model.getModelManager();
@@ -1117,87 +1116,8 @@ public class ImageResultsTableController
 		return imageKeys;
 	}
 
-    //    class DragDropRowTableUI extends BasicTableUI {
-    //
-    //        private boolean draggingRow = false;
-    //        private int startDragPoint;
-    //        private int dyOffset;
-    //
-    //       protected MouseInputListener createMouseInputListener() {
-    //           return new DragDropRowMouseInputHandler();
-    //       }
-    //
-    //       public void paint(Graphics g, JComponent c) {
-    //            super.paint(g, c);
-    //
-    //            if (draggingRow) {
-    //                 g.setColor(table.getParent().getBackground());
-    //                  Rectangle cellRect = table.getCellRect(table.getSelectedRow(), 0, false);
-    //                 g.copyArea(cellRect.x, cellRect.y, table.getWidth(), table.getRowHeight(), cellRect.x, dyOffset);
-    //
-    //                 if (dyOffset < 0) {
-    //                      g.fillRect(cellRect.x, cellRect.y + (table.getRowHeight() + dyOffset), table.getWidth(), (dyOffset * -1));
-    //                 } else {
-    //                      g.fillRect(cellRect.x, cellRect.y, table.getWidth(), dyOffset);
-    //                 }
-    //            }
-    //       }
-    //
-    //       class DragDropRowMouseInputHandler extends MouseInputHandler {
-    //
-    //    	   private int toRow;
-    //
-    //           public void mousePressed(MouseEvent e) {
-    //                super.mousePressed(e);
-    //                startDragPoint = (int)e.getPoint().getY();
-    //                toRow = table.getSelectedRow();
-    //           }
-    //
-    //           public void mouseDragged(MouseEvent e) {
-    //                int fromRow = table.getSelectedRow();
-    //
-    //                if (fromRow >= 0) {
-    //                     draggingRow = true;
-    //
-    //                     int rowHeight = table.getRowHeight();
-    //                     int middleOfSelectedRow = (rowHeight * fromRow) + (rowHeight / 2);
-    //
-    //                     toRow = fromRow;
-    //                     int yMousePoint = (int)e.getPoint().getY();
-    //
-    //                     if (yMousePoint < (middleOfSelectedRow - rowHeight)) {
-    //                          // Move row up
-    //                          toRow = fromRow - 1;
-    //                     } else if (yMousePoint > (middleOfSelectedRow + rowHeight)) {
-    //                          // Move row down
-    //                          toRow = fromRow + 1;
-    //                     }
-    //
-    //                     DefaultTableModel model = (DefaultTableModel)table.getModel();
-    //                     if (toRow >= 0 && toRow < table.getRowCount())
-    //                     {
-    //                    	 model.moveRow(table.getSelectedRow(), table.getSelectedRow(), toRow);
-    //
-    //                          List<String> fromList = imageRawResults.get(fromRow);
-    //                          List<String> toList = imageRawResults.get(toRow);
-    //
-    //                          imageRawResults.set(toRow, fromList);
-    //                          imageRawResults.set(fromRow, toList);
-    ////                          stringRenderer.setImageRawResults(imageRawResults);
-    //                           table.setRowSelectionInterval(toRow, toRow);
-    //                           startDragPoint = yMousePoint;
-    //                     }
-    //
-    //                     dyOffset = (startDragPoint - yMousePoint) * -1;
-    //                     table.repaint();
-    //                }
-    //           }
-    //
-    //           public void mouseReleased(MouseEvent e){
-    //                super.mouseReleased(e);
-    //                draggingRow = false;
-    //                table.repaint();
-    //           }
-    //       }
-    //   }
+	public void setPositionOrientationManager(IPositionOrientationManager manager)
+	{
+		this.positionOrientationManager = manager;
+	}
 }

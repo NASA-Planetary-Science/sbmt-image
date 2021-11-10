@@ -53,7 +53,7 @@ public class CustomImageResultsTableController extends ImageResultsTableControll
 
     public CustomImageResultsTableController(ImagingInstrument instrument, ImageCollection imageCollection, CustomImagesModel model, Renderer renderer, SbmtInfoWindowManager infoPanelManager, SbmtSpectrumWindowManager spectrumPanelManager)
     {
-        super(instrument, imageCollection, model, renderer, infoPanelManager, spectrumPanelManager, null);
+        super(instrument, imageCollection, model, renderer, infoPanelManager, spectrumPanelManager);
         this.model = model;
         this.results = model.getCustomImages();
         this.boundaries = (PerspectiveImageBoundaryCollection)model.getModelManager().getModel(model.getImageBoundaryCollectionModelName()).get(0);

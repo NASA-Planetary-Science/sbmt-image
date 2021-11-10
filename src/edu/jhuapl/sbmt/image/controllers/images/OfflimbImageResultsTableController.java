@@ -24,9 +24,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import edu.jhuapl.saavtk.gui.render.Renderer;
-import edu.jhuapl.saavtk.model.IPositionOrientationManager;
 import edu.jhuapl.saavtk.util.Properties;
-import edu.jhuapl.sbmt.client.SmallBodyModel;
 import edu.jhuapl.sbmt.image.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.SbmtSpectrumWindowManager;
 import edu.jhuapl.sbmt.image.common.ImageKeyInterface;
@@ -45,9 +43,9 @@ public class OfflimbImageResultsTableController extends ImageResultsTableControl
 
     public OfflimbImageResultsTableController(ImagingInstrument instrument, ImageCollection imageCollection, ImageSearchModel model,
     											Renderer renderer, SbmtInfoWindowManager infoPanelManager,
-    											SbmtSpectrumWindowManager spectrumPanelManager, IPositionOrientationManager<SmallBodyModel> positionOrientationManager)
+    											SbmtSpectrumWindowManager spectrumPanelManager)
     {
-        super(instrument, imageCollection, model, renderer, infoPanelManager, spectrumPanelManager, positionOrientationManager);
+        super(instrument, imageCollection, model, renderer, infoPanelManager, spectrumPanelManager);
         if (this.propertyChangeListener != null)
         {
             this.imageCollection.removePropertyChangeListener(this.propertyChangeListener);

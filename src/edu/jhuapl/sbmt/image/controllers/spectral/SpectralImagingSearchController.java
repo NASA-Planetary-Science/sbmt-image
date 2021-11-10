@@ -61,7 +61,7 @@ public class SpectralImagingSearchController implements Controller<ImageSearchMo
         ImageCollection imageCollection = (ImageCollection)modelManager.getModel(imageSearchModel.getImageCollectionModelName()).get(0);
         PerspectiveImageBoundaryCollection imageBoundaryCollection = (PerspectiveImageBoundaryCollection)modelManager.getModel(imageSearchModel.getImageBoundaryCollectionModelName()).get(0);
 
-        this.imageResultsTableController = new OfflimbImageResultsTableController(instrument, imageCollection, imageSearchModel, renderer, infoPanelManager, spectrumPanelManager, null);
+        this.imageResultsTableController = new OfflimbImageResultsTableController(instrument, imageCollection, imageSearchModel, renderer, infoPanelManager, spectrumPanelManager);
         this.imageResultsTableController.setImageResultsPanel();
 
         this.searchParametersController = new SpectralImageSearchParametersController(imageSearchModel, pickManager);
