@@ -350,7 +350,7 @@ public class PerspectiveImageRendererHelper2
     {
     	for (vtkProp footprintActor : footprintActors)
     	{
-    		if (!footprintOfflimbActors.contains(footprintActor))
+    		if (!footprintOfflimbActors.contains(footprintActor) && footprintActor != frustumActor)
     			footprintActor.SetVisibility(b ? 1 : 0);
     	}
     }
@@ -433,7 +433,7 @@ public class PerspectiveImageRendererHelper2
             frustumActor.VisibilityOff();
         }
 
-        image.firePropertyChange(Properties.MODEL_CHANGED, null, this);
+        image.firePropertyChange(Properties.MODEL_CHANGED, null, frustumActor);
     }
 
     public boolean isFrustumShowing()
