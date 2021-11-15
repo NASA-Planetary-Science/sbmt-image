@@ -25,7 +25,7 @@ public class PerspectiveImageFrustumRendererOperator
 		this.image = image;
 		maxFrustumDepth = new double[image.getImageDepth()];
 		minFrustumDepth = new double[image.getImageDepth()];
-		frustumActor = new vtkActor();
+
 	}
 
 	// **********************
@@ -34,6 +34,7 @@ public class PerspectiveImageFrustumRendererOperator
 
 	public void calculateFrustum()
 	{
+		frustumActor = new vtkActor();
 		double[][] spacecraftPositionAdjusted = image.getSpacecraftPositionAdjusted();
 		double[][] frustum1Adjusted = image.getFrustum1Adjusted();
 		double[][] frustum2Adjusted = image.getFrustum2Adjusted();

@@ -38,6 +38,7 @@ import vtk.vtkTexture;
 
 import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.saavtk.util.BoundingBox;
+import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.saavtk.util.DateTimeUtil;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.Frustum;
@@ -232,7 +233,8 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
         this.backplanesHelper = new PerspectiveImageBackplanesHelper(this);
         this.imageOffsetCalculator = new PerspectiveImageOffsetCalculator(this);
         this.offlimbPlaneHelper = new PerspectiveImageOfflimbPlaneHelper(this);
-        this.rendererHelper = new PerspectiveImageRendererHelper2(this, smallBodyModels);
+        if (!Configuration.isHeadless())
+        	this.rendererHelper = new PerspectiveImageRendererHelper2(this, smallBodyModels);
 
         initialize();
     }
