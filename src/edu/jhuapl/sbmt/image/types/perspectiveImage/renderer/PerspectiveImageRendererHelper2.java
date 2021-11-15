@@ -210,7 +210,8 @@ public class PerspectiveImageRendererHelper2
     public void loadFootprint()
     {
         vtkPolyData[] existingFootprints = footprintCacheOperator.checkForExistingFootprint(image.getPrerenderingFileNameBase());
-        if (existingFootprints != null)
+        int modelRes = image.getSmallBodyModel().getModelResolution();
+        if ((modelRes >=3) && (existingFootprints != null))
         {
         	int i=0;
         	for (vtkPolyData existingFootprint : existingFootprints)
