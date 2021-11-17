@@ -1993,10 +1993,8 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
         try
         {
             images = getCustomImageMetadata();
-            System.out.println("PerspectiveImage: initLocalInfoFileFullPath: num custom images " + images.size());
             for (ImageKeyInterface info : images)
             {
-            	System.out.println("PerspectiveImage: initLocalInfoFileFullPath: info is " + info);
                 String filename = new File(getKey().getImageFilename()).getName();
                 if (filename.equals(info.getImageFilename()))
                 {
@@ -2004,7 +2002,6 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
                         return null;
 //                    String string = new File(getKey().getName()).getParent() + File.separator + info.getPointingFile();
                     String string = smallBodyModel.getCustomDataFolder() + File.separator + info.getPointingFile();
-                    System.out.println("PerspectiveImage: initLocalInfoFileFullPath: string is " + string);
 //                    if (getKey().getName().startsWith("file:/"))
 //                        return string.substring(5);
 //                    else
