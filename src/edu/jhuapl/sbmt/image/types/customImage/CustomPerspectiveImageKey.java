@@ -5,6 +5,7 @@ import java.util.Date;
 import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.sbmt.image.common.IImagingInstrument;
 import edu.jhuapl.sbmt.image.common.ImageType;
+import edu.jhuapl.sbmt.image.core.ImagingInstrument;
 import edu.jhuapl.sbmt.image.gui.custom.CustomImageImporterDialog.ProjectionType;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 
@@ -28,6 +29,7 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
     public final ImageSource source;
     private final Date date;
     private String originalName;
+    public final IImagingInstrument instrument;
 
     private static final Key<String> nameKey = Key.of("name");
     private static final Key<String> imageFileNameKey = Key.of("imagefilename");
@@ -39,12 +41,13 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
     private static final Key<String> pointingFilenameKey = Key.of("pointingfilename");
     private static final Key<Date> dateKey = Key.of("date");
     private static final Key<String> originalNameKey = Key.of("originalName");
+    private static final Key<Metadata> instrumentKey = Key.of("instrument");
 
     private static final Key<CustomPerspectiveImageKey> CUSTOM_PERSPECTIVE_IMAGE_KEY = Key.of("customPerspectiveImage");
 
 
 
-    public CustomPerspectiveImageKey(String name, String imagefilename, ImageSource source, ImageType imageType,
+    public CustomPerspectiveImageKey(String name, String imagefilename, ImageSource source, ImageType imageType, IImagingInstrument instrument,
     		double rotation, String flip, FileType fileType, String pointingFilename, Date date, String originalName)
     {
     	this.name = name;
@@ -57,7 +60,7 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
     	this.pointingFilename = pointingFilename;
     	this.date = date;
     	this.originalName = originalName;
-
+    	this.instrument = instrument;
     }
 
     @Override
@@ -66,7 +69,7 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
         if (imageType == ImageType.GENERIC_IMAGE)
             return name + ", Perspective" + ", " + imageType + ", Rotate " + rotation + ", Flip " + flip;
         else
-            return name + "Image name: " + imagefilename +", Perspective" + ", " + imageType;
+            return name + ", Image name: " + imagefilename +", Perspective" + ", " + imageType;
     }
 
     public String getName()
@@ -124,6 +127,8 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
         result.put(pointingFilenameKey, pointingFilename);
         result.put(dateKey, date);
         result.put(originalNameKey, originalName);
+        if (instrument != null)
+        	result.put(instrumentKey, instrument.store());
         return result;
     }
 
@@ -141,8 +146,10 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
 	        String pointingFilename = metadata.get(pointingFilenameKey);
 	        Date date = metadata.get(dateKey);
 	        String originalName = metadata.hasKey(originalNameKey) ? metadata.get(originalNameKey) : name;
-
-	        return new CustomPerspectiveImageKey(name, imagefilename, source, imageType, rotation, flip, fileType, pointingFilename, date, originalName);
+	        Metadata instrumentMetadata =  metadata.hasKey(instrumentKey) ? metadata.get(instrumentKey) : null;
+	        ImagingInstrument instrument = new ImagingInstrument();
+	        instrument.retrieve(instrumentMetadata);
+	        return new CustomPerspectiveImageKey(name, imagefilename, source, imageType, instrument, rotation, flip, fileType, pointingFilename, date, originalName);
 		}, CustomPerspectiveImageKey.class, key -> {
 		    return key.store();
 		});
@@ -164,8 +171,7 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
 	@Override
 	public IImagingInstrument getInstrument()
 	{
-		// TODO Auto-generated method stub
-		return null;
+		return instrument;
 	}
 
 	@Override

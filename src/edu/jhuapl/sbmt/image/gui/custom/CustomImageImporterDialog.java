@@ -214,7 +214,7 @@ public class CustomImageImporterDialog extends javax.swing.JDialog
             double rotation = imageRotateComboBox.getSelectedIndex() * 90.0;
             String flip = imageFlipComboBox.getSelectedItem().toString();
 
-            CustomPerspectiveImageKey key = new CustomPerspectiveImageKey(name, imagefilename, source, imageType, rotation, flip, fileType, pointingFilename, new Date(), originalName);
+            CustomPerspectiveImageKey key = new CustomPerspectiveImageKey(name, imagefilename, source, imageType, instrument, rotation, flip, fileType, pointingFilename, new Date(), originalName);
             return key;
         }
     }

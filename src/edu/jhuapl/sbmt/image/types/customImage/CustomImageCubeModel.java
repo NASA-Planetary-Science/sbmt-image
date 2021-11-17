@@ -12,8 +12,8 @@ import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.sbmt.image.core.listeners.ImageCubeResultsListener;
 import edu.jhuapl.sbmt.image.gui.custom.CustomImageImporterDialog.ProjectionType;
 import edu.jhuapl.sbmt.image.types.imageCube.ImageCube;
-import edu.jhuapl.sbmt.image.types.imageCube.ImageCubeModel;
 import edu.jhuapl.sbmt.image.types.imageCube.ImageCube.ImageCubeKey;
+import edu.jhuapl.sbmt.image.types.imageCube.ImageCubeModel;
 import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImage;
 
 import nom.tam.fits.FitsException;
@@ -63,7 +63,7 @@ public class CustomImageCubeModel extends ImageCubeModel
      		{
      			newKey = new CustomPerspectiveImageKey( //
      			        SafeURLPaths.instance().getUrl(getCustomDataFolder() + File.separator + info.getImageFilename()), //
-     			        info.getImageFilename(), info.getSource(), info.getImageType(), //
+     			        info.getImageFilename(), info.getSource(), info.getImageType(), info.getInstrument(), //
      			        ((CustomPerspectiveImageKey)info).getRotation(), ((CustomPerspectiveImageKey)info).getFlip(), //
      			        info.getFileType(), info.getPointingFile(), info.getDate(), info.getOriginalName());
                 selectedKeys.add(newKey);

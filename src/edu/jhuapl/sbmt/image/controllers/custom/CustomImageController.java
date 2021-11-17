@@ -6,6 +6,7 @@ import java.util.Vector;
 import javax.swing.JPanel;
 
 import edu.jhuapl.saavtk.gui.render.Renderer;
+import edu.jhuapl.saavtk.model.IPositionOrientationManager;
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.pick.PickManager;
 import edu.jhuapl.sbmt.client.SmallBodyViewConfig;
@@ -102,4 +103,9 @@ public class CustomImageController
     {
         return panel;
     }
+
+	public void setPositionOrientationManager(IPositionOrientationManager manager)
+	{
+		imageResultsTableController.setPositionOrientationManager(manager);
+	}
 }

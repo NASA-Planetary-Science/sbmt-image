@@ -131,6 +131,7 @@ public class CustomImagesModel extends ImageSearchModel
     public void loadImage(CustomImageKeyInterface key, ImageCollection images) throws FitsException, IOException
     {
         images.addImage(key);
+        images.propertyChange(new PropertyChangeEvent(this, Properties.MODEL_CHANGED, null, null));
     }
 
     @Override
@@ -167,7 +168,7 @@ public class CustomImagesModel extends ImageSearchModel
 		{
 			revisedKey = new CustomPerspectiveImageKey( //
 			        SafeURLPaths.instance().getUrl(getCustomDataFolder() + File.separator + info.getImageFilename()), //
-			        info.getImageFilename(), info.getSource(), info.getImageType(), //
+			        info.getImageFilename(), info.getSource(), info.getImageType(), info.getInstrument(), //
 			        ((CustomPerspectiveImageKey)info).getRotation(), ((CustomPerspectiveImageKey)info).getFlip(), //
 			        info.getFileType(), info.getPointingFile(), info.getDate(), info.getOriginalName());
 		}
@@ -561,7 +562,7 @@ public class CustomImagesModel extends ImageSearchModel
                     		fileType = FileType.INFO;
 
                     	}
-                    	CustomPerspectiveImageKey imageInfo = new CustomPerspectiveImageKey(name, imageFilename, ImageSource.LOCAL_PERSPECTIVE, imageType, rotation, flip, fileType, pointingFilename, new Date(), name);
+                    	CustomPerspectiveImageKey imageInfo = new CustomPerspectiveImageKey(name, imageFilename, ImageSource.LOCAL_PERSPECTIVE, imageType, null, rotation, flip, fileType, pointingFilename, new Date(), name);
 
                         customImages.add(imageInfo);
 

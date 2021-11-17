@@ -50,7 +50,7 @@ public interface CustomImageKeyInterface extends ImageKeyInterface
 				 fileType = FileType.SUM;
 	        	 pointingFileName = metadata.get(sumFilenameKey);
 			 }
-			 return new CustomPerspectiveImageKey(metadata.get(nameKey), metadata.get(imageFileNameKey), imageSource, ImageType.valueOf(metadata.get(imageTypeKey)),
+			 return new CustomPerspectiveImageKey(metadata.get(nameKey), metadata.get(imageFileNameKey), imageSource, ImageType.valueOf(metadata.get(imageTypeKey)), null,
 					 metadata.get(rotationKey), metadata.get(flipKey), fileType, pointingFileName, new Date(), metadata.get(nameKey));
 		 }
 		 else

@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import com.google.common.base.Stopwatch;
-
 import vtk.vtkActor;
 import vtk.vtkProp;
 
@@ -115,8 +113,8 @@ public class ImageCollection extends AbstractModel implements PropertyChangeList
             return;
         }
 
-        Stopwatch sw = Stopwatch.createUnstarted();
-        sw.start();
+//        Stopwatch sw = Stopwatch.createUnstarted();
+//        sw.start();
         Image image = createImage(key);
 //        System.out.println("ImageCollection: addImage: created image in " + sw.elapsedMillis() + " ms");
 

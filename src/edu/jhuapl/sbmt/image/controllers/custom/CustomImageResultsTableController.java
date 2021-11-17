@@ -355,7 +355,7 @@ public class CustomImageResultsTableController extends ImageResultsTableControll
         		{
         			info = new CustomPerspectiveImageKey( //
         			        SafeURLPaths.instance().getUrl(getCustomDataFolder() + File.separator + key.getImageFilename()), //
-        			        key.getImageFilename(), key.getSource(), key.getImageType(), //
+        			        key.getImageFilename(), key.getSource(), key.getImageType(), key.getInstrument(), //
         			        ((CustomPerspectiveImageKey)key).getRotation(), ((CustomPerspectiveImageKey)key).getFlip(), //
         			        key.getFileType(), key.getPointingFile(), key.getDate(), key.getOriginalName());
                     boundaries.addBoundary(info);
@@ -474,7 +474,7 @@ public class CustomImageResultsTableController extends ImageResultsTableControll
 		{
 			info = new CustomPerspectiveImageKey(//
 			        SafeURLPaths.instance().getUrl(getCustomDataFolder() + File.separator + key.getImageFilename()), //
-			        key.getImageFilename(), key.getSource(), key.getImageType(), //
+			        key.getImageFilename(), key.getSource(), key.getImageType(), key.getInstrument(), //
 			        ((CustomPerspectiveImageKey)key).getRotation(), ((CustomPerspectiveImageKey)key).getFlip(), //
 			        key.getFileType(), key.getPointingFile(), key.getDate(), key.getOriginalName());
 		}
@@ -536,6 +536,7 @@ public class CustomImageResultsTableController extends ImageResultsTableControll
                 if ((Boolean)imageResultsTableView.getResultList().getValueAt(row, imageResultsTableView.getMapColumnIndex()))
                 {
                     model.loadImages(results.get(row));
+
                 }
                 else
                 {
@@ -570,7 +571,7 @@ public class CustomImageResultsTableController extends ImageResultsTableControll
         		{
         			key = new CustomPerspectiveImageKey( //
         			        SafeURLPaths.instance().getUrl(getCustomDataFolder() + File.separator + info.getImageFilename()), //
-        			        info.getImageFilename(), info.getSource(), info.getImageType(), //
+        			        info.getImageFilename(), info.getSource(), info.getImageType(), info.getInstrument(),//
         			        ((CustomPerspectiveImageKey)info).getRotation(), ((CustomPerspectiveImageKey)info).getFlip(), //
         			        info.getFileType(), info.getPointingFile(), info.getDate(), info.getOriginalName());
         		}
@@ -606,6 +607,7 @@ public class CustomImageResultsTableController extends ImageResultsTableControll
                     e1.printStackTrace();
                 }
             }
+            renderer.getRenderWindowPanel().resetCameraClippingRange();
 
         }
     }

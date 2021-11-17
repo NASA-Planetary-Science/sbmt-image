@@ -1919,7 +1919,7 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
 
     protected String initLocalFitFileFullPath()
     {
-        String keyName = getKey().getName();
+        String keyName = smallBodyModel.getCustomDataFolder() + File.separator + getKey().getImageFilename();
         if (keyName.endsWith(".fit") || keyName.endsWith(".fits") ||
                 keyName.endsWith(".FIT") || keyName.endsWith(".FITS"))
         {
@@ -1961,11 +1961,19 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
     {
         final Key<List<CustomImageKeyInterface>> customImagesKey = Key.of("customImages");
         String file;
+        System.out.println("PerspectiveImage: getCustomImageMetadata: key is " + getKey());
         if (getKey().getName().startsWith("file://"))
             file = getKey().getName().substring(7, getKey().getName().lastIndexOf("/"));
         else
             file = new File(getKey().getImageFilename()).getParent();
+        if (file == null)
+        {
+        	file = getSmallBodyModel().getCustomDataFolder();
+        }
+
         String configFilename = file + File.separator + "config.txt";
+        System.out.println("PerspectiveImage: getCustomImageMetadata: config filename " + configFilename);
+
         FixedMetadata metadata = Serializers.deserialize(new File(configFilename), "CustomImages");
         return metadata.get(customImagesKey);
 
@@ -1985,17 +1993,21 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
         try
         {
             images = getCustomImageMetadata();
+            System.out.println("PerspectiveImage: initLocalInfoFileFullPath: num custom images " + images.size());
             for (ImageKeyInterface info : images)
             {
-                String filename = new File(getKey().getName()).getName();
+            	System.out.println("PerspectiveImage: initLocalInfoFileFullPath: info is " + info);
+                String filename = new File(getKey().getImageFilename()).getName();
                 if (filename.equals(info.getImageFilename()))
                 {
                     if (info.getFileType() == FileType.SUM)
                         return null;
-                    String string = new File(getKey().getName()).getParent() + File.separator + info.getPointingFile();
-                    if (getKey().getName().startsWith("file:/"))
-                        return string.substring(5);
-                    else
+//                    String string = new File(getKey().getName()).getParent() + File.separator + info.getPointingFile();
+                    String string = smallBodyModel.getCustomDataFolder() + File.separator + info.getPointingFile();
+                    System.out.println("PerspectiveImage: initLocalInfoFileFullPath: string is " + string);
+//                    if (getKey().getName().startsWith("file:/"))
+//                        return string.substring(5);
+//                    else
                         return string;
                 }
             }

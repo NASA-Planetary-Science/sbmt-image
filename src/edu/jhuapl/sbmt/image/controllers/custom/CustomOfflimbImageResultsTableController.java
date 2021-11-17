@@ -27,17 +27,22 @@ import javax.swing.table.DefaultTableModel;
 import org.apache.commons.io.FilenameUtils;
 
 import edu.jhuapl.saavtk.gui.render.Renderer;
+import edu.jhuapl.saavtk.model.ModelNames;
 import edu.jhuapl.saavtk.util.Properties;
+import edu.jhuapl.sbmt.client.SmallBodyModel;
 import edu.jhuapl.sbmt.image.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.SbmtSpectrumWindowManager;
 import edu.jhuapl.sbmt.image.common.ImageKeyInterface;
 import edu.jhuapl.sbmt.image.controllers.StringRenderer;
+import edu.jhuapl.sbmt.image.core.Image;
 import edu.jhuapl.sbmt.image.core.ImagingInstrument;
 import edu.jhuapl.sbmt.image.gui.images.OfflimbImageResultsTableView;
+import edu.jhuapl.sbmt.image.services.SbmtImageModelFactory;
 import edu.jhuapl.sbmt.image.types.ImageCollection;
 import edu.jhuapl.sbmt.image.types.customImage.CustomImageKeyInterface;
 import edu.jhuapl.sbmt.image.types.customImage.CustomImagesModel;
 import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImage;
+import edu.jhuapl.sbmt.util.TimeUtil;
 
 public class CustomOfflimbImageResultsTableController extends CustomImageResultsTableController
 {
@@ -337,6 +342,33 @@ public class CustomOfflimbImageResultsTableController extends CustomImageResults
         modifiedTableRow = -1;
     }
 
+    private void updateBodyPositions(int row, Runnable completionBlock)
+    {
+    	Date dt = new Date(Long.parseLong(imageRawResults.get(row).get(1)));
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS");
+    	sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    	try
+		{
+    		ImageKeyInterface key = model.getImageKeyForIndex(row);
+			List<SmallBodyModel> bodies = modelManager.getModel(ModelNames.SMALL_BODY).stream().map(body -> { return (SmallBodyModel)body; }).toList();
+    		Image image = SbmtImageModelFactory.createImage(key, bodies, false);
+
+        	if (positionOrientationManager != null)
+    			positionOrientationManager.run(image.getTime());
+        	if (image == null) {
+        		if (completionBlock != null) completionBlock.run();
+        		return;
+        	}
+        	image.propertyChange(new PropertyChangeEvent(this, Properties.MODEL_CHANGED, null, null));
+        	if (completionBlock != null) completionBlock.run();
+		}
+		catch (Exception e1)
+		{
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+    }
+
     class OfflimbImageResultsTableModeListener extends CustomImageResultsTableModeListener
     {
         public void tableChanged(TableModelEvent e)
@@ -357,10 +389,29 @@ public class CustomOfflimbImageResultsTableController extends CustomImageResults
 //                offlimbTableView.getResultList().setValueAt(false, actualRow, offlimbTableView.getOffLimbIndex());
 //                setOffLimbFootprintVisibility(namePrefix, false);   // set visibility to false if we are mapping or unmapping the image
             }
-            else*/ if (e.getColumn() == offlimbTableView.getOffLimbIndex())
+            */
+            if (e.getColumn() == offlimbTableView.getMapColumnIndex())
+            {
+            	updateBodyPositions(row, new Runnable()
+				{
+
+					@Override
+					public void run()
+					{
+						String name = imageRawResults.get(row).get(0);
+						String namePrefix = FilenameUtils.getBaseName(name);
+		                OfflimbImageResultsTableModeListener.super.tableChanged(e);
+		                offlimbTableView.getResultList().setValueAt(false, actualRow, offlimbTableView.getOffLimbIndex());
+		                setOffLimbFootprintVisibility(namePrefix, false);   // set visibility to false if we are mapping or unmapping the image
+					}
+				});
+
+
+            }
+            else if (e.getColumn() == offlimbTableView.getOffLimbIndex())
             {
                 String name = imageRawResults.get(row).get(0);
-                String namePrefix = name.substring(0, name.length()-4);
+                String namePrefix = FilenameUtils.getBaseName(name);
                 boolean visible = (Boolean)getResultList().getValueAt(actualRow, offlimbTableView.getOffLimbIndex());
                 setOffLimbFootprintVisibility(namePrefix, visible);
             }

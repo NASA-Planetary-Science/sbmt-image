@@ -158,6 +158,7 @@ public class PerspectiveImageRendererHelper2
         {
         	footprintRendererOperator.loadFootprint();
         	shiftedFootprint = footprintRendererOperator.getShiftedFootprint();
+        	footprint = footprintRendererOperator.getFootprint();
         }
     }
 
@@ -231,6 +232,7 @@ public class PerspectiveImageRendererHelper2
         {
         	footprintRendererOperator.loadFootprint();
         	shiftedFootprint = footprintRendererOperator.getShiftedFootprint();
+        	footprint = footprintRendererOperator.getFootprint();
         }
         setCurrentMask(image.getCurrentMask());
     }
