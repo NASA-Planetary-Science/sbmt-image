@@ -45,7 +45,11 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
 
     private static final Key<CustomPerspectiveImageKey> CUSTOM_PERSPECTIVE_IMAGE_KEY = Key.of("customPerspectiveImage");
 
-
+    public CustomPerspectiveImageKey(String name, String imagefilename, ImageSource source, ImageType imageType,
+    		double rotation, String flip, FileType fileType, String pointingFilename, Date date, String originalName)
+    {
+    	this(name, imagefilename, source, imageType, null, rotation, flip, fileType, pointingFilename, date, originalName);
+    }
 
     public CustomPerspectiveImageKey(String name, String imagefilename, ImageSource source, ImageType imageType, IImagingInstrument instrument,
     		double rotation, String flip, FileType fileType, String pointingFilename, Date date, String originalName)
@@ -147,9 +151,16 @@ public class CustomPerspectiveImageKey implements StorableAsMetadata<CustomPersp
 	        Date date = metadata.get(dateKey);
 	        String originalName = metadata.hasKey(originalNameKey) ? metadata.get(originalNameKey) : name;
 	        Metadata instrumentMetadata =  metadata.hasKey(instrumentKey) ? metadata.get(instrumentKey) : null;
-	        ImagingInstrument instrument = new ImagingInstrument();
-	        instrument.retrieve(instrumentMetadata);
-	        return new CustomPerspectiveImageKey(name, imagefilename, source, imageType, instrument, rotation, flip, fileType, pointingFilename, date, originalName);
+	        if (instrumentMetadata == null)
+	        {
+	        	return new CustomPerspectiveImageKey(name, imagefilename, source, imageType, rotation, flip, fileType, pointingFilename, date, originalName);
+	        }
+	        else
+	        {
+		        ImagingInstrument instrument = new ImagingInstrument();
+		        instrument.retrieve(instrumentMetadata);
+		        return new CustomPerspectiveImageKey(name, imagefilename, source, imageType, instrument, rotation, flip, fileType, pointingFilename, date, originalName);
+	        }
 		}, CustomPerspectiveImageKey.class, key -> {
 		    return key.store();
 		});
