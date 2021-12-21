@@ -37,11 +37,9 @@ import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.sbmt.image.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.SbmtSpectrumWindowManager;
 import edu.jhuapl.sbmt.image.core.Image;
-import edu.jhuapl.sbmt.image.types.imageCube.ImageCubeCollection;
 import edu.jhuapl.sbmt.image.types.imageCube.ImageCube.ImageCubeKey;
+import edu.jhuapl.sbmt.image.types.imageCube.ImageCubeCollection;
 import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImage;
-import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImageBoundary;
-import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImageBoundaryCollection;
 import edu.jhuapl.sbmt.model.image.ImageSource;
 import edu.jhuapl.sbmt.model.leisa.LEISAJupiterImage;
 import edu.jhuapl.sbmt.model.mvic.MVICQuadJupiterImage;
@@ -53,7 +51,7 @@ public class ImageCubePopupMenu extends PopupMenu
 {
     private Component invoker;
     private ImageCubeCollection imageCollection;
-    private PerspectiveImageBoundaryCollection imageBoundaryCollection;
+//    private PerspectiveImageBoundaryCollection imageBoundaryCollection;
     private List<ImageCubeKey> imageKeys = new ArrayList<ImageCubeKey>();
     private JMenuItem mapImageMenuItem;
     private JMenuItem mapBoundaryMenuItem;
@@ -85,14 +83,14 @@ public class ImageCubePopupMenu extends PopupMenu
      */
     public ImageCubePopupMenu(
             ImageCubeCollection imageCollection,
-            PerspectiveImageBoundaryCollection imageBoundaryCollection,
+//            PerspectiveImageBoundaryCollection imageBoundaryCollection,
             SbmtInfoWindowManager infoPanelManager,
             SbmtSpectrumWindowManager spectrumPanelManager,
             Renderer renderer,
             Component invoker)
     {
         this.imageCollection = imageCollection;
-        this.imageBoundaryCollection = imageBoundaryCollection;
+//        this.imageBoundaryCollection = imageBoundaryCollection;
         this.infoPanelManager = infoPanelManager;
         this.spectrumPanelManager = spectrumPanelManager;
         this.renderer = renderer;
@@ -217,13 +215,14 @@ public class ImageCubePopupMenu extends PopupMenu
         for (ImageCubeKey imageKey : imageKeys)
         {
             boolean containsImage = imageCollection.containsImage(imageKey);
-            boolean containsBoundary = false;
-            if (imageBoundaryCollection != null)
-                containsBoundary = imageBoundaryCollection.containsBoundary(imageKey);
+            boolean containsBoundary = true;
+            Image image = imageCollection.getImage(imageKey);
+            if (image != null)
+            	selectMapBoundary = image.isBoundaryVisible();
 
             if (!containsBoundary)
             {
-                selectMapBoundary = containsBoundary;
+                selectMapBoundary = image.isBoundaryVisible();
                 enableBoundaryColor = false;
             }
 
@@ -248,7 +247,6 @@ public class ImageCubePopupMenu extends PopupMenu
 
             if (containsImage)
             {
-                Image image = imageCollection.getImage(imageKey);
                 if (!(image instanceof PerspectiveImage) || !((PerspectiveImage)image).isFrustumShowing())
                     selectShowFrustum = false;
                 if (imageKeys.size() == 1)
@@ -293,21 +291,21 @@ public class ImageCubePopupMenu extends PopupMenu
             HashSet<String> colors = new HashSet<String>();
             for (ImageCubeKey imageKey : imageKeys)
             {
-                int[] c = imageBoundaryCollection.getBoundary(imageKey).getBoundaryColor();
-                colors.add(c[0] + " " + c[1] + " " + c[2]);
+                Color c = imageCollection.getImage(imageKey).getBoundaryColor();
+                colors.add(c.getRed() + " " + c.getGreen() + " " + c.getBlue());
             }
 
             // If the boundary color equals one of the predefined colors, then check
             // the corresponding menu item.
-            int[] currentColor = imageBoundaryCollection.getBoundary(imageKeys.get(0)).getBoundaryColor();
+            Color currentColor = imageCollection.getImage(imageKeys.get(0)).getBoundaryColor();
             for (JCheckBoxMenuItem item : colorMenuItems)
             {
                 BoundaryColorAction action = (BoundaryColorAction)item.getAction();
                 Color color = action.color;
                 if (colors.size() == 1 &&
-                        currentColor[0] == color.getRed() &&
-                        currentColor[1] == color.getGreen() &&
-                        currentColor[2] == color.getBlue())
+                        currentColor.getRed() == color.getRed() &&
+                        currentColor.getGreen() == color.getGreen() &&
+                        currentColor.getBlue() == color.getBlue())
                 {
                     item.setSelected(true);
                 }
@@ -371,19 +369,7 @@ public class ImageCubePopupMenu extends PopupMenu
         {
             for (ImageCubeKey imageKey : imageKeys)
             {
-                try
-                {
-                    if (mapBoundaryMenuItem.isSelected())
-                        imageBoundaryCollection.addBoundary(imageKey);
-                    else
-                        imageBoundaryCollection.removeBoundary(imageKey);
-                }
-                catch (FitsException e1) {
-                    e1.printStackTrace();
-                }
-                catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+               	imageCollection.getImage(imageKey).setBoundaryVisibility(mapBoundaryMenuItem.isSelected());
             }
 
             updateMenuItems();
@@ -491,24 +477,24 @@ public class ImageCubePopupMenu extends PopupMenu
             double[] upVector = new double[3];
             double viewAngle = 0.0;
 
-            if (imageBoundaryCollection != null && imageBoundaryCollection.containsBoundary(imageKey))
-            {
-                PerspectiveImageBoundary boundary = imageBoundaryCollection.getBoundary(imageKey);
-                boundary.getCameraOrientation(spacecraftPosition, focalPoint, upVector);
-
-                viewAngle = boundary.getImage().getMaxFovAngle();
-            }
-            else if (imageCollection.containsImage(imageKey))
-            {
+//            if (imageBoundaryCollection != null && imageBoundaryCollection.containsBoundary(imageKey))
+//            {
+//                PerspectiveImageBoundary boundary = imageBoundaryCollection.getBoundary(imageKey);
+//                boundary.getCameraOrientation(spacecraftPosition, focalPoint, upVector);
+//
+//                viewAngle = boundary.getImage().getMaxFovAngle();
+//            }
+//            else if (imageCollection.containsImage(imageKey))
+//            {
                 PerspectiveImage image = (PerspectiveImage)imageCollection.getImage(imageKey);
                 image.getCameraOrientation(spacecraftPosition, focalPoint, upVector);
 
                 viewAngle = image.getMaxFovAngle();
-            }
-            else
-            {
-                return;
-            }
+//            }
+//            else
+//            {
+//                return;
+//            }
 
             renderer.setCameraOrientation(spacecraftPosition, focalPoint, upVector, viewAngle);
         }
@@ -806,8 +792,7 @@ public class ImageCubePopupMenu extends PopupMenu
         {
             for (ImageCubeKey imageKey : imageKeys)
             {
-                PerspectiveImageBoundary boundary = imageBoundaryCollection.getBoundary(imageKey);
-                boundary.setBoundaryColor(color);
+            	imageCollection.getImage(imageKey).setBoundaryColor(color);
             }
 
             updateMenuItems();
@@ -818,15 +803,13 @@ public class ImageCubePopupMenu extends PopupMenu
     {
         public void actionPerformed(ActionEvent e)
         {
-            PerspectiveImageBoundary boundary = imageBoundaryCollection.getBoundary(imageKeys.get(0));
-            int[] currentColor = boundary.getBoundaryColor();
+        	Color currentColor = imageCollection.getImage(imageKeys.get(0)).getBoundaryColor();
             Color newColor = ColorChooser.showColorChooser(invoker, currentColor);
             if (newColor != null)
             {
                 for (ImageCubeKey imageKey : imageKeys)
                 {
-                    boundary = imageBoundaryCollection.getBoundary(imageKey);
-                    boundary.setBoundaryColor(newColor);
+                	imageCollection.getImage(imageKey).setBoundaryColor(newColor);
                 }
             }
         }
@@ -837,18 +820,18 @@ public class ImageCubePopupMenu extends PopupMenu
     {
         if (pickedProp instanceof vtkActor)
         {
-            if (imageBoundaryCollection != null && imageBoundaryCollection.getBoundary((vtkActor)pickedProp) != null)
-            {
-                PerspectiveImageBoundary boundary = imageBoundaryCollection.getBoundary((vtkActor)pickedProp);
-                setCurrentImage((ImageCubeKey)boundary.getKey());
-                show(e.getComponent(), e.getX(), e.getY());
-            }
-            else if (imageCollection.getImage((vtkActor)pickedProp) != null)
-            {
+//            if (imageBoundaryCollection != null && imageBoundaryCollection.getBoundary((vtkActor)pickedProp) != null)
+//            {
+//                PerspectiveImageBoundary boundary = imageBoundaryCollection.getBoundary((vtkActor)pickedProp);
+//                setCurrentImage((ImageCubeKey)boundary.getKey());
+//                show(e.getComponent(), e.getX(), e.getY());
+//            }
+//            else if (imageCollection.getImage((vtkActor)pickedProp) != null)
+//            {
                 Image image = imageCollection.getImage((vtkActor)pickedProp);
                 setCurrentImage((ImageCubeKey)image.getKey());
                 show(e.getComponent(), e.getX(), e.getY());
-            }
+//            }
         }
     }
 

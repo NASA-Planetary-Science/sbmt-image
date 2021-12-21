@@ -30,10 +30,10 @@ import edu.jhuapl.sbmt.image.gui.color.ColorImageGenerationPanel;
 import edu.jhuapl.sbmt.image.gui.color.ColorImagePopupMenu;
 import edu.jhuapl.sbmt.image.types.ImageSearchModel;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage;
-import edu.jhuapl.sbmt.image.types.colorImage.ColorImageCollection;
-import edu.jhuapl.sbmt.image.types.colorImage.ColorImageModel;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage.ColorImageKey;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage.NoOverlapException;
+import edu.jhuapl.sbmt.image.types.colorImage.ColorImageCollection;
+import edu.jhuapl.sbmt.image.types.colorImage.ColorImageModel;
 import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImageBoundaryCollection;
 
 import nom.tam.fits.FitsException;
@@ -111,7 +111,7 @@ public class ColorImageController
     {
         boundaries = (PerspectiveImageBoundaryCollection)model.getModelManager().getModel(colorModel.getImageBoundaryCollectionModelName()).get(0);
 
-        ColorImagePopupMenu colorImagePopupMenu = new ColorImagePopupMenu(colorImages, boundaries, infoPanelManager, model.getModelManager(), renderer, panel);
+        ColorImagePopupMenu colorImagePopupMenu = new ColorImagePopupMenu(colorImages, /*boundaries,*/ infoPanelManager, model.getModelManager(), renderer, panel);
         panel.setColorImagePopupMenu(colorImagePopupMenu);
 
         colorImages.addPropertyChangeListener(propertyChangeListener);

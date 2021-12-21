@@ -334,7 +334,7 @@ public class ImageInfoPanel extends ModelInfoWindow implements MouseListener, Mo
          * from that class and put these in our new JMenu.
          */
         ImagePopupMenu imagesPopupMenu =
-            new ImagePopupMenu(null, imageCollection, imageBoundaryCollection, null, null, null, this);
+            new ImagePopupMenu(null, imageCollection, /*imageBoundaryCollection,*/ null, null, null, this);
 
         imagesPopupMenu.setCurrentImage(image.getKey());
 

@@ -31,9 +31,9 @@ import edu.jhuapl.sbmt.image.types.ImageCollection;
 import edu.jhuapl.sbmt.image.types.ImageSearchModel;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage.NoOverlapException;
 import edu.jhuapl.sbmt.image.types.imageCube.ImageCube;
+import edu.jhuapl.sbmt.image.types.imageCube.ImageCube.ImageCubeKey;
 import edu.jhuapl.sbmt.image.types.imageCube.ImageCubeCollection;
 import edu.jhuapl.sbmt.image.types.imageCube.ImageCubeModel;
-import edu.jhuapl.sbmt.image.types.imageCube.ImageCube.ImageCubeKey;
 import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImageBoundaryCollection;
 
 import nom.tam.fits.FitsException;
@@ -139,7 +139,7 @@ public class ImageCubeController
     {
         boundaries = (PerspectiveImageBoundaryCollection)model.getModelManager().getModel(cubeModel.getImageBoundaryCollectionModelName()).get(0);
         imageCubes = (ImageCubeCollection)model.getModelManager().getModel(cubeModel.getImageCubeCollectionModelName()).get(0);
-        imageCubePopupMenu = new ImageCubePopupMenu(imageCubes, boundaries, infoPanelManager, spectrumPanelManager, renderer, panel);
+        imageCubePopupMenu = new ImageCubePopupMenu(imageCubes, /*boundaries,*/ infoPanelManager, spectrumPanelManager, renderer, panel);
 
         panel.getRemoveImageCubeButton().setText("Remove Image Cube");
         panel.getRemoveImageCubeButton().addActionListener(new ActionListener() {

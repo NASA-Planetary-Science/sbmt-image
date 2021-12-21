@@ -26,11 +26,9 @@ import edu.jhuapl.saavtk.popup.PopupMenu;
 import edu.jhuapl.saavtk.util.ColorUtil;
 import edu.jhuapl.sbmt.image.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage;
-import edu.jhuapl.sbmt.image.types.colorImage.ColorImageCollection;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage.ColorImageKey;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage.NoOverlapException;
-import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImageBoundary;
-import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImageBoundaryCollection;
+import edu.jhuapl.sbmt.image.types.colorImage.ColorImageCollection;
 
 import nom.tam.fits.FitsException;
 
@@ -39,7 +37,7 @@ public class ColorImagePopupMenu extends PopupMenu
 {
     private Component invoker;
     private ColorImageCollection imageCollection;
-    private PerspectiveImageBoundaryCollection imageBoundaryCollection;
+//    private PerspectiveImageBoundaryCollection imageBoundaryCollection;
     private ColorImageKey imageKey;
     //private ModelManager modelManager;
     private JMenuItem showRemoveImageIn3DMenuItem;
@@ -66,7 +64,7 @@ public class ColorImagePopupMenu extends PopupMenu
      */
     public ColorImagePopupMenu(
             ColorImageCollection imageCollection,
-            PerspectiveImageBoundaryCollection imageBoundaryCollection,
+//            PerspectiveImageBoundaryCollection imageBoundaryCollection,
             SbmtInfoWindowManager infoPanelManager,
             ModelManager modelManager,
             Renderer renderer,
@@ -74,7 +72,7 @@ public class ColorImagePopupMenu extends PopupMenu
     {
         this.imageCollection = imageCollection;
         this.infoPanelManager = infoPanelManager;
-        this.imageBoundaryCollection = imageBoundaryCollection;
+//        this.imageBoundaryCollection = imageBoundaryCollection;
         this.renderer = renderer;
         //this.modelManager = modelManager;
         this.invoker = invoker;
@@ -213,22 +211,7 @@ public class ColorImagePopupMenu extends PopupMenu
         {
             for (ColorImageKey imageKey : imageKeys)
             {
-                try
-                {
-                    if (mapBoundaryMenuItem.isSelected())
-                    {
-                    	System.out.println("ColorImagePopupMenu.MapBoundaryAction: actionPerformed: adding image boundary");
-                        imageBoundaryCollection.addBoundary(imageKey);
-                    }
-                    else
-                        imageBoundaryCollection.removeBoundary(imageKey);
-                }
-                catch (FitsException e1) {
-                    e1.printStackTrace();
-                }
-                catch (IOException e1) {
-                    e1.printStackTrace();
-                }
+              	imageCollection.getImage(imageKey).setBoundaryVisibility(((JMenuItem)e.getSource()).isSelected());
             }
 
             updateMenuItems();
@@ -367,8 +350,7 @@ public class ColorImagePopupMenu extends PopupMenu
         {
             for (ColorImageKey imageKey : imageKeys)
             {
-                PerspectiveImageBoundary boundary = imageBoundaryCollection.getBoundary(imageKey);
-                boundary.setBoundaryColor(color);
+            	imageCollection.getImage(imageKey).setBoundaryColor(color);
             }
 
             updateMenuItems();
@@ -379,15 +361,13 @@ public class ColorImagePopupMenu extends PopupMenu
     {
         public void actionPerformed(ActionEvent e)
         {
-            PerspectiveImageBoundary boundary = imageBoundaryCollection.getBoundary(imageKeys.get(0));
-            int[] currentColor = boundary.getBoundaryColor();
+            Color currentColor = imageCollection.getImage(imageKey).getBoundaryColor();
             Color newColor = ColorChooser.showColorChooser(invoker, currentColor);
             if (newColor != null)
             {
                 for (ColorImageKey imageKey : imageKeys)
                 {
-                    boundary = imageBoundaryCollection.getBoundary(imageKey);
-                    boundary.setBoundaryColor(newColor);
+                	imageCollection.getImage(imageKey).setBoundaryColor(newColor);
                 }
             }
         }

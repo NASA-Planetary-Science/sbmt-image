@@ -99,7 +99,7 @@ public class ImageResultsTableController
         this.modelManager = model.getModelManager();
         this.imageKeys = new ArrayList<ImageKeyInterface>();
         boundaries = (PerspectiveImageBoundaryCollection) modelManager.getModel(model.getImageBoundaryCollectionModelName()).get(0);
-        imagePopupMenu = new ImagePopupMenu(modelManager, imageCollection, boundaries, infoPanelManager, spectrumPanelManager, renderer, imageResultsTableView);
+        imagePopupMenu = new ImagePopupMenu(modelManager, imageCollection, /*boundaries,*/ infoPanelManager, spectrumPanelManager, renderer, imageResultsTableView);
         imageResultsTableView = new ImageResultsTableView(instrument, imageCollection, imagePopupMenu);
         imageResultsTableView.setup();
         //        imageResultsTableView.getResultList().setUI(new DragDropRowTableUI());

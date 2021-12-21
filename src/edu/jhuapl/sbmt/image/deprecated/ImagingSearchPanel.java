@@ -97,11 +97,11 @@ import edu.jhuapl.sbmt.image.gui.cubes.ImageCubePopupMenu;
 import edu.jhuapl.sbmt.image.gui.images.ImagePopupMenu;
 import edu.jhuapl.sbmt.image.types.ImageCollection;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage;
-import edu.jhuapl.sbmt.image.types.colorImage.ColorImageCollection;
 import edu.jhuapl.sbmt.image.types.colorImage.ColorImage.ColorImageKey;
+import edu.jhuapl.sbmt.image.types.colorImage.ColorImageCollection;
 import edu.jhuapl.sbmt.image.types.imageCube.ImageCube;
-import edu.jhuapl.sbmt.image.types.imageCube.ImageCubeCollection;
 import edu.jhuapl.sbmt.image.types.imageCube.ImageCube.ImageCubeKey;
+import edu.jhuapl.sbmt.image.types.imageCube.ImageCubeCollection;
 import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImage;
 import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImageBoundary;
 import edu.jhuapl.sbmt.image.types.perspectiveImage.PerspectiveImageBoundaryCollection;
@@ -202,7 +202,7 @@ public class ImagingSearchPanel extends javax.swing.JPanel implements PropertyCh
 
         ImageCollection images = (ImageCollection)modelManager.getModel(getImageCollectionModelName());
         PerspectiveImageBoundaryCollection boundaries = (PerspectiveImageBoundaryCollection)modelManager.getModel(getImageBoundaryCollectionModelName());
-        imagePopupMenu = new ImagePopupMenu(modelManager, images, boundaries, infoPanelManager, spectrumPanelManager, renderer, this);
+        imagePopupMenu = new ImagePopupMenu(modelManager, images, /*boundaries,*/ infoPanelManager, spectrumPanelManager, renderer, this);
         boundaries.addPropertyChangeListener(this);
         images.addPropertyChangeListener(this);
 
@@ -210,7 +210,7 @@ public class ImagingSearchPanel extends javax.swing.JPanel implements PropertyCh
 //        colorImagePopupMenu = new ColorImagePopupMenu(colorImages, infoPanelManager, modelManager, this);
 
         ImageCubeCollection imageCubes = (ImageCubeCollection)modelManager.getModel(getImageCubeCollectionModelName());
-        imageCubePopupMenu = new ImageCubePopupMenu(imageCubes, boundaries, infoPanelManager, spectrumPanelManager, renderer, this);
+        imageCubePopupMenu = new ImageCubePopupMenu(imageCubes, /*boundaries,*/ infoPanelManager, spectrumPanelManager, renderer, this);
 
         imageCubes.addPropertyChangeListener(this);
 

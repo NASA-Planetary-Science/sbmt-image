@@ -1,5 +1,6 @@
 package edu.jhuapl.sbmt.image.core;
 
+import java.awt.Color;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
@@ -372,6 +373,7 @@ public abstract class Image extends AbstractModel implements PropertyChangeListe
 
     abstract public int getNumberOfComponentsOfOriginalImage();
 
+
     public boolean isFrustumShowing()
     {
     	return showFrustum;
@@ -381,7 +383,7 @@ public abstract class Image extends AbstractModel implements PropertyChangeListe
     {
     	this.showFrustum = showFrustum;
     }
-
+    
     public int[] getCurrentMask()
     {
         return new int[] {0, 0, 0, 0};
@@ -394,6 +396,29 @@ public abstract class Image extends AbstractModel implements PropertyChangeListe
 
     public void outputToOBJ(String filename)
     {
+    }
+
+    protected Color boundaryColor = Color.red;
+    protected boolean boundaryVisible = false;
+
+    public void setBoundaryColor(Color color)
+    {
+    	this.boundaryColor = color;
+    }
+
+    public Color getBoundaryColor()
+    {
+    	return boundaryColor;
+    }
+
+    public void setBoundaryVisibility(boolean isVisible)
+    {
+    	this.boundaryVisible = isVisible;
+    }
+
+    public boolean isBoundaryVisible()
+    {
+    	return boundaryVisible;
     }
 
 }

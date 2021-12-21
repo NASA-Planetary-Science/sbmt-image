@@ -82,7 +82,7 @@ public class CustomImageController
         ImageCubeCollection imageCubeCollection = (ImageCubeCollection)customImageModel.getModelManager().getModel(customCubeModel.getImageCubeCollectionModelName()).get(0);
         customCubeModel.setImageSearchModel(customImageModel);
         customCubeModel.setColorImageCollection(imageCubeCollection);
-        ImageCubePopupMenu imageCubePopupMenu = new ImageCubePopupMenu(imageCubeCollection, imageBoundaryCollection, infoPanelManager, spectrumPanelManager, renderer, getPanel());
+        ImageCubePopupMenu imageCubePopupMenu = new ImageCubePopupMenu(imageCubeCollection, /*imageBoundaryCollection,*/ infoPanelManager, spectrumPanelManager, renderer, getPanel());
         this.imageCubeController = new SpectralImageCubeController(customImageModel, customCubeModel, infoPanelManager, imageCubePopupMenu, spectrumPanelManager, renderer);
         CustomColorImageModel colorModel = new CustomColorImageModel();
         this.colorImageController = new ColorImageController(customImageModel, colorModel, infoPanelManager, renderer);

@@ -70,7 +70,7 @@ public class SpectralImagingSearchController implements Controller<ImageSearchMo
         ImageCubeModel cubeModel = new ImageCubeModel();
         ImageCubeCollection imageCubeCollection = (ImageCubeCollection)imageSearchModel.getModelManager().getModel(cubeModel.getImageCubeCollectionModelName()).get(0);
         cubeModel.setColorImageCollection(imageCubeCollection);
-        ImageCubePopupMenu imageCubePopupMenu = new ImageCubePopupMenu(imageCubeCollection, imageBoundaryCollection, infoPanelManager, spectrumPanelManager, renderer, getPanel());
+        ImageCubePopupMenu imageCubePopupMenu = new ImageCubePopupMenu(imageCubeCollection, /*imageBoundaryCollection,*/ infoPanelManager, spectrumPanelManager, renderer, getPanel());
         this.imageCubeController = new SpectralImageCubeController(imageSearchModel, cubeModel, infoPanelManager, imageCubePopupMenu, spectrumPanelManager, renderer);
 
         ColorImageModel colorModel = new ColorImageModel();

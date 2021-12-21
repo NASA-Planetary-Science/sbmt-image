@@ -3704,13 +3704,13 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
 		return rendererHelper.isSimulatingLighingOn();
 	}
 
-	@Override
+//	@Override
 	public void setShowFrustum(boolean b)
 	{
 		rendererHelper.setShowFrustum(b);
 	}
 
-	@Override
+//	@Override
 	public boolean isFrustumShowing()
 	{
 		return rendererHelper.isFrustumShowing();
