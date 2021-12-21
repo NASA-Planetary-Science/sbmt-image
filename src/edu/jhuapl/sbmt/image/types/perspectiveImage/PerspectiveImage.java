@@ -1961,7 +1961,7 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
     {
         final Key<List<CustomImageKeyInterface>> customImagesKey = Key.of("customImages");
         String file;
-        System.out.println("PerspectiveImage: getCustomImageMetadata: key is " + getKey());
+//        System.out.println("PerspectiveImage: getCustomImageMetadata: key is " + getKey());
         if (getKey().getName().startsWith("file://"))
             file = getKey().getName().substring(7, getKey().getName().lastIndexOf("/"));
         else
@@ -1972,7 +1972,7 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
         }
 
         String configFilename = file + File.separator + "config.txt";
-        System.out.println("PerspectiveImage: getCustomImageMetadata: config filename " + configFilename);
+//        System.out.println("PerspectiveImage: getCustomImageMetadata: config filename " + configFilename);
 
         FixedMetadata metadata = Serializers.deserialize(new File(configFilename), "CustomImages");
         return metadata.get(customImagesKey);
