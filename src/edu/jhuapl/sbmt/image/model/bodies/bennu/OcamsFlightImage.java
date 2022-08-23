@@ -39,7 +39,6 @@ public class OcamsFlightImage extends BasicPerspectiveImage
         {
         	if (key.getImageType() != ImageType.NAVCAM_FLIGHT_IMAGE)
         	{
-        		System.out.println("OcamsFlightImage: processRawImage: not navcam");
         		ImageDataUtil.flipImageYAxis(rawImage);
         		ImageDataUtil.rotateImage(rawImage, 90);
         	}
