@@ -728,17 +728,16 @@ public class ImageResultsTableController
         imageResultsTableView.getSaveImageListButton().setEnabled(enablePostSearchButtons);
         imageResultsTableView.getSaveSelectedImageListButton().setEnabled(resultTable.getSelectedRowCount() > 0);
 
-        ImageGalleryGenerator galleryGenerator = ImageGalleryGenerator.of(instrument);
+        // Disable the gallery by default.
+        imageResultsTableView.getViewResultsGalleryButton().setVisible(false);
 
-        if (galleryGenerator != null)
-        {
+        ImageGalleryGenerator.of(instrument, state -> {
+            // This state change will always be triggered as long as the gallery
+            // has been set up successfully, so enable the gallery at this point.
             imageResultsTableView.getViewResultsGalleryButton().setEnabled(enablePostSearchButtons);
             imageResultsTableView.getViewResultsGalleryButton().setVisible(true);
-        }
-        else
-        {
-            imageResultsTableView.getViewResultsGalleryButton().setVisible(false);
-        }
+        });
+
     }
 
     protected void removeImageBoundaries(IdPair idPair)
