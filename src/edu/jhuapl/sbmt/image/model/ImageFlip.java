@@ -4,6 +4,7 @@ import java.util.function.Function;
 
 import com.vividsolutions.jts.awt.PointShapeFactory.X;
 
+
 /**
  * Encapsulation of image flip conditions, including algebra for applying
  * multiple flips. This abstraction is as null/fault-tolerant as possible for
