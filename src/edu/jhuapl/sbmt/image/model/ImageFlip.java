@@ -2,8 +2,6 @@ package edu.jhuapl.sbmt.image.model;
 
 import java.util.function.Function;
 
-import com.vividsolutions.jts.awt.PointShapeFactory.X;
-
 
 /**
  * Encapsulation of image flip conditions, including algebra for applying
@@ -114,7 +112,7 @@ public enum ImageFlip implements Function<ImageFlip, ImageFlip>
     /**
      * Return a {@link ImageFlip} based on the supplied string as follows. If the
      * string contains both characters X and Y, {@link #XY} is returned. If the
-     * string contains only X, {@link X} is returned. If the string contains only Y,
+     * string contains only X, {@link #X} is returned. If the string contains only Y,
      * {@link #Y} is returned. Otherwise {@link #NONE} is returned.
      * <p>
      * All string operations are case-insensitive.
