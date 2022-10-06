@@ -367,7 +367,7 @@ public class ColorImage extends Image implements PropertyChangeListener
                 double[] x = new double[3];
                 double[] pcoords = new double[3];
                 int[] subId = new int[1];
-                int[] cellId = new int[1];
+                long[] cellId = new long[1];
                 int result = cellLocator.IntersectWithLine(spacecraftPosition, lookPt, tol, t, x, pcoords, subId, cellId, cell);
 
                 if (result > 0)
@@ -418,17 +418,17 @@ public class ColorImage extends Image implements PropertyChangeListener
                     else if (this.chromatism == Chromatism.MONO_BLUE)
                         greenComponent = redComponent = blueComponent;
 
-                    colorImage.SetScalarComponentFromFloat(j, i, 0, 0, redComponent);
-                    colorImage.SetScalarComponentFromFloat(j, i, 0, 1, greenComponent);
-                    colorImage.SetScalarComponentFromFloat(j, i, 0, 2, blueComponent);
+                    colorImage.SetScalarComponentFromFloat(j, i, 0, 0, (float)redComponent);
+                    colorImage.SetScalarComponentFromFloat(j, i, 0, 1, (float)greenComponent);
+                    colorImage.SetScalarComponentFromFloat(j, i, 0, 2, (float)blueComponent);
                 }
                 // If there is no intersection then set the pixel to black. The
                 // memory associated with vtkImageData is not cleared by default.
                 else
                 {
-                    colorImage.SetScalarComponentFromFloat(j, i, 0, 0, 0.00);
-                    colorImage.SetScalarComponentFromFloat(j, i, 0, 1, 0.00);
-                    colorImage.SetScalarComponentFromFloat(j, i, 0, 2, 0.00);
+                    colorImage.SetScalarComponentFromFloat(j, i, 0, 0, 0.00f);
+                    colorImage.SetScalarComponentFromFloat(j, i, 0, 1, 0.00f);
+                    colorImage.SetScalarComponentFromFloat(j, i, 0, 2, 0.00f);
                 }
             }
         }

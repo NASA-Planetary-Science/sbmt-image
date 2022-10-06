@@ -528,7 +528,7 @@ public class ImageCube<T extends ImageKeyInterface> extends PerspectiveImage imp
                 double[] x = new double[3];
                 double[] pcoords = new double[3];
                 int[] subId = new int[1];
-                int[] cellId = new int[1];
+                long[] cellId = new long[1];
                 int result = cellLocator.IntersectWithLine(spacecraftPosition, lookPt, tol, t, x, pcoords, subId, cellId, cell);
 
                 if (result > 0)

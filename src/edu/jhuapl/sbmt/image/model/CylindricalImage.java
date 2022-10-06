@@ -624,7 +624,7 @@ public class CylindricalImage extends Image
 
         vtkFloatArray textureCoords = new vtkFloatArray();
 
-        int numberOfPoints = polydata.GetNumberOfPoints();
+        int numberOfPoints = (int)polydata.GetNumberOfPoints();
 
         textureCoords.SetNumberOfComponents(2);
         textureCoords.SetNumberOfTuples(numberOfPoints);
