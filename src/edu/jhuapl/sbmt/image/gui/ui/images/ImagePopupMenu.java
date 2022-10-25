@@ -885,7 +885,6 @@ public class ImagePopupMenu<K extends ImageKeyInterface> extends PopupMenu
             {
                 if (simulateLightingMenuItem.isSelected())
                 {
-                    System.out.println("Simulate Lighting On");
                     // store original lighting parameters
                     origLightCfg = renderer.getLightCfg();
 
@@ -905,7 +904,6 @@ public class ImagePopupMenu<K extends ImageKeyInterface> extends PopupMenu
                 }
                 else
                 {
-                    System.out.println("Simulate Lighting Off");
                     LightUtil.switchToLightKit(renderer);
 //                    renderer.setLightCfg(origLightCfg);
                 }
