@@ -15,7 +15,7 @@ public class CustomPerspectiveImage extends PerspectiveImage
 {
     public CustomPerspectiveImage(ImageKeyInterface key, SmallBodyModel smallBodyModel, boolean loadPointingOnly) throws FitsException, IOException
     {
-        super(key, smallBodyModel, null, loadPointingOnly);
+        super(key, smallBodyModel, loadPointingOnly);
     }
 
     protected void initialize() throws FitsException, IOException
@@ -37,7 +37,7 @@ public class CustomPerspectiveImage extends PerspectiveImage
     }
 
     @Override
-    protected int[] getMaskSizes()
+    public int[] getMaskSizes()
     {
         return new int[]{0, 0, 0, 0};
     }

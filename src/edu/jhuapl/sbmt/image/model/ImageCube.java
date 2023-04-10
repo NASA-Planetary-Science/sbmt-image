@@ -246,7 +246,7 @@ public class ImageCube<T extends ImageKeyInterface> extends PerspectiveImage imp
 
     public ImageCube(ImageCubeKey<T> key, SmallBodyModel smallBodyModel, ModelManager modelManager) throws FitsException, IOException, NoOverlapException
     {
-        super(key, smallBodyModel, modelManager, false);
+        super(key, smallBodyModel, false);
     }
 
     protected vtkImageData loadRawImage() throws FitsException, IOException
@@ -757,7 +757,7 @@ public class ImageCube<T extends ImageKeyInterface> extends PerspectiveImage imp
     }
 
 
-    protected int[] getMaskSizes()
+    public int[] getMaskSizes()
     {
         return new int[]{0, 0, 0, 0};
     }
