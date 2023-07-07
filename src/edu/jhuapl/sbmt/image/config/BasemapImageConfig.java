@@ -84,6 +84,7 @@ public class BasemapImageConfig implements IFeatureConfig
 			// Newest/best way to specify maps is with metadata, if this model
 			// has it.
 			String metadataFileName = SafeURLPaths.instance().getString(config.serverPath("basemap"), baseMapConfigName);
+			System.out.println("BasemapImageConfig: generateImageMapKeys: metadatafilename " + metadataFileName);
 			File metadataFile;
 			try
 			{
@@ -91,6 +92,7 @@ public class BasemapImageConfig implements IFeatureConfig
 			}
 			catch (Exception ignored)
 			{
+				ignored.printStackTrace();
 				// This file is optional.
 				metadataFile = null;
 //				return ImmutableList.of();
