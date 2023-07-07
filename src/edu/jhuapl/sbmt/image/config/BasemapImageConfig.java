@@ -97,7 +97,7 @@ public class BasemapImageConfig implements IFeatureConfig
 			}
 			if (metadataFile != null && metadataFile.isFile())
 			{
-				System.out.println("BasemapImageConfig: getImageMapKeys: using metadata");
+				System.out.println("BasemapImageConfig: getImageMapKeys: using metadata " + metadataFile.getAbsolutePath());
 				// Proceed using metadata.
 				try
 				{
@@ -112,7 +112,7 @@ public class BasemapImageConfig implements IFeatureConfig
 			}
 			else
 			{
-				System.out.println("BasemapImageConfig: getImageMapKeys: legacy check");
+				System.out.println("BasemapImageConfig: getImageMapKeys: legacy check " + config.serverPath("image_map.png"));
 				// Final option (legacy behavior). The key is hardwired. The
 				// file could be in
 				// either of two places.
