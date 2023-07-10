@@ -84,7 +84,6 @@ public class BasemapImageConfig implements IFeatureConfig
 			// Newest/best way to specify maps is with metadata, if this model
 			// has it.
 			String metadataFileName = SafeURLPaths.instance().getString(config.serverPath("basemap"), baseMapConfigName);
-			System.out.println("BasemapImageConfig: generateImageMapKeys: metadatafilename " + metadataFileName);
 			File metadataFile;
 			try
 			{
@@ -99,7 +98,6 @@ public class BasemapImageConfig implements IFeatureConfig
 			}
 			if (metadataFile != null && metadataFile.isFile())
 			{
-				System.out.println("BasemapImageConfig: getImageMapKeys: using metadata " + metadataFile.getAbsolutePath());
 				// Proceed using metadata.
 				try
 				{
@@ -114,7 +112,6 @@ public class BasemapImageConfig implements IFeatureConfig
 			}
 			else
 			{
-				System.out.println("BasemapImageConfig: getImageMapKeys: legacy check " + config.serverPath("image_map.png"));
 				// Final option (legacy behavior). The key is hardwired. The
 				// file could be in
 				// either of two places.
