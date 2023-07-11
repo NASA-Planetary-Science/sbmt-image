@@ -41,7 +41,8 @@ public class BasemapImageConfig implements IFeatureConfig
 	{
 		this.config = config;
 		generateBasemapImages();
-		generateImageMapKeys();
+		if (basemapImages.size() == 0)
+			generateImageMapKeys();
 	}
 
 	public BasemapImageConfig(List<ImageKeyInterface> imageMapKeys, List<BasemapImage> basemapImages)
@@ -70,7 +71,6 @@ public class BasemapImageConfig implements IFeatureConfig
 		return imageMapKeys;
 	}
 
-	@Deprecated
 	public void generateImageMapKeys()
 	{
 //		if (!hasImageMap)
@@ -134,7 +134,7 @@ public class BasemapImageConfig implements IFeatureConfig
 			this.basemapImages.add(convertImageKeyToBaseMap(key));
 		}
 
-		return; //imageMapKeys;
+		return;
 	}
 
 	private BasemapImage convertImageKeyToBaseMap(ImageKeyInterface key)
