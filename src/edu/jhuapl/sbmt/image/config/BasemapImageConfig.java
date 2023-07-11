@@ -126,14 +126,14 @@ public class BasemapImageConfig implements IFeatureConfig
 							ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
 				}
 			}
-
+			System.out.println("BasemapImageConfig: generateImageMapKeys: number of keys " + imageMapKeys.size() + " for " + config.getUniqueName());
 			this.imageMapKeys = correctMapKeys(imageMapKeys/*, metadataFile.getParent()*/);
 		}
 		for (ImageKeyInterface key : imageMapKeys)
 		{
 			this.basemapImages.add(convertImageKeyToBaseMap(key));
 		}
-
+		imageMapKeys = null;
 		return;
 	}
 
