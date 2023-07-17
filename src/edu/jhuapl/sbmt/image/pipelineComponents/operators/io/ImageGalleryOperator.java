@@ -13,9 +13,9 @@ import org.apache.commons.lang3.tuple.Pair;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
+import edu.jhuapl.sbmt.image.util.ImageGalleryGenerator;
+import edu.jhuapl.sbmt.image.util.ImageGalleryGenerator.ImageGalleryEntry;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
-import edu.jhuapl.sbmt.tools.ImageGalleryGenerator;
-import edu.jhuapl.sbmt.tools.ImageGalleryGenerator.ImageGalleryEntry;
 
 public class ImageGalleryOperator<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends BasePipelineOperator<Pair<IImagingInstrument, List<G1>>, Void>
 {

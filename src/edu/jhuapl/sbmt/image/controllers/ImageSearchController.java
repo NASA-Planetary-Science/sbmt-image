@@ -59,8 +59,8 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SaveImagesToSavedFi
 import edu.jhuapl.sbmt.image.ui.custom.importer.CustomImageImporterDialog2;
 import edu.jhuapl.sbmt.image.ui.search.ImagingSearchPanel;
 import edu.jhuapl.sbmt.image.ui.table.popup.ImageListPopupMenu;
+import edu.jhuapl.sbmt.image.util.ImageGalleryGenerator;
 import edu.jhuapl.sbmt.spectrum.SbmtSpectrumWindowManager;
-import edu.jhuapl.sbmt.tools.ImageGalleryGenerator;
 
 import glum.gui.action.PopupMenu;
 
