@@ -7,7 +7,7 @@ import javax.swing.table.DefaultTableModel;
 
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.pick.PickManager;
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
+import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.ImageSearchParametersModel;
@@ -19,9 +19,9 @@ public class SpectralImageSearchParametersController<G1 extends IPerspectiveImag
 {
     SpectralImageSearchParametersPanel specPanel = new SpectralImageSearchParametersPanel();
 
-    public SpectralImageSearchParametersController(SmallBodyViewConfig viewConfig, PerspectiveImageCollection<G1> collection,  ImageSearchParametersModel model, ModelManager modelManager, PickManager pickManager)
+    public SpectralImageSearchParametersController(ImagingInstrumentConfig config, PerspectiveImageCollection<G1> collection,  ImageSearchParametersModel model, ModelManager modelManager, PickManager pickManager)
     {
-        super(viewConfig, collection, model, modelManager, pickManager);
+        super(config, collection, model, modelManager, pickManager);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class SpectralImageSearchParametersController<G1 extends IPerspectiveImag
         setPanel(specPanel);
         super.setupSearchParametersPanel();
 
-        String[] filterNames = smallBodyConfig.imageSearchFilterNames;
+        String[] filterNames = config.imageSearchFilterNames;
         JTable filterTable = specPanel.getFilterTable();
         ((DefaultTableModel)filterTable.getModel()).setRowCount(filterNames.length);
         int i = 0;
@@ -42,7 +42,7 @@ public class SpectralImageSearchParametersController<G1 extends IPerspectiveImag
             filterTable.setValueAt(name, i++, 1);
         }
 
-        String[] userSearchNames = smallBodyConfig.imageSearchUserDefinedCheckBoxesNames;
+        String[] userSearchNames = config.imageSearchUserDefinedCheckBoxesNames;
         JTable userTable = specPanel.getUserParamTable();
         ((DefaultTableModel)userTable.getModel()).setRowCount(userSearchNames.length);
         i = 0;

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
@@ -20,11 +19,11 @@ public class LoadImagesFromSavedFilePipeline<G1 extends IPerspectiveImage & IPer
 {
 	List<G1> images = Lists.newArrayList();
 
-	public LoadImagesFromSavedFilePipeline(SmallBodyViewConfig viewConfig, String filename, ImagingInstrument instrument) throws Exception
+	public LoadImagesFromSavedFilePipeline(String filename, ImagingInstrument instrument) throws Exception
 	{
 		Just.of(Pair.of(filename, instrument))
 			.operate(new LoadImageListOperator())
-			.operate(new SearchResultsToPointingFilesOperator(viewConfig))
+			.operate(new SearchResultsToPointingFilesOperator())
 			.operate(new CreateImageFromSavedListOperator<G1>())
 			.subscribe(Sink.of(images))
 			.run();

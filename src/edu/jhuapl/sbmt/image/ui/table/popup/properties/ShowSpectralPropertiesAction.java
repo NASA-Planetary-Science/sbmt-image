@@ -5,7 +5,7 @@ import java.util.List;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
-import edu.jhuapl.sbmt.spectrum.SbmtSpectrumWindowManager;
+import edu.jhuapl.sbmt.image.model.SbmtSpectralImageWindowManager;
 
 import glum.gui.action.PopAction;
 
@@ -16,12 +16,12 @@ public class ShowSpectralPropertiesAction<G1 extends IPerspectiveImage & IPerspe
 	 */
 	private final PerspectiveImageCollection<G1> aManager;
 
-	private final SbmtSpectrumWindowManager spectrumPanelManager;
+	private final SbmtSpectralImageWindowManager spectrumPanelManager;
 
 	/**
 	 * @param imagePopupMenu
 	 */
-	public ShowSpectralPropertiesAction(PerspectiveImageCollection<G1> aManager, SbmtSpectrumWindowManager spectrumPanelManager)
+	public ShowSpectralPropertiesAction(PerspectiveImageCollection<G1> aManager, SbmtSpectralImageWindowManager spectrumPanelManager)
 	{
 		this.aManager = aManager;
 		this.spectrumPanelManager = spectrumPanelManager;

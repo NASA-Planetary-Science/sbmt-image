@@ -24,6 +24,7 @@ import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.query.IQueryBase;
+import edu.jhuapl.sbmt.query.v2.IDataQuery;
 
 /**
  * Class for managing access to image galleries. A gallery is a collection of
@@ -161,7 +162,7 @@ public abstract class ImageGalleryGenerator
             return null;
         }
 
-        IQueryBase query = instrument.getSearchQuery();
+        IDataQuery query = instrument.getSearchQuery();
 
         if (query == null)
         {

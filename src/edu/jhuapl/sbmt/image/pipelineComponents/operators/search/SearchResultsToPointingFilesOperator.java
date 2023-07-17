@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableMap;
 
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
-import edu.jhuapl.sbmt.core.config.ISmallBodyViewConfig;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
 import edu.jhuapl.sbmt.image.util.ImageFileUtil;
@@ -27,13 +26,13 @@ public class SearchResultsToPointingFilesOperator
 		extends BasePipelineOperator<Pair<List<List<String>>, ImagingInstrument>, Triple<List<List<String>>, ImagingInstrument, List<String>>>
 {
 	private List<List<String>> results;
-	private ISmallBodyViewConfig viewConfig;
+//	private ISmallBodyViewConfig viewConfig;
 	private static final Map<String, ImmutableMap<String, String>> SUM_FILE_MAP = new HashMap<>();
 	private PointingSource imageSource;
 
-	public SearchResultsToPointingFilesOperator(ISmallBodyViewConfig viewConfig)
+	public SearchResultsToPointingFilesOperator(/*ISmallBodyViewConfig viewConfig*/)
 	{
-		this.viewConfig = viewConfig;
+//		this.viewConfig = viewConfig;
 	}
 
 	@Override

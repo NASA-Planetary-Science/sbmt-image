@@ -5,7 +5,7 @@ import java.util.List;
 import com.beust.jcommander.internal.Lists;
 
 import edu.jhuapl.saavtk.model.ModelManager;
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
+import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.ImageSearchParametersModel;
@@ -18,10 +18,10 @@ public class ImageSearchPipeline<G1 extends IPerspectiveImage & IPerspectiveImag
 {
 	List<G1> images = Lists.newArrayList();
 
-	public ImageSearchPipeline(SmallBodyViewConfig viewConfig, ModelManager modelManager, ImageSearchParametersModel searchParamatersModel) throws Exception
+	public ImageSearchPipeline(ImagingInstrumentConfig config, ModelManager modelManager, ImageSearchParametersModel searchParamatersModel) throws Exception
 	{
 		Just.of(searchParamatersModel)
-			.operate(new ImageSearchOperator(viewConfig, modelManager))
+			.operate(new ImageSearchOperator(config, modelManager))
 			.operate(new CreateImageFromSearchResultOperator<G1>())
 			.subscribe(Sink.of(images))
 			.run();

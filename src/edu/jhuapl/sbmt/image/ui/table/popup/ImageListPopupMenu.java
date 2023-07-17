@@ -14,6 +14,7 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.model.SbmtInfoWindowManager;
+import edu.jhuapl.sbmt.image.model.SbmtSpectralImageWindowManager;
 import edu.jhuapl.sbmt.image.ui.table.popup.boundaryColor.BoundaryColorAction;
 import edu.jhuapl.sbmt.image.ui.table.popup.export.ExportAction;
 import edu.jhuapl.sbmt.image.ui.table.popup.properties.EditPointingAction;
@@ -29,7 +30,6 @@ import edu.jhuapl.sbmt.image.ui.table.popup.rendering.MapImageAction;
 import edu.jhuapl.sbmt.image.ui.table.popup.rendering.RemapImageAction;
 import edu.jhuapl.sbmt.image.ui.table.popup.rendering.ShowFrustumAction;
 import edu.jhuapl.sbmt.image.ui.table.popup.rendering.SimulateLightingAction;
-import edu.jhuapl.sbmt.spectrum.SbmtSpectrumWindowManager;
 
 import glum.gui.action.PopupMenu;
 
@@ -41,7 +41,7 @@ public class ImageListPopupMenu<G1 extends IPerspectiveImage  & IPerspectiveImag
             PerspectiveImageCollection<G1> aManager,
 //            PerspectiveImageBoundaryCollection imageBoundaryCollection,
             SbmtInfoWindowManager infoPanelManager,
-            SbmtSpectrumWindowManager spectrumPanelManager,
+            SbmtSpectralImageWindowManager spectrumPanelManager,
             Renderer renderer,
             Component invoker)
 	{

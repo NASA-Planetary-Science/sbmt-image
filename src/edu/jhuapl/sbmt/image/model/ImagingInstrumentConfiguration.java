@@ -7,14 +7,14 @@ import edu.jhuapl.saavtk.config.Key;
 import edu.jhuapl.sbmt.config.SBMTFileLocator;
 import edu.jhuapl.sbmt.core.config.Instrument;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
-import edu.jhuapl.sbmt.query.QueryBase;
+import edu.jhuapl.sbmt.query.v2.IDataQuery;
 
 public class ImagingInstrumentConfiguration extends ExtensibleTypedLookup implements Configurable
 {
     // Required keys.
     public static final Key<Instrument> INSTRUMENT = Key.of("Instrument");
     public static final Key<SpectralImageMode> SPECTRAL_MODE = Key.of("Spectral Mode");
-    public static final Key<QueryBase> QUERY_BASE = Key.of("Search query");
+    public static final Key<IDataQuery> QUERY_BASE = Key.of("Search query");
     public static final Key<PointingSource[]> IMAGE_SOURCE = Key.of("Image source for searches");
     public static final Key<SBMTFileLocator> FILE_LOCATOR = Key.of("Image file locator");
 
@@ -33,7 +33,7 @@ public class ImagingInstrumentConfiguration extends ExtensibleTypedLookup implem
     public static Builder<ImagingInstrumentConfiguration> builder(
             Instrument instrument,
             SpectralImageMode spectralMode,
-            QueryBase queryBase,
+            IDataQuery queryBase,
             PointingSource[] imageSource,
             SBMTFileLocator imageFileLocator)
     {
@@ -56,7 +56,7 @@ public class ImagingInstrumentConfiguration extends ExtensibleTypedLookup implem
     public static Builder<ImagingInstrumentConfiguration> builder(
             Instrument instrument,
             SpectralImageMode spectralMode,
-            QueryBase queryBase,
+            IDataQuery queryBase,
             PointingSource[] imageSource,
             SBMTFileLocator imageFileLocator,
             ImageType type)
@@ -69,7 +69,7 @@ public class ImagingInstrumentConfiguration extends ExtensibleTypedLookup implem
     public static Builder<ImagingInstrumentConfiguration> builder(
             Instrument instrument,
             SpectralImageMode spectralMode,
-            QueryBase queryBase,
+            IDataQuery queryBase,
             PointingSource[] imageSource,
             SBMTFileLocator imageFileLocator,
             ImageType type,

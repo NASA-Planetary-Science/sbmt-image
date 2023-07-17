@@ -29,8 +29,8 @@ import edu.jhuapl.saavtk.model.ModelNames;
 import edu.jhuapl.saavtk.model.structure.AbstractEllipsePolygonModel;
 import edu.jhuapl.saavtk.pick.PickManager;
 import edu.jhuapl.saavtk.pick.PickManager.PickMode;
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
+import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.interfaces.ImageSearchModelListener;
@@ -47,19 +47,18 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
     protected ImageSearchParametersModel model;
     private PickManager pickManager;
     private JPanel auxPanel;
-    protected SmallBodyViewConfig smallBodyConfig;
+    protected ImagingInstrumentConfig config;
     private boolean isFixedListSearch = false;
     private ModelManager modelManager;
-    private SmallBodyViewConfig viewConfig;
     private PerspectiveImageCollection<G1> collection;
 
-    public ImageSearchParametersController(SmallBodyViewConfig viewConfig, PerspectiveImageCollection<G1> collection,  ImageSearchParametersModel model, ModelManager modelManager, PickManager pickManager)
+    public ImageSearchParametersController(ImagingInstrumentConfig config, PerspectiveImageCollection<G1> collection,  ImageSearchParametersModel model, ModelManager modelManager, PickManager pickManager)
     {
         this.model = model;
         this.panel = new SpectralImageSearchParametersPanel();
         this.pickManager = pickManager;
         this.modelManager = modelManager;
-        this.viewConfig = viewConfig;
+        this.config = config;
         this.collection = collection;
         model.addModelChangedListener(new ImageSearchModelListener()
         {
@@ -74,7 +73,6 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
 
     public void setupSearchParametersPanel()
     {
-        smallBodyConfig = model.getSmallBodyConfig();
         boolean showSourceLabelAndComboBox = true; //imageSources.length > 1 ? true : false;
         panel.getSourceLabel().setVisible(showSourceLabelAndComboBox);
         panel.getSourceComboBox().setVisible(showSourceLabelAndComboBox);
@@ -89,7 +87,7 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
         });
 
         SBMTDateSpinner startSpinner = panel.getStartSpinner();
-        startSpinner.setDate(smallBodyConfig.imageSearchDefaultStartDate);
+        startSpinner.setDate(config.imageSearchDefaultStartDate);
         startSpinner.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
                 startSpinnerStateChanged(evt);
@@ -100,7 +98,7 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
         panel.getEndDateLabel().setText("End Date:");
 
         SBMTDateSpinner endSpinner = panel.getEndSpinner();
-        endSpinner.setDate(smallBodyConfig.imageSearchDefaultEndDate);
+        endSpinner.setDate(config.imageSearchDefaultEndDate);
         endSpinner.addChangeListener(new ChangeListener() {
             public void stateChanged(ChangeEvent evt) {
                 endSpinnerStateChanged(evt);
@@ -230,7 +228,7 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
                 collection.clearSearchedImages();
 				try
 				{
-					pipeline = new ImageSearchPipeline<G1>(viewConfig, modelManager, model);
+					pipeline = new ImageSearchPipeline<G1>(config, modelManager, model);
 				} catch (Exception e)
 				{
 					// TODO Auto-generated catch block
@@ -262,8 +260,8 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
 
         pushInputToModel();
 
-        toDistanceTextField.setValue(smallBodyConfig.imageSearchDefaultMaxSpacecraftDistance);
-        toResolutionTextField.setValue(smallBodyConfig.imageSearchDefaultMaxResolution);
+        toDistanceTextField.setValue(config.imageSearchDefaultMaxSpacecraftDistance);
+        toResolutionTextField.setValue(config.imageSearchDefaultMaxResolution);
 
         initHierarchicalImageSearch();
     }
@@ -280,13 +278,13 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
             panel.getAuxPanel().setVisible(false);
 
             // Create the tree
-            CheckBoxTree checkBoxTree = new CheckBoxTree(smallBodyConfig.hierarchicalImageSearchSpecification.getTreeModel());
+            CheckBoxTree checkBoxTree = new CheckBoxTree(config.hierarchicalImageSearchSpecification.getTreeModel());
 
             // Connect tree to panel.
             panel.setCheckBoxTree(checkBoxTree);
 
             // Bind the checkbox-specific tree selection model to the "spec"
-            smallBodyConfig.hierarchicalImageSearchSpecification.setSelectionModel(checkBoxTree.getCheckBoxTreeSelectionModel());
+            config.hierarchicalImageSearchSpecification.setSelectionModel(checkBoxTree.getCheckBoxTreeSelectionModel());
 
             // Place the tree in the panel
             panel.getHierarchicalSearchScrollPane().setViewportView(panel.getCheckBoxTree());

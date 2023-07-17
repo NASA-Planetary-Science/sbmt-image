@@ -22,8 +22,8 @@ import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.model.ModelNames;
 import edu.jhuapl.saavtk.model.structure.AbstractEllipsePolygonModel;
 import edu.jhuapl.saavtk.util.IdPair;
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
+import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.ImageSearchModelListener;
 import edu.jhuapl.sbmt.image.interfaces.ImageSearchResultsListener;
@@ -64,7 +64,7 @@ public class ImageSearchParametersModel implements Model, MetadataManager
     final Key<SortedMap<String, Boolean>> isFrustrumShowingKey = Key.of("frustrumShowing");
     final Key<SortedMap<String, Boolean>> isBoundaryShowingKey = Key.of("boundaryShowing");
 
-    private SmallBodyViewConfig smallBodyConfig;
+    private ImagingInstrumentConfig config;
     protected ModelManager modelManager;
     protected IdPair resultIntervalCurrentlyShown = null;
     protected List<List<String>> imageResults = new ArrayList<List<String>>();
@@ -105,19 +105,19 @@ public class ImageSearchParametersModel implements Model, MetadataManager
         STANDARD_UTC_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
     }
 
-    public ImageSearchParametersModel(SmallBodyViewConfig smallBodyConfig,
+    public ImageSearchParametersModel(ImagingInstrumentConfig config,
             final ModelManager modelManager,
             Renderer renderer,
             IImagingInstrument instrument)
     {
-        this.smallBodyConfig = smallBodyConfig;
+        this.config = config;
         this.modelManager = modelManager;
         this.renderer = renderer;
         this.resultsListeners = new Vector<ImageSearchResultsListener>();
         this.modelListeners = new Vector<ImageSearchModelListener>();
         this.instrument = instrument;
-        this.startDate = smallBodyConfig.imageSearchDefaultStartDate;
-        this.endDate = smallBodyConfig.imageSearchDefaultEndDate;
+        this.startDate = config.imageSearchDefaultStartDate;
+        this.endDate = config.imageSearchDefaultEndDate;
         camerasSelected = new LinkedList<Integer>();
         filtersSelected = new LinkedList<Integer>();
         selectedImageIndices = new int[] {};
@@ -184,9 +184,9 @@ public class ImageSearchParametersModel implements Model, MetadataManager
 
     public String getCurrentBand() { return "0"; }
 
-    public SmallBodyViewConfig getSmallBodyConfig()
+    public ImagingInstrumentConfig getSmallBodyConfig()
     {
-        return smallBodyConfig;
+        return config;
     }
 
     public Renderer getRenderer()
@@ -207,7 +207,7 @@ public class ImageSearchParametersModel implements Model, MetadataManager
 
     public int getNumberOfFiltersActuallyUsed()
     {
-        String[] names = smallBodyConfig.imageSearchFilterNames;
+        String[] names = config.imageSearchFilterNames;
         if (names == null)
             return 0;
         else
@@ -216,7 +216,7 @@ public class ImageSearchParametersModel implements Model, MetadataManager
 
     public int getNumberOfUserDefinedCheckBoxesActuallyUsed()
     {
-        String[] names = smallBodyConfig.imageSearchUserDefinedCheckBoxesNames;
+        String[] names = config.imageSearchUserDefinedCheckBoxesNames;
         if (names == null)
             return 0;
         else
@@ -580,9 +580,9 @@ public class ImageSearchParametersModel implements Model, MetadataManager
         result.put(searchByFileNameEnabledKey, searchByFilename);
         result.put(searchByFileNameKey, searchFilename);
 
-        if (smallBodyConfig.hasHierarchicalImageSearch)
+        if (config.hasHierarchicalImageSearch)
         {
-            MetadataManager manager = smallBodyConfig.hierarchicalImageSearchSpecification.getMetadataManager();
+            MetadataManager manager = config.hierarchicalImageSearchSpecification.getMetadataManager();
             result.put(imageTreeFilterKey, manager.store());
         }
         else
@@ -594,7 +594,7 @@ public class ImageSearchParametersModel implements Model, MetadataManager
             if (numberFilters > 0)
             {
                 ImmutableMap.Builder<String, Boolean> filterBuilder = ImmutableMap.builder();
-                String[] filterNames = smallBodyConfig.imageSearchFilterNames;
+                String[] filterNames = config.imageSearchFilterNames;
 
                 for (int index = 0; index < numberFilters; ++index)
                 {
@@ -609,7 +609,7 @@ public class ImageSearchParametersModel implements Model, MetadataManager
             if (numberFilters > 0)
             {
                 ImmutableMap.Builder<String, Boolean> filterBuilder = ImmutableMap.builder();
-                String[] filterNames = smallBodyConfig.imageSearchUserDefinedCheckBoxesNames;
+                String[] filterNames = config.imageSearchUserDefinedCheckBoxesNames;
 
                 for (int index = 0; index < numberFilters; ++index)
                 {
@@ -710,9 +710,9 @@ public class ImageSearchParametersModel implements Model, MetadataManager
         model.setSearchByFilename(source.get(searchByFileNameEnabledKey));
         model.setSearchFilename(source.get(searchByFileNameKey));
 
-        if (smallBodyConfig.hasHierarchicalImageSearch)
+        if (config.hasHierarchicalImageSearch)
         {
-            MetadataManager manager = smallBodyConfig.hierarchicalImageSearchSpecification.getMetadataManager();
+            MetadataManager manager = config.hierarchicalImageSearchSpecification.getMetadataManager();
             manager.retrieve(source.get(imageTreeFilterKey));
         }
         else
@@ -724,7 +724,7 @@ public class ImageSearchParametersModel implements Model, MetadataManager
             if (numberFilters > 0)
             {
                 Map<String, Boolean> filterMap = source.get(filterMapKey);
-                String[] filterNames = smallBodyConfig.imageSearchFilterNames;
+                String[] filterNames = config.imageSearchFilterNames;
                 for (int index = 0; index < numberFilters; ++index)
                 {
                     Boolean filterSelected = filterMap.get(filterNames[index]);
@@ -741,7 +741,7 @@ public class ImageSearchParametersModel implements Model, MetadataManager
             if (numberFilters > 0)
             {
                 Map<String, Boolean> filterMap = source.get(userCheckBoxMapKey);
-                String[] filterNames = smallBodyConfig.imageSearchUserDefinedCheckBoxesNames;
+                String[] filterNames = config.imageSearchUserDefinedCheckBoxesNames;
                 for (int index = 0; index < numberFilters; ++index)
                 {
                     Boolean filterSelected = filterMap.get(filterNames[index]);

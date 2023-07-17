@@ -17,27 +17,28 @@ import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.model.ModelNames;
 import edu.jhuapl.saavtk.model.structure.AbstractEllipsePolygonModel;
 import edu.jhuapl.saavtk.structure.Ellipse;
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.core.search.HierarchicalSearchSpecification.Selection;
+import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.model.ImageSearchParametersModel;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.query.database.ImageDatabaseSearchMetadata;
 import edu.jhuapl.sbmt.query.fixedlist.FixedListQuery;
 import edu.jhuapl.sbmt.query.fixedlist.FixedListSearchMetadata;
+import edu.jhuapl.sbmt.query.v2.QueryException;
 
 public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParametersModel, Triple<List<List<String>>, IImagingInstrument, PointingSource>>
 {
 	private ImageSearchParametersModel searchParameterModel;
-	private SmallBodyViewConfig viewConfig;
+	private ImagingInstrumentConfig config;
 	private ModelManager modelManager;
 
-	public ImageSearchOperator(SmallBodyViewConfig viewConfig, ModelManager modelManager)
+	public ImageSearchOperator(ImagingInstrumentConfig config, ModelManager modelManager)
 	{
 		this.modelManager = modelManager;
-		this.viewConfig = viewConfig;
+		this.config = config;
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParamet
 		runSearch();
 	}
 
-	private void runSearch()
+	private void runSearch() throws QueryException
 	{
 		double minDistanceQuery = searchParameterModel.getMinDistanceQuery();
 		double maxDistanceQuery = searchParameterModel.getMaxDistanceQuery();
@@ -120,12 +121,12 @@ public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParamet
         boolean sumOfProductsSearch;
 //        List<Integer> camerasSelected;
 //        List<Integer> filtersSelected;
-        SmallBodyViewConfig smallBodyConfig = viewConfig;
-        if(smallBodyConfig.hasHierarchicalImageSearch)
+//        SmallBodyViewConfig smallBodyConfig = viewConfig;
+        if(config.hasHierarchicalImageSearch)
         {
             // Sum of products (hierarchical) search: (CAMERA 1 AND FILTER 1) OR ... OR (CAMERA N AND FILTER N)
             sumOfProductsSearch = true;
-            Selection selection = smallBodyConfig.hierarchicalImageSearchSpecification.processTreeSelections();
+            Selection selection = config.hierarchicalImageSearchSpecification.processTreeSelections();
             camerasSelected = selection.getSelectedCameras();
             filtersSelected = selection.getSelectedFilters();
         }
@@ -152,7 +153,7 @@ public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParamet
                     sumOfProductsSearch, camerasSelected, filtersSelected,
                     Range.closed(minResolutionQuery, maxResolutionQuery),
                     cubeList, imageSource, selectedLimbIndex);
-            results = searchParameterModel.getInstrument().getSearchQuery().runQuery(searchMetadata).getResultlist();
+            results = searchParameterModel.getInstrument().getSearchQuery().runQuery(searchMetadata).getFetchedData();
        }
 
         // If SPICE Derived (exclude Gaskell) or Gaskell Derived (exlude SPICE) is selected,
@@ -179,7 +180,7 @@ public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParamet
                         Range.closed(minResolutionQuery, maxResolutionQuery),
                         cubeList, imageSource == PointingSource.SPICE ? PointingSource.GASKELL_UPDATED : PointingSource.SPICE, selectedLimbIndex);
 
-                    resultsOtherSource = instrument.getSearchQuery().runQuery(searchMetadataOther).getResultlist();
+                    resultsOtherSource = instrument.getSearchQuery().runQuery(searchMetadataOther).getFetchedData();
 
             }
 

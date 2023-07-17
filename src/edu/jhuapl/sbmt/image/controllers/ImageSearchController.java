@@ -40,9 +40,9 @@ import edu.jhuapl.saavtk.pick.PickUtil;
 import edu.jhuapl.saavtk.popup.PopupManager;
 import edu.jhuapl.saavtk.status.LegacyStatusHandler;
 import edu.jhuapl.saavtk2.gui.BasicFrame;
-import edu.jhuapl.sbmt.config.SmallBodyViewConfig;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.util.TimeUtil;
+import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.controllers.custom.CustomImageEditingController;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
@@ -51,6 +51,7 @@ import edu.jhuapl.sbmt.image.model.ImageSearchParametersModel;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.model.SbmtInfoWindowManager;
+import edu.jhuapl.sbmt.image.model.SbmtSpectralImageWindowManager;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.CustomImageListToSavedFilePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.ImageGalleryPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadFileToCustomImageListPipeline;
@@ -60,7 +61,6 @@ import edu.jhuapl.sbmt.image.ui.custom.importer.CustomImageImporterDialog2;
 import edu.jhuapl.sbmt.image.ui.search.ImagingSearchPanel;
 import edu.jhuapl.sbmt.image.ui.table.popup.ImageListPopupMenu;
 import edu.jhuapl.sbmt.image.util.ImageGalleryGenerator;
-import edu.jhuapl.sbmt.spectrum.SbmtSpectrumWindowManager;
 
 import glum.gui.action.PopupMenu;
 
@@ -78,19 +78,17 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 	private List<SmallBodyModel> smallBodyModels;
 	private JTabbedPane pane;
 	private PopupMenu<G1> popupMenu;
-	private SmallBodyViewConfig config;
 	IPositionOrientationManager<SmallBodyModel> positionOrientationManager;
 	private LegacyStatusHandler refStatusHandler;
 	private Renderer renderer;
     private vtkPropPicker imagePicker;
 
-	public ImageSearchController(SmallBodyViewConfig config, PerspectiveImageCollection<G1> collection,
+	public ImageSearchController(ImagingInstrumentConfig config, PerspectiveImageCollection<G1> collection,
 								Optional<IImagingInstrument> instrument, ModelManager modelManager,
 								PopupManager popupManager, Renderer renderer,
 								PickManager pickManager, SbmtInfoWindowManager infoPanelManager,
-					            SbmtSpectrumWindowManager spectrumPanelManager, LegacyStatusHandler refStatusHandler)
+					            SbmtSpectralImageWindowManager spectrumPanelManager, LegacyStatusHandler refStatusHandler)
 	{
-		this.config = config;
 		this.instrument = instrument;
 		this.collection = collection;
 		this.refStatusHandler = refStatusHandler;
@@ -286,7 +284,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 	        if (file == null) return;
 			try
 			{
-				LoadImagesFromSavedFilePipeline<G1> pipeline = new LoadImagesFromSavedFilePipeline<G1>(config, file.getAbsolutePath(), (ImagingInstrument)instrument.orElse(null));
+				LoadImagesFromSavedFilePipeline<G1> pipeline = new LoadImagesFromSavedFilePipeline<G1>(file.getAbsolutePath(), (ImagingInstrument)instrument.orElse(null));
 				collection.clearSearchedImages();
 				collection.setImages(pipeline.getImages());
 			}

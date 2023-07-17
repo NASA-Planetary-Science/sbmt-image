@@ -6,7 +6,7 @@ import edu.jhuapl.saavtk.model.ModelNames;
 import edu.jhuapl.saavtk.popup.PopupManager;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.model.SbmtInfoWindowManager;
-import edu.jhuapl.sbmt.spectrum.SbmtSpectrumWindowManager;
+import edu.jhuapl.sbmt.image.model.SbmtSpectralImageWindowManager;
 
 import glum.gui.action.PopupMenu;
 
@@ -17,7 +17,7 @@ import glum.gui.action.PopupMenu;
 public class ImageListPopupManager extends PopupManager
 {
 	public ImageListPopupManager(ModelManager modelManager, SbmtInfoWindowManager infoPanelManager,
-			SbmtSpectrumWindowManager spectrumPanelManager, Renderer renderer)
+			SbmtSpectralImageWindowManager spectrumPanelManager, Renderer renderer)
 	{
 		super(modelManager);
 

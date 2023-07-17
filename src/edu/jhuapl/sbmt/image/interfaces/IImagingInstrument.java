@@ -8,7 +8,7 @@ import edu.jhuapl.sbmt.image.model.ImageBinPadding;
 import edu.jhuapl.sbmt.image.model.ImageType;
 import edu.jhuapl.sbmt.image.model.Orientation;
 import edu.jhuapl.sbmt.image.model.SpectralImageMode;
-import edu.jhuapl.sbmt.query.IQueryBase;
+import edu.jhuapl.sbmt.query.v2.IDataQuery;
 
 import crucible.crust.metadata.api.Metadata;
 
@@ -33,7 +33,7 @@ public interface IImagingInstrument
      * @return
      */
     @Deprecated
-    IQueryBase getSearchQuery();
+    IDataQuery getSearchQuery();
 
     PointingSource[] getSearchImageSources();
 

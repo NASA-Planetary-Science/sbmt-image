@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
-import edu.jhuapl.sbmt.core.config.ISmallBodyViewConfig;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage.RenderablePointedImage;
@@ -21,12 +20,12 @@ public class FilenameToRenderableImagePipeline
 	private List<RenderablePointedImage> images;
 	private List<String> pointingFilenames;
 
-	public FilenameToRenderableImagePipeline(String filename, PointingSource imageSource, ISmallBodyViewConfig config, ImagingInstrument selectedInstrument) throws IOException, Exception
+	public FilenameToRenderableImagePipeline(String filename, PointingSource imageSource, ImagingInstrument selectedInstrument) throws IOException, Exception
 	{
 		Triple<List<List<String>>, ImagingInstrument, List<String>>[] tripleSink = new Triple[1];
         List<List<String>> fileInputs = List.of(List.of(filename, "", imageSource.toString()));
         IPipelineOperator<Pair<List<List<String>>, ImagingInstrument>, Triple<List<List<String>>, ImagingInstrument, List<String>>> searchToPointingFilesOperator
-        		= new SearchResultsToPointingFilesOperator(config);
+        		= new SearchResultsToPointingFilesOperator();
         Just.of(Pair.of(fileInputs, selectedInstrument))
 			.operate(searchToPointingFilesOperator)
 			.subscribe(TripleSink.of(tripleSink))
@@ -39,9 +38,9 @@ public class FilenameToRenderableImagePipeline
     	images = pipeline.getOutput();
 	}
 
-	public static FilenameToRenderableImagePipeline of(String filename, PointingSource imageSource, ISmallBodyViewConfig config, ImagingInstrument selectedInstrument) throws IOException, Exception
+	public static FilenameToRenderableImagePipeline of(String filename, PointingSource imageSource, ImagingInstrument selectedInstrument) throws IOException, Exception
 	{
-		return new FilenameToRenderableImagePipeline(filename, imageSource, config, selectedInstrument);
+		return new FilenameToRenderableImagePipeline(filename, imageSource, selectedInstrument);
 	}
 
 	public List<RenderablePointedImage> getImages()

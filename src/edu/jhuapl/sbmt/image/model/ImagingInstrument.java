@@ -14,21 +14,24 @@ import edu.jhuapl.saavtk.util.ImageDataUtil;
 import edu.jhuapl.sbmt.core.config.Instrument;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
-import edu.jhuapl.sbmt.query.IQueryBase;
-import edu.jhuapl.sbmt.query.QueryBase;
+import edu.jhuapl.sbmt.image.query.ImageDataQuery;
 import edu.jhuapl.sbmt.query.database.GenericPhpQuery;
 import edu.jhuapl.sbmt.query.fixedlist.FixedListQuery;
+import edu.jhuapl.sbmt.query.v2.DatabaseDataQuery;
+import edu.jhuapl.sbmt.query.v2.FixedListDataQuery;
+import edu.jhuapl.sbmt.query.v2.IDataQuery;
 
 import crucible.crust.metadata.api.Key;
 import crucible.crust.metadata.api.Metadata;
 import crucible.crust.metadata.api.MetadataManager;
 import crucible.crust.metadata.api.Version;
+import crucible.crust.metadata.impl.InstanceGetter;
 import crucible.crust.metadata.impl.SettableMetadata;
 
 public class ImagingInstrument implements MetadataManager, IImagingInstrument
 {
     public SpectralImageMode spectralMode;
-    public QueryBase searchQuery;
+    public IDataQuery searchQuery;
     public PointingSource[] searchImageSources;
     private ImageType type;
     public Instrument instrumentName;
@@ -61,43 +64,43 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
     // this(spectralMode, null, null, null, null, 0.0, null);
     // }
 
-    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName)
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName)
     {
         this(spectralMode, searchQuery, type, searchImageSources, instrumentName, 0.0, null, null, null, null, true, null);
     }
 
-    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, Map<PointingSource, Orientation> orientationMap)
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, Map<PointingSource, Orientation> orientationMap)
     {
         this(spectralMode, searchQuery, type, searchImageSources, instrumentName, 0.0, null, null, null, null, true, orientationMap);
     }
 
-    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, ImageBinPadding binPadding)
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, ImageBinPadding binPadding)
     {
         this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, null, null, null, true, null);
         this.binPadding = binPadding;
     }
 
-    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip)
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip)
     {
         this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, null, null, null, true, null);
     }
 
-    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues)
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues)
     {
         this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, fillValues, null, null, true, null);
     }
 
-    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, int[] linearInterpDims, int[] maskValues)
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, int[] linearInterpDims, int[] maskValues)
     {
         this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, fillValues, linearInterpDims, maskValues, true, null);
     }
 
-    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, boolean isTranspose)
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, boolean isTranspose)
     {
         this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, fillValues, null, null, isTranspose, null);
     }
 
-    public ImagingInstrument(SpectralImageMode spectralMode, QueryBase searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, int[] linearInterpDims, int[] maskValues, boolean isTranspose, Map<PointingSource, Orientation> orientationMap)
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, int[] linearInterpDims, int[] maskValues, boolean isTranspose, Map<PointingSource, Orientation> orientationMap)
     {
         this.spectralMode = spectralMode;
         this.searchQuery = searchQuery;
@@ -124,12 +127,12 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         }
     }
 
-    public ImagingInstrument clone()
+    public ImagingInstrument clone() throws CloneNotSupportedException
     {
         PointingSource source0 = searchImageSources != null && searchImageSources.length > 0 ? searchImageSources[0] : null;
         Orientation orientation = getOrientation(source0, null, null, null);
 
-        return new ImagingInstrument(spectralMode, searchQuery.copy(), type, searchImageSources != null ? searchImageSources.clone() : null, instrumentName, orientation.getRotation(), orientation.getFlip().flip(), fillValues, linearInterpolationDims, maskValues, orientation.isTranspose(), orientationMap);
+        return new ImagingInstrument(spectralMode, searchQuery.clone(), type, searchImageSources != null ? searchImageSources.clone() : null, instrumentName, orientation.getRotation(), orientation.getFlip().flip(), fillValues, linearInterpolationDims, maskValues, orientation.isTranspose(), orientationMap);
     }
 
     public ImageType getType()
@@ -147,6 +150,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         return spectralMode;
     }
 
+    private static final Key<ImagingInstrument> ImagingInstrument_KEY = Key.of("imagingInstrument");
     private static final Key<String> spectralModeKey = Key.of("spectralMode");
     private static final Key<String> queryType = Key.of("queryType");
     private static final Key<Metadata> queryKey = Key.of("query");
@@ -167,17 +171,42 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
     private static final Key<ImageBinPadding> binPaddingValuesKey = Key.of("binPaddingValues");
 //    private static final Key<int[]> maxSizeValuesKey = Key.of("maxSizes");
 
+    public static void initializeSerializationProxy()
+	{
+    	InstanceGetter.defaultInstanceGetter().register(ImagingInstrument_KEY, (metadata) -> {
+
+    		ImagingInstrument instrument = new ImagingInstrument();
+    		instrument.retrieve(metadata);
+    		return instrument;
+
+    	}, ImagingInstrument.class, instrument -> {
+
+    		return instrument.store();
+    	});
+
+	}
+
     @Override
     public void retrieve(Metadata source)
     {
         spectralMode = SpectralImageMode.valueOf(read(spectralModeKey, source));
         String searchType = read(queryType, source);
-        Metadata queryMetadata = read(queryKey, source);
+//        Metadata queryMetadata = read(queryKey, source);
         // Do not use, e.g., GenericPhpQuery.class.getSimpleName() method
         // because if the class gets renamed this would not be able to read
         // previously-saved metadata.
-        searchQuery = searchType.equals("GenericPhpQuery") ? new GenericPhpQuery() : new FixedListQuery<>();
-        searchQuery.retrieve(queryMetadata);
+//        searchQuery = searchType.equals("GenericPhpQuery") ? new GenericPhpQuery() : new FixedListQuery<>();
+        if (searchType.equals("GenericPhpQuery"))
+        {
+        	Key<DatabaseDataQuery> dbQueryKey = Key.of("query");
+        	searchQuery = read(dbQueryKey, source);
+        }
+        else
+        {
+        	Key<FixedListDataQuery> fixedListQueryKey = Key.of("query");
+        	searchQuery = read(fixedListQueryKey, source);
+        }
+//        searchQuery.retrieve(queryMetadata);
 
         type = ImageType.valueOf(read(imageTypeKey, source));
 
@@ -239,6 +268,18 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         {
             write(queryType, "FixedListQuery", configMetadata);
         }
+        else if (searchQuery.getClass() == FixedListDataQuery.class)
+        {
+            write(queryType, "FixedListDataQuery", configMetadata);
+        }
+        else if (searchQuery.getClass() == ImageDataQuery.class)
+        {
+            write(queryType, "ImageDataQuery", configMetadata);
+        }
+        else if (searchQuery.getClass() == DatabaseDataQuery.class)
+        {
+            write(queryType, "DatabaseDataQuery", configMetadata);
+        }
         else
         {
             // Writing the metadata is actually not a problem --
@@ -253,7 +294,22 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         PointingSource source0 = searchImageSources != null && searchImageSources.length > 0 ? searchImageSources[0] : null;
         Orientation orientation = getOrientation(source0, null, null, null);
 
-        write(queryKey, searchQuery.store(), configMetadata);
+//        write(queryKey, searchQuery.store(), configMetadata);
+        if (searchQuery.getClass() == GenericPhpQuery.class)
+        {
+        	Key<DatabaseDataQuery> dbQueryKey = Key.of("query");
+        	write(dbQueryKey, (DatabaseDataQuery)searchQuery, configMetadata);
+        }
+        else if (searchQuery.getClass() == ImageDataQuery.class)
+        {
+        	Key<ImageDataQuery> imageQueryKey = Key.of("query");
+        	write(imageQueryKey, (ImageDataQuery)searchQuery, configMetadata);
+        }
+        else
+        {
+        	Key<FixedListDataQuery> fixedListQueryKey = Key.of("query");
+        	write(fixedListQueryKey, (FixedListDataQuery)searchQuery, configMetadata);
+        }
         write(imageTypeKey, type.name(), configMetadata);
         writeEnums(imageSourcesKey, searchImageSources, configMetadata);
         writeEnum(instrumentKey, instrumentName, configMetadata);
@@ -315,7 +371,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         return null;
     }
 
-    public IQueryBase getSearchQuery()
+    public IDataQuery getSearchQuery()
     {
         return searchQuery;
     }

@@ -6,7 +6,6 @@ import java.util.List;
 import vtk.vtkPolyData;
 
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
-import edu.jhuapl.sbmt.core.config.ISmallBodyViewConfig;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage.RenderablePointedImage;
@@ -20,9 +19,9 @@ public class FilenameToRenderableImageFootprintPipeline
 
 	public FilenameToRenderableImageFootprintPipeline(String filename, PointingSource imageSource, List<SmallBodyModel> smallBodyModels, ImagingInstrument selectedInstrument) throws IOException, Exception
 	{
-		ISmallBodyViewConfig config = smallBodyModels.get(0).getSmallBodyConfig();
+//		ISmallBodyViewConfig config = smallBodyModels.get(0).getSmallBodyConfig();
 
-		FilenameToRenderableImagePipeline pipeline = FilenameToRenderableImagePipeline.of(filename, imageSource, config, selectedInstrument);
+		FilenameToRenderableImagePipeline pipeline = FilenameToRenderableImagePipeline.of(filename, imageSource, selectedInstrument);
 		images = pipeline.getImages();
 		pointingFilenames = pipeline.getPointingFilenames();
 
