@@ -55,11 +55,11 @@ import edu.jhuapl.sbmt.core.util.VtkENVIReader;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
 import edu.jhuapl.sbmt.image.keys.CustomImageKeyInterface;
+import edu.jhuapl.sbmt.image.util.BackPlanesPDS4XML;
+import edu.jhuapl.sbmt.image.util.BackPlanesXml;
+import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta;
+import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta.BPMetaBuilder;
 import edu.jhuapl.sbmt.model.image.perspectiveImage.renderer.PerspectiveImageRendererHelper2;
-import edu.jhuapl.sbmt.util.BackPlanesPDS4XML;
-import edu.jhuapl.sbmt.util.BackPlanesXml;
-import edu.jhuapl.sbmt.util.BackPlanesXmlMeta;
-import edu.jhuapl.sbmt.util.BackPlanesXmlMeta.BPMetaBuilder;
 import edu.jhuapl.sbmt.util.BackplanesLabel;
 
 import crucible.crust.metadata.api.Key;

@@ -15,9 +15,9 @@ import edu.jhuapl.saavtk.util.ImageDataUtil;
 import edu.jhuapl.saavtk.util.LatLon;
 import edu.jhuapl.saavtk.util.MathUtil;
 import edu.jhuapl.sbmt.core.util.BackplaneInfo;
-import edu.jhuapl.sbmt.util.BackPlanesXml;
-import edu.jhuapl.sbmt.util.BackPlanesXmlMeta;
-import edu.jhuapl.sbmt.util.BackPlanesXmlMeta.BPMetaBuilder;
+import edu.jhuapl.sbmt.image.util.BackPlanesXml;
+import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta;
+import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta.BPMetaBuilder;
 
 import nom.tam.fits.FitsException;
 
