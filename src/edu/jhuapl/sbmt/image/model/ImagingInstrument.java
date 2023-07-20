@@ -260,7 +260,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         // Do not use, e.g., GenericPhpQuery.class.getSimpleName() method
         // because if the class gets renamed this would start writing something
         // different that could not be read by the retrieve method above.
-        if (searchQuery.getClass() == GenericPhpQuery.class)
+        /*if (searchQuery.getClass() == GenericPhpQuery.class)
         {
             write(queryType, "GenericPhpQuery", configMetadata);
         }
@@ -268,7 +268,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         {
             write(queryType, "FixedListQuery", configMetadata);
         }
-        else if (searchQuery.getClass() == FixedListDataQuery.class)
+        else*/ if (searchQuery.getClass() == FixedListDataQuery.class)
         {
             write(queryType, "FixedListDataQuery", configMetadata);
         }
@@ -295,12 +295,12 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         Orientation orientation = getOrientation(source0, null, null, null);
 
 //        write(queryKey, searchQuery.store(), configMetadata);
-        if (searchQuery.getClass() == GenericPhpQuery.class)
+        /*if (searchQuery.getClass() == GenericPhpQuery.class)
         {
         	Key<DatabaseDataQuery> dbQueryKey = Key.of("query");
         	write(dbQueryKey, (DatabaseDataQuery)searchQuery, configMetadata);
         }
-        else if (searchQuery.getClass() == ImageDataQuery.class)
+        else*/ if (searchQuery.getClass() == ImageDataQuery.class)
         {
         	Key<ImageDataQuery> imageQueryKey = Key.of("query");
         	write(imageQueryKey, (ImageDataQuery)searchQuery, configMetadata);
