@@ -1,17 +1,13 @@
 package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
-
-import vtk.vtkFloatArray;
-import vtk.vtkImageData;
-import vtk.vtkPointData;
-import vtk.vtkPolyData;
 
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.Frustum;
@@ -22,22 +18,30 @@ import edu.jhuapl.sbmt.image.model.BinTranslations;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
 import edu.jhuapl.sbmt.image.model.ImageBinPadding;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.PadImageOperator;
+import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.color.RGBALayerMergeOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageContrastOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageVtkMaskingOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadPolydataFromCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SavePolydataToCachePipeline;
+import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pipeline.operator.IPipelineOperator;
 import edu.jhuapl.sbmt.pipeline.operator.PassthroughOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import vtk.vtkFloatArray;
+import vtk.vtkImageData;
+import vtk.vtkPointData;
+import vtk.vtkPolyData;
 
 public class RenderablePointedImageFootprintOperator extends BasePipelineOperator<IRenderableImage, Pair<List<vtkImageData>, List<vtkPolyData>>>
 {
 	List<SmallBodyModel> smallBodyModels;
 	private boolean useModifiedPointing = false;
+	private static HashMap<String, vtkImageData> layerImageData = new HashMap<String, vtkImageData>();
+
 
 	public RenderablePointedImageFootprintOperator(List<SmallBodyModel> smallBodyModels)
 	{
@@ -88,14 +92,32 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
     	}
     	if (renderableImage.getImageBinPadding() != null) padOperator = new PadImageOperator(renderableImage.getImageBinPadding(), renderableImage.getBinning());
 
-        VtkImageRendererOperator imageRenderer = new VtkImageRendererOperator();
-        List<vtkImageData> imageData = Lists.newArrayList();
-        Just.of(renderableImage.getLayer())
-        	.operate(imageRenderer)
-        	.operate(padOperator)
-        	.operate(new VtkImageContrastOperator(renderableImage.getIntensityRange()))
-        	.operate(new VtkImageVtkMaskingOperator(renderableImage.getMasking().getMask()))
-        	.subscribe(Sink.of(imageData)).run();
+    	List<vtkImageData> imageData = Lists.newArrayList();
+    	vtkImageData existingImageData = layerImageData.get(renderableImage.getFilename());
+		if (existingImageData != null)
+		{
+			imageData.add(existingImageData);
+		}
+		else
+		{
+	        IPipelineOperator<Layer, vtkImageData> imageRenderer = new VtkImageRendererOperator();
+	        if (renderableImage.getLayer().dataSizes().get(0) == 1)
+			{
+	        	imageRenderer = new VtkImageRendererOperator();
+			}
+	        else if (renderableImage.getLayer().dataSizes().get(0) == 3)
+	        {
+	        	imageRenderer = new RGBALayerMergeOperator();
+	        }
+	        
+	        Just.of(renderableImage.getLayer())
+	        	.operate(imageRenderer)
+	        	.operate(padOperator)
+	        	.operate(new VtkImageContrastOperator(renderableImage.getIntensityRange()))
+	        	.operate(new VtkImageVtkMaskingOperator(renderableImage.getMasking().getMask()))
+	        	.subscribe(Sink.of(imageData)).run();
+	        layerImageData.put(renderableImage.getFilename(), imageData.get(0));
+		}
         List<vtkPolyData> footprints = Lists.newArrayList();
         synchronized(RenderablePointedImageFootprintOperator.class)
         {

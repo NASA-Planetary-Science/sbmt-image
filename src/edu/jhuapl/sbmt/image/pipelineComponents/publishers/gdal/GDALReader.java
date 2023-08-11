@@ -61,7 +61,11 @@ public class GDALReader extends BasePipelinePublisher<Layer>
 				}
 
 				//insert a composite RGB(A) layer as the 0th layer
-				if (dataset.GetDriver().getShortName().equals("PNG") || dataset.GetDriver().getShortName().equals("JPEG") || dataset.GetDriver().getShortName().equals("JPG"))
+				if (dataset.GetDriver().getShortName().equals("PNG") 
+					|| dataset.GetDriver().getShortName().equals("JPEG") 
+					|| dataset.GetDriver().getShortName().equals("JPG")
+					|| numLayers == 3
+				 )
 				{
 					outputs.add(0, layer);
 				}

@@ -2,18 +2,15 @@ package edu.jhuapl.sbmt.image.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
-
-import vtk.vtkImageData;
-import vtk.vtkImageReslice;
-import vtk.vtkImageSlice;
-import vtk.vtkImageSliceMapper;
-import vtk.vtkTransform;
 
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
+import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.color.RGBALayerMergeOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.IPerspectiveImageToLayerAndMetadataPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.vtk.VtkImageContrastPipeline;
@@ -22,6 +19,11 @@ import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
+import vtk.vtkImageReslice;
+import vtk.vtkImageSlice;
+import vtk.vtkImageSliceMapper;
+import vtk.vtkTransform;
 
 public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>
 {
@@ -42,6 +44,8 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 	private List<List<HashMap<String, String>>> metadatas;
 	private boolean invertY = false;
 	private vtkImageData displayedImage;
+	
+	private HashMap<Layer, vtkImageData> layerImageData = new HashMap<Layer, vtkImageData>();
 
 	public LayerPreviewModel(G1 image, final List<Layer> layers, int currentLayerIndex, IntensityRange intensityRange, int[] currentMaskValues,
 				double[] currentFillValues, List<List<HashMap<String, String>>> metadatas, boolean invertY)
@@ -108,6 +112,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setCurrentMaskValues(int[] currentMaskValues) throws IOException, Exception
 	{
+		if (Arrays.equals(this.currentMaskValues, currentMaskValues)) return;
 		this.currentMaskValues = currentMaskValues;
 		if (image != null) image.setMaskValues(currentMaskValues);
 		renderLayer();
@@ -121,6 +126,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setCurrentFillValues(double[] currentFillValues) throws IOException, Exception
 	{
+		if (Arrays.equals(this.currentFillValues, currentFillValues)) return;
 		this.currentFillValues = currentFillValues;
 		if (image != null) image.setFillValues(currentFillValues);
 		renderLayer();
@@ -161,15 +167,32 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	private void generateVtkImageData(Layer layer) throws IOException, Exception
 	{
-		List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
-		IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
-		reader.
-			operate(new VtkImageRendererOperator(isInvertY())).
-			subscribe(new Sink<vtkImageData>(displayedImages)).run();
-		setDisplayedImage(displayedImages.get(0));
-//		contrastController.setImageData(getDisplayedImage());
-//		if (getDisplayedImage().GetNumberOfScalarComponents() != 1)
-//			contrastController.getView().setVisible(false);
+		vtkImageData existingImageData = layerImageData.get(layer);
+		if (existingImageData != null)
+		{
+			setDisplayedImage(existingImageData);
+			return;
+		}
+		if (layer.dataSizes().get(0) == 1)
+		{
+			List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
+			IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
+			reader.
+				operate(new VtkImageRendererOperator(isInvertY())).
+				subscribe(new Sink<vtkImageData>(displayedImages)).run();
+			setDisplayedImage(displayedImages.get(0));
+			layerImageData.put(layer, displayedImages.get(0));
+		}
+		else if (layer.dataSizes().get(0) == 3)
+		{
+			List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
+			IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
+			reader.
+				operate(new RGBALayerMergeOperator()).
+				subscribe(new Sink<vtkImageData>(displayedImages)).run();
+			setDisplayedImage(displayedImages.get(0));
+			layerImageData.put(layer, displayedImages.get(0));
+		}
 	}
 
 	public void renderLayer(Layer layer) throws IOException, Exception
