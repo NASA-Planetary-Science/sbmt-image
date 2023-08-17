@@ -97,6 +97,7 @@ public class PerspectiveImageToRenderableImagePipeline
 
 		for (RenderablePointedImage renderableImg : renderableImages)
 		{
+			renderableImg.setLayerIndex(image.getCurrentLayer());
 			renderableImg.setImageSource(image.getPointingSourceType());
 			renderableImg.setFilename(image.getFilename());
 			renderableImg.setMasking(new LayerMasking(image.getMaskValues()));

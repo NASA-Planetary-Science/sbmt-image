@@ -153,6 +153,7 @@ public class RenderablePointedImageToScenePipeline<G1 extends IPerspectiveImage 
 
 		for (RenderablePointedImage renderableImage : renderableImages)
 		{
+			renderableImage.setLayerIndex(image.getCurrentLayer());
 			renderableImage.setImageSource(image.getPointingSourceType());
 			renderableImage.setOfflimbShowing(image.isOfflimbShowing());
 			renderableImage.setFilename(image.getFilename());

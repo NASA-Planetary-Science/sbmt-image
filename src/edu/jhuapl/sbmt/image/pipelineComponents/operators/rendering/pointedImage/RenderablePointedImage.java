@@ -35,6 +35,7 @@ public class RenderablePointedImage implements IRenderableImage
 	private int binning = 1;
 	private Integer startH;
 	private Integer lastV;
+	private int layerIndex;
 //	private int[] pad;
 //	private int[] fullSize;
 
@@ -356,4 +357,16 @@ public class RenderablePointedImage implements IRenderableImage
 	{
 		this.lastV = lastV;
 	}
+
+
+	public int getLayerIndex() {
+		return layerIndex;
+	}
+
+
+	public void setLayerIndex(int layerIndex) {
+		this.layerIndex = layerIndex;
+	}
+	
+	
 }

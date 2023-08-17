@@ -13,6 +13,7 @@ import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.Frustum;
 import edu.jhuapl.saavtk.util.PolyDataUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
+import edu.jhuapl.saavtk.util.VtkDataTypes;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.model.BinTranslations;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
@@ -22,6 +23,7 @@ import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.color.RGBALa
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageContrastOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageVtkMaskingOperator;
+import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadCachedSupportFilesPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadImageDataFromCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadPolydataFromCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SaveImageDataToCachePipeline;
@@ -96,17 +98,24 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
 
      	 List<vtkImageData> imageData = Lists.newArrayList();
     	 List<vtkPolyData> footprints = Lists.newArrayList();
+    	 
+    	 int layerIndex = renderableImage.getLayerIndex();
+    	 
     	 synchronized(RenderablePointedImageFootprintOperator.class)
          {
  	    	for (SmallBodyModel smallBody : smallBodyModels)
  	    	{
-	    		String imageDataFilename = getPrerenderingFileNameBase(renderableImage, smallBody) + "_footprintImageData.vtk.gz";
- 	    		
-		    	vtkImageData existingImageData = LoadImageDataFromCachePipeline.of(imageDataFilename).orNull();
-//		    	vtkImageData existingImageData = layerImageData.get(renderableImage.getFilename());
+ 	    		String prefix = getPrerenderingFileNameBase(renderableImage, smallBody) + "_" + layerIndex;
+	    		String imageDataFilename = prefix + "_footprintImageData.vtk.gz";
+ 	    		LoadCachedSupportFilesPipeline cachedPipeline = LoadCachedSupportFilesPipeline.of(prefix);
+ 	    		vtkImageData existingImageData = cachedPipeline.getImageData();
 				if (existingImageData != null)
 				{
-					imageData.add(existingImageData);
+					//this restretches things to the proper contrast 
+					Just.of(existingImageData)
+						.operate(new VtkImageContrastOperator(renderableImage.getIntensityRange()))
+						.subscribe(Sink.of(imageData))
+						.run();					
 				}
 				else
 				{
@@ -127,14 +136,12 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
 			        	.operate(new VtkImageVtkMaskingOperator(renderableImage.getMasking().getMask()))
 			        	.subscribe(Sink.of(imageData)).run();
 			        SaveImageDataToCachePipeline.of(imageData.get(0), imageDataFilename);
-		//	        layerImageData.put(renderableImage.getFilename(), imageData.get(0));
 				}
 				
 				
 				//Footprints
-				String imageFootprintFilename = getPrerenderingFileNameBase(renderableImage, smallBody) + "_footprintData.vtk.gz";
-			
-	    		vtkPolyData existingFootprint = LoadPolydataFromCachePipeline.of(imageFootprintFilename).orNull();
+				String imageFootprintFilename = prefix + "_footprintData.vtk.gz";
+				vtkPolyData existingFootprint = cachedPipeline.getFootprintPolyData();
 	    		if (existingFootprint != null)
 	    		{
 	    			footprints.add(existingFootprint);
