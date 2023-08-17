@@ -40,10 +40,18 @@ public class LoadImageDataFromFileOperator extends BasePipelineOperator<String, 
 //			e.printStackTrace();
 		    file = null;
 		}
+		vtkXMLImageDataReader reader = new vtkXMLImageDataReader();
 		if (file != null && file.exists())
 		{
-		    vtkXMLImageDataReader reader = new vtkXMLImageDataReader();
+		    
 		    reader.SetFileName(file.getAbsolutePath());
+		    reader.Update();
+		    vtkImageData imageData = reader.GetOutput();
+		    outputs.add(imageData);
+		}
+		else if (new File(inputs.get(0)).exists())
+		{
+			reader.SetFileName(inputs.get(0));
 		    reader.Update();
 		    vtkImageData imageData = reader.GetOutput();
 		    outputs.add(imageData);

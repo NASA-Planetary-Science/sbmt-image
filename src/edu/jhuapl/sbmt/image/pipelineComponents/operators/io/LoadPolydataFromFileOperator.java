@@ -40,13 +40,21 @@ public class LoadPolydataFromFileOperator extends BasePipelineOperator<String, v
 //			e.printStackTrace();
 		    file = null;
 		}
+		vtkPolyDataReader reader = new vtkPolyDataReader();
 		if (file != null && file.exists())
 		{
-		    vtkPolyDataReader reader = new vtkPolyDataReader();
 		    reader.SetFileName(file.getAbsolutePath());
 		    reader.Update();
 		    vtkPolyData imageData = reader.GetOutput();
 		    outputs.add(imageData);
 		}
+		else if (new File(inputs.get(0)).exists())
+		{
+		    reader.SetFileName(inputs.get(0));
+		    reader.Update();
+		    vtkPolyData imageData = reader.GetOutput();
+		    outputs.add(imageData);
+		}
+		
 	}
 }
