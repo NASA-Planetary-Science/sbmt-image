@@ -113,10 +113,11 @@ public class BasemapImageConfig implements IFeatureConfig
 			}
 			else
 			{
-				try {
+//				try {
 					// Final option (legacy behavior). The key is hardwired. The
 					// file could be in
 					// either of two places.
+					System.out.println("BasemapImageConfig: generateImageMapKeys: " + config.serverPath("image_map.png"));
 					if (FileCache.isFileGettable(config.serverPath("image_map.png")))
 					{
 						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "image_map.png",
@@ -127,11 +128,11 @@ public class BasemapImageConfig implements IFeatureConfig
 						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "basemap/image_map.png",
 								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
 					}
-				} 
-				catch (UnauthorizedAccessException uae)
-				{
-					imageMapKeys = ImmutableList.of();
-				}
+//				} 
+//				catch (UnauthorizedAccessException uae)
+//				{
+//					imageMapKeys = ImmutableList.of();
+//				}
 				
 			}
 //			System.out.println("BasemapImageConfig: generateImageMapKeys: number of keys " + imageMapKeys.size() + " for " + config.getUniqueName());
