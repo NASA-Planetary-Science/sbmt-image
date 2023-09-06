@@ -117,7 +117,6 @@ public class BasemapImageConfig implements IFeatureConfig
 					// Final option (legacy behavior). The key is hardwired. The
 					// file could be in
 					// either of two places.
-					System.out.println("BasemapImageConfig: generateImageMapKeys: " + config.serverPath("image_map.png") + " for " + config.getUniqueName());
 					if (FileCache.isFileGettable(config.serverPath("image_map.png")))
 					{
 						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "image_map.png",
