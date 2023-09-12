@@ -99,7 +99,7 @@ public class ColorImageGeneratorPipeline extends ImageToScenePipeline //implemen
 
 	public static void main(String[] args) throws Exception
 	{
-		NativeLibraryLoader.loadAllVtkLibraries();
+		NativeLibraryLoader.loadVtkLibraries();
 		gdal.AllRegister();
 
 		PerspectiveImageMetadata image1 = new PerspectiveImageMetadata("/Users/steelrj1/Desktop/2356-test-files/1270/M0125990473F4_2P_IOF_DBL.FIT", ImageType.MSI_IMAGE, PointingSource.SPICE, "/Users/steelrj1/Desktop/2356-test-files/1270/M0125990473F4_2P_IOF_DBL.INFO", new double[] {});

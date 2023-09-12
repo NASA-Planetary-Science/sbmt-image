@@ -84,7 +84,7 @@ public class GDALReader extends BasePipelinePublisher<Layer>
 
 	public static void main(String[] args) throws InvalidGDALFileTypeException
 	{
-		NativeLibraryLoader.loadAllVtkLibraries();
+		NativeLibraryLoader.loadVtkLibraries();
         gdal.AllRegister();
         // This is a DART/LICIA/LUKE test image, which is a 3-band UNSIGNED byte
         // image that has both Didymos and Dimorphos visible and fairly large.

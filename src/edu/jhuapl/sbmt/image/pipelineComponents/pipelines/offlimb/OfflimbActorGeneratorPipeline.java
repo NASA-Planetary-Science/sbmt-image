@@ -117,7 +117,7 @@ public class OfflimbActorGeneratorPipeline
 
 	public static void main(String[] args) throws Exception
 	{
-		NativeLibraryLoader.loadAllVtkLibraries();
+		NativeLibraryLoader.loadVtkLibraries();
 		OfflimbActorGeneratorPipeline pipeline = new OfflimbActorGeneratorPipeline();
 	}
 }

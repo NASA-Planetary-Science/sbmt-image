@@ -67,7 +67,7 @@ public class RenderableCylindricalImageToScenePipeline extends ImageToScenePipel
 
 	public static void main(String[] args) throws Exception
 	{
-		NativeLibraryLoader.loadAllVtkLibraries();
+		NativeLibraryLoader.loadVtkLibraries();
 
 		IPipelinePublisher<SmallBodyModel> vtkReader = new BuiltInVTKReader("/Users/steelrj1/.sbmt/cache/2/EROS/ver64q.vtk");
 		List<SmallBodyModel> smallBodyModels = Lists.newArrayList();
