@@ -43,6 +43,7 @@ public class VTKImagePolyDataRendererOperator extends BasePipelineOperator<Pair<
 		vtkActor actor = new vtkActor();
 		actor.SetMapper(mapper);
 		actor.SetTexture(imageTexture);
+        actor.SetForceOpaque(true);
         vtkProperty footprintProperty = actor.GetProperty();
         footprintProperty.LightingOff();
 

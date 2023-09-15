@@ -145,6 +145,7 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
 	    		if (existingFootprint != null)
 	    		{
 	    			footprints.add(existingFootprint);
+	    			PolyDataUtil.shiftPolyDataInMeanNormalDirection(existingFootprint, renderableImage.getOffset());
 	    			continue;
 	    		}
 	    		else 
@@ -170,7 +171,7 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
 			        pointData.SetTCoords(textureCoords);
 			        PolyDataUtil.generateTextureCoordinates(frustum, renderableImage.getImageWidth(), renderableImage.getImageHeight(), footprint);
 			        pointData.Delete();
-			        PolyDataUtil.shiftPolyDataInNormalDirection(footprint, renderableImage.getOffset());
+			        PolyDataUtil.shiftPolyDataInMeanNormalDirection(footprint, renderableImage.getOffset());
 					SavePolydataToCachePipeline.of(footprint, imageFootprintFilename);
 					footprints.add(footprint);
 	    		}
