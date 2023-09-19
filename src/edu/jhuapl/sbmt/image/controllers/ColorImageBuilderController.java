@@ -3,6 +3,7 @@ package edu.jhuapl.sbmt.image.controllers;
 import java.util.List;
 import java.util.Optional;
 
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
@@ -14,6 +15,7 @@ import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.CompositePerspectiveImage;
+import edu.jhuapl.sbmt.image.model.NoOverlapException;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.SceneActorBuilderOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.colorImages.ColorImageGeneratorPipeline;
@@ -57,9 +59,13 @@ public class ColorImageBuilderController<G1 extends IPerspectiveImage & IPerspec
 					.run();
 
 				panel.updatePreviewPanel(preview);
+			} catch (NoOverlapException noOverlapEx) {
+				JOptionPane.showMessageDialog(panel.getRootPane().getContentPane(),
+	                    noOverlapEx.getMessage(),
+	                    "Error",
+	                    JOptionPane.ERROR_MESSAGE);
 			}
-			catch (Exception ex)
-			{
+			catch (Exception ex) {
 				ex.printStackTrace();
 			}
 		});
