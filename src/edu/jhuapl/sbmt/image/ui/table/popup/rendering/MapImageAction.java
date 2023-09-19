@@ -37,7 +37,8 @@ public class MapImageAction<G1 extends IPerspectiveImage & IPerspectiveImageTabl
 		boolean stateToChangeTo = true;
 		for (G1 aItem : aManager.getSelectedItems())
 		{
-			stateToChangeTo &= aManager.getImageMapped(aItem) == true;
+			stateToChangeTo = aManager.getImageMapped(aItem) == true;
+			if (aManager.getImageMapped(aItem) == true) break;
 		}
 
 		for (G1 aItem : aManager.getSelectedItems())
@@ -56,7 +57,11 @@ public class MapImageAction<G1 extends IPerspectiveImage & IPerspectiveImageTabl
 		boolean isSelected = true;
 
 		for (G1 aItem : aManager.getSelectedItems())
-			isSelected &= aManager.getImageMapped(aItem) == true;
+		{
+			isSelected = aManager.getImageMapped(aItem) == true;
+			if (aManager.getImageMapped(aItem) == true) break;
+		}
+			
 		((JCheckBoxMenuItem) aAssocMI).setSelected(isSelected);
 	}
 
