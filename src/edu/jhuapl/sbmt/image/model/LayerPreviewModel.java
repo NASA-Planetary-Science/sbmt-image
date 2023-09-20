@@ -197,7 +197,6 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 		}
 		if (layer.dataSizes().get(0) == 1)
 		{
-			System.out.println("LayerPreviewModel: generateVtkImageData: size 1");
 			List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
 			IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
 			reader.
@@ -208,7 +207,6 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 		}
 		else if (layer.dataSizes().get(0) == 3)
 		{
-			System.out.println("LayerPreviewModel: generateVtkImageData: size 3");
 			List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
 			IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
 			reader.
