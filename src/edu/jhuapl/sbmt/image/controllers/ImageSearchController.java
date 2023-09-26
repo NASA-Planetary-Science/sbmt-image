@@ -101,8 +101,8 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
         imagePicker.InitializePickList();
         vtkPropCollection smallBodyPickList = imagePicker.GetPickList();
         smallBodyPickList.RemoveAllItems();
-		this.imageSearchModel = new ImageSearchParametersModel(config, modelManager, renderer, instrument.orElse(null));
-		instrument.ifPresent(inst -> {
+        instrument.ifPresent(inst -> {
+        	this.imageSearchModel = new ImageSearchParametersModel(config, modelManager, renderer, instrument.orElse(null));
 			this.searchParametersController = new SpectralImageSearchParametersController(config, collection, imageSearchModel, modelManager, pickManager);
 			this.searchParametersController.setupSearchParametersPanel();
 		});
