@@ -284,17 +284,17 @@ public class RendererPreviewPanel2 extends ModelInfoWindow implements MouseListe
 		JMenuBar menuBar = new JMenuBar();
 
 		JMenu fileMenu = new JMenu("File");
-		JMenuItem mi = new JMenuItem(new AbstractAction("Export to Image...")
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				File file = CustomFileChooser.showSaveDialog(renderer.getRenderWindowPanel().getComponent(), "Export to PNG Image...",
-						"image.png", "png");
-				RenderIoUtil.saveToFile(file, renderer.getRenderWindowPanel(), null);
-			}
-		});
-		fileMenu.add(mi);
+//		JMenuItem mi = new JMenuItem(new AbstractAction("Export to Image...")
+//		{
+//			@Override
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				File file = CustomFileChooser.showSaveDialog(renderer.getRenderWindowPanel().getComponent(), "Export to PNG Image...",
+//						"image.png", "png");
+//				RenderIoUtil.saveToFile(file, renderer.getRenderWindowPanel(), null);
+//			}
+//		});
+//		fileMenu.add(mi);
 		fileMenu.setMnemonic('F');
 		menuBar.add(fileMenu);
 
