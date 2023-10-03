@@ -35,22 +35,17 @@
 	<dependency>
 		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>
 		<artifactId>sbmt-layer</artifactId>
-		<version>1.0.0</version>
-	</dependency>
-	<dependency>
-		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>
-		<artifactId>sbmt-pipeline</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1-b0-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>
 		<artifactId>sbmt-pointing</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.1-b0-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>
 		<artifactId>sbmt-util</artifactId>
-		<version>1.0.0</version>
+		<version>1.0.2-b0-SNAPSHOT</version>
 	</dependency>
   </dependencies>
   <build>
