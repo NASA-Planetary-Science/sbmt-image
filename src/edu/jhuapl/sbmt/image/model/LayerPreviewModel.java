@@ -8,6 +8,8 @@ import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
 
+import com.google.common.base.Preconditions;
+
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
@@ -57,7 +59,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 //	private HashMap<Layer, vtkImageData> layerImageData = new HashMap<Layer, vtkImageData>();
 
 	public LayerPreviewModel(G1 image, final List<Layer> layers, int currentLayerIndex, IntensityRange intensityRange, int[] currentMaskValues,
-				double[] currentFillValues, List<List<HashMap<String, String>>> metadatas, boolean invertY, SmallBodyModel smallBodyModel)
+				double[] currentFillValues, List<List<HashMap<String, String>>> metadatas, boolean invertY)
 	{
 		this.image = image;
 		this.invertY = invertY;
@@ -69,6 +71,10 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 		this.layer = layers.get(currentLayerIndex);
 		this.metadatas = metadatas;
 		this.metadata = metadatas.get(currentLayerIndex);
+	}
+	
+	public void setSmallBodyModel(SmallBodyModel smallBodyModel)
+	{
 		this.smallBodyModel = smallBodyModel;
 		try
 		{
@@ -79,7 +85,6 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	public int getDisplayedLayerIndex()
@@ -122,6 +127,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setCurrentMaskValues(int[] currentMaskValues) throws IOException, Exception
 	{
+		Preconditions.checkNotNull(smallBodyModel);
 		if (Arrays.equals(this.currentMaskValues, currentMaskValues)) return;
 		this.currentMaskValues = currentMaskValues;
 		dataNeedsUpdate = true;
@@ -217,7 +223,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 		}
 	}
 
-	public void renderLayer(Layer layer) throws IOException, Exception
+	private void renderLayer(Layer layer) throws IOException, Exception
 	{
 		generateVtkImageDataAndSetLayer(layer);
 		updateImage(getDisplayedImage());
@@ -225,6 +231,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	private void renderLayer() throws IOException, Exception
 	{
+		Preconditions.checkNotNull(smallBodyModel);
 		if (getImage() == null) return;
 		regenerateLayerFromImage();
 		if (getLayer() == null) return;
@@ -296,6 +303,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setLayer(Layer layer) throws Exception
 	{
+		Preconditions.checkNotNull(smallBodyModel);
 		this.layer = layer;
 		generateVtkImageData(layer);
 		updateImage(getDisplayedImage());

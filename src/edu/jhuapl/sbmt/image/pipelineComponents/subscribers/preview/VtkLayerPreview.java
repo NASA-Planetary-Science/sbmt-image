@@ -71,7 +71,8 @@ public class VtkLayerPreview<G1 extends IPerspectiveImage & IPerspectiveImageTab
 			List<Layer> layers = items.stream().map( item -> item.getLeft()).toList();
 			List<List<HashMap<String, String>>> metadata = items.stream().map( item -> item.getRight()).toList();
 			preview = new LayerPreviewPanel<G1>(title);
-			previewModel = new LayerPreviewModel<G1>(image, layers, currentLayerIndex, currentIntensityRange, currentMaskValues, currentFillValues, metadata, invertY, smallBodyModel);
+			previewModel = new LayerPreviewModel<G1>(image, layers, currentLayerIndex, currentIntensityRange, currentMaskValues, currentFillValues, metadata, invertY);
+			previewModel.setSmallBodyModel(smallBodyModel);
 			previewController = new LayerPreviewController<>(preview, previewModel, completionBlock);
 		}
 		catch (Exception e)
