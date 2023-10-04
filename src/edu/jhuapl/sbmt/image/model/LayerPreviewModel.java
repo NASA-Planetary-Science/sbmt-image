@@ -2,26 +2,36 @@ package edu.jhuapl.sbmt.image.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import vtk.vtkImageData;
-import vtk.vtkImageReslice;
-import vtk.vtkImageSlice;
-import vtk.vtkImageSliceMapper;
-import vtk.vtkTransform;
+import org.apache.commons.io.FilenameUtils;
 
+import com.google.common.base.Preconditions;
+
+import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.IntensityRange;
+import edu.jhuapl.saavtk.util.SafeURLPaths;
+import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
+import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.color.RGBALayerMergeOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.IPerspectiveImageToLayerAndMetadataPipeline;
+import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadCachedSupportFilesPipeline;
+import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SaveImageDataToCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.vtk.VtkImageContrastPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.publishers.gdal.InvalidGDALFileTypeException;
 import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
+import vtk.vtkImageReslice;
+import vtk.vtkImageSlice;
+import vtk.vtkImageSliceMapper;
+import vtk.vtkTransform;
 
 public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>
 {
@@ -42,6 +52,11 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 	private List<List<HashMap<String, String>>> metadatas;
 	private boolean invertY = false;
 	private vtkImageData displayedImage;
+	private SmallBodyModel smallBodyModel;
+	private boolean dataNeedsUpdate = false;
+
+	
+//	private HashMap<Layer, vtkImageData> layerImageData = new HashMap<Layer, vtkImageData>();
 
 	public LayerPreviewModel(G1 image, final List<Layer> layers, int currentLayerIndex, IntensityRange intensityRange, int[] currentMaskValues,
 				double[] currentFillValues, List<List<HashMap<String, String>>> metadatas, boolean invertY)
@@ -56,6 +71,11 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 		this.layer = layers.get(currentLayerIndex);
 		this.metadatas = metadatas;
 		this.metadata = metadatas.get(currentLayerIndex);
+	}
+	
+	public void setSmallBodyModel(SmallBodyModel smallBodyModel)
+	{
+		this.smallBodyModel = smallBodyModel;
 		try
 		{
 			renderLayer();
@@ -65,7 +85,6 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 
 	public int getDisplayedLayerIndex()
@@ -108,9 +127,13 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setCurrentMaskValues(int[] currentMaskValues) throws IOException, Exception
 	{
+		Preconditions.checkNotNull(smallBodyModel);
+		if (Arrays.equals(this.currentMaskValues, currentMaskValues)) return;
 		this.currentMaskValues = currentMaskValues;
+		dataNeedsUpdate = true;
 		if (image != null) image.setMaskValues(currentMaskValues);
 		renderLayer();
+		dataNeedsUpdate = false;
 
 	}
 
@@ -121,9 +144,12 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setCurrentFillValues(double[] currentFillValues) throws IOException, Exception
 	{
+		if (Arrays.equals(this.currentFillValues, currentFillValues)) return;
 		this.currentFillValues = currentFillValues;
+		dataNeedsUpdate = true;
 		if (image != null) image.setFillValues(currentFillValues);
 		renderLayer();
+		dataNeedsUpdate = false;
 	}
 
 	public IntensityRange getIntensityRange()
@@ -133,16 +159,20 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setIntensityRange(IntensityRange intensityRange) throws IOException, Exception
 	{
+//		dataNeedsUpdate = true;
 		this.intensityRange = intensityRange;
 		image.setIntensityRange(intensityRange);
 		renderLayer();
+//		dataNeedsUpdate = false;
 	}
 
 	public void setIntensity(IntensityRange range) throws IOException, Exception
 	{
+		dataNeedsUpdate = true;
 		VtkImageContrastPipeline pipeline = new VtkImageContrastPipeline(getDisplayedImage(), range);
 		setDisplayedImage(pipeline.getUpdatedData().get(0));
  		updateImage(getDisplayedImage());
+ 		dataNeedsUpdate = false;
 	}
 
 	private void generateVtkImageDataAndSetLayer(Layer layer) throws IOException, Exception
@@ -161,18 +191,39 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	private void generateVtkImageData(Layer layer) throws IOException, Exception
 	{
-		List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
-		IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
-		reader.
-			operate(new VtkImageRendererOperator(isInvertY())).
-			subscribe(new Sink<vtkImageData>(displayedImages)).run();
-		setDisplayedImage(displayedImages.get(0));
-//		contrastController.setImageData(getDisplayedImage());
-//		if (getDisplayedImage().GetNumberOfScalarComponents() != 1)
-//			contrastController.getView().setVisible(false);
+		String prefix = getPrerenderingFileNameBase(image, smallBodyModel) + "_" + displayedLayerIndex;
+		String imageDataFilename = prefix + "_footprintImageData.vtk.gz";
+		LoadCachedSupportFilesPipeline cachedPipeline = LoadCachedSupportFilesPipeline.of(prefix);
+		
+		vtkImageData existingImageData = cachedPipeline.getImageData();
+		if (existingImageData != null && !dataNeedsUpdate)
+		{
+			setDisplayedImage(existingImageData);
+			return;
+		}
+		if (layer.dataSizes().get(0) == 1)
+		{
+			List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
+			IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
+			reader.
+				operate(new VtkImageRendererOperator(isInvertY())).
+				subscribe(new Sink<vtkImageData>(displayedImages)).run();
+			setDisplayedImage(displayedImages.get(0));
+			SaveImageDataToCachePipeline.of(displayedImages.get(0), imageDataFilename);
+		}
+		else if (layer.dataSizes().get(0) == 3)
+		{
+			List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
+			IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
+			reader.
+				operate(new RGBALayerMergeOperator()).
+				subscribe(new Sink<vtkImageData>(displayedImages)).run();
+			setDisplayedImage(displayedImages.get(displayedLayerIndex));
+			SaveImageDataToCachePipeline.of(displayedImages.get(0), imageDataFilename);
+		}
 	}
 
-	public void renderLayer(Layer layer) throws IOException, Exception
+	private void renderLayer(Layer layer) throws IOException, Exception
 	{
 		generateVtkImageDataAndSetLayer(layer);
 		updateImage(getDisplayedImage());
@@ -180,6 +231,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	private void renderLayer() throws IOException, Exception
 	{
+		Preconditions.checkNotNull(smallBodyModel);
 		if (getImage() == null) return;
 		regenerateLayerFromImage();
 		if (getLayer() == null) return;
@@ -251,6 +303,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setLayer(Layer layer) throws Exception
 	{
+		Preconditions.checkNotNull(smallBodyModel);
 		this.layer = layer;
 		generateVtkImageData(layer);
 		updateImage(getDisplayedImage());
@@ -281,5 +334,15 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 	{
 		this.metadatas = metadatas;
 	}
+	
+    private String getPrerenderingFileNameBase(G1 image, SmallBodyModel smallBodyModel)
+    {
+        String imageName = image.getFilename();
+        String topPath = FileCache.instance().getFile(imageName).getParent();
+        String result = SafeURLPaths.instance().getString(topPath, "support",
+        												  image.getPointingSourceType().name(),
+        												  FilenameUtils.getBaseName(imageName) + "_" + smallBodyModel.getModelResolution() + "_" + smallBodyModel.getModelName());
 
+        return result;
+    }
 }

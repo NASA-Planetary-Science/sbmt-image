@@ -155,4 +155,14 @@ public class RenderableCylindricalImage implements IRenderableImage
 	{
 		this.filename = filename;
 	}
+
+	@Override
+	public int getLayerIndex() {
+		return 0;
+	}
+
+	@Override
+	public void setLayerIndex(int layerIndex) {
+		
+	}
 }

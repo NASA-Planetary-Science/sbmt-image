@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.jhuapl.ses.srn.sbmt</groupId>
   <artifactId>sbmt-image</artifactId>
-  <version>1.0.1-b0-SNAPSHOT</version>
+  <version>1.1.0.b1-SNAPSHOT</version>
   <name>sbmt-image</name>
   <description>SBMT Image library</description>
   <packaging>jar</packaging>
@@ -31,11 +31,6 @@
 		<groupId>com.beust</groupId>
 		<artifactId>jcommander</artifactId>
 		<version>1.82</version>
-	</dependency>
-	<dependency>
-		<groupId>edu.jhuapl.ses.srn.saavtk</groupId>
-		<artifactId>saavtk</artifactId>
-		<version>1.0.0</version>
 	</dependency>
 	<dependency>
 		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>

@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 
 import edu.jhuapl.saavtk.util.IntensityRange;
+import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.controllers.preview.LayerPreviewController;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
@@ -31,6 +32,7 @@ public class VtkLayerPreview<G1 extends IPerspectiveImage & IPerspectiveImageTab
 	private double[] currentFillValues = new double[] {};
 	private G1 image;
 	private boolean invertY = false;
+	private SmallBodyModel smallBodyModel;
 
 	public VtkLayerPreview(String title, G1 image, boolean invertY)
 	{
@@ -70,6 +72,7 @@ public class VtkLayerPreview<G1 extends IPerspectiveImage & IPerspectiveImageTab
 			List<List<HashMap<String, String>>> metadata = items.stream().map( item -> item.getRight()).toList();
 			preview = new LayerPreviewPanel<G1>(title);
 			previewModel = new LayerPreviewModel<G1>(image, layers, currentLayerIndex, currentIntensityRange, currentMaskValues, currentFillValues, metadata, invertY);
+			previewModel.setSmallBodyModel(smallBodyModel);
 			previewController = new LayerPreviewController<>(preview, previewModel, completionBlock);
 		}
 		catch (Exception e)
@@ -141,5 +144,10 @@ public class VtkLayerPreview<G1 extends IPerspectiveImage & IPerspectiveImageTab
 		this.image = image;
 		if (previewModel == null) return;
 		previewModel.setImage(image);
+	}
+	
+	public void setSmallBodyModel(SmallBodyModel smallBodyModel)
+	{
+		this.smallBodyModel = smallBodyModel;
 	}
 }

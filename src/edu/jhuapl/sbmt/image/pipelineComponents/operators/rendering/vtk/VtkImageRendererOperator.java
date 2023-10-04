@@ -20,6 +20,9 @@ import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 public class VtkImageRendererOperator extends BasePipelineOperator<Layer, vtkImageData>
 {
 	vtkImageData output;
+	vtkImageData redOutput;
+	vtkImageData greenOutput;
+	vtkImageData blueOutput;
 	PixelDoubleFactory pixelDoubleFactory;
 	int layerWidth, layerDepth, layerHeight;
 	private boolean invertY = false;
@@ -65,9 +68,29 @@ public class VtkImageRendererOperator extends BasePipelineOperator<Layer, vtkIma
 //				taskList.add(task);
 			}
 //			resultList = ThreadService.submitAll(taskList);
+			
+			outputs.add(output);
 		}
 		else if (layerDepth >= 3)
 		{
+			redOutput = new vtkImageData();
+			redOutput.SetSpacing(1.0, 1.0, 1.0);
+			redOutput.SetOrigin(0.0, 0.0, 0.0);
+			redOutput.SetDimensions(layerWidth, layerHeight, 1);
+			redOutput.AllocateScalars(VtkDataTypes.VTK_FLOAT, 1);
+			
+			greenOutput = new vtkImageData();
+			greenOutput.SetSpacing(1.0, 1.0, 1.0);
+			greenOutput.SetOrigin(0.0, 0.0, 0.0);
+			greenOutput.SetDimensions(layerWidth, layerHeight, 1);
+			greenOutput.AllocateScalars(VtkDataTypes.VTK_FLOAT, 1);
+			
+			blueOutput = new vtkImageData();
+			blueOutput.SetSpacing(1.0, 1.0, 1.0);
+			blueOutput.SetOrigin(0.0, 0.0, 0.0);
+			blueOutput.SetDimensions(layerWidth, layerHeight, 1);
+			blueOutput.AllocateScalars(VtkDataTypes.VTK_FLOAT, 1);
+			
 			output.AllocateScalars(VtkDataTypes.VTK_UNSIGNED_CHAR, layerDepth);
 			for (int i = 0; i < layerWidth; i++)
 			{
@@ -76,14 +99,20 @@ public class VtkImageRendererOperator extends BasePipelineOperator<Layer, vtkIma
 			}
 
 			resultList = ThreadService.submitAll(taskList);
+			
+			outputs.add(output);
+			outputs.add(redOutput);
+			outputs.add(greenOutput);
+			outputs.add(blueOutput);
 		}
-		outputs.add(output);
+		
 	}
 
 	private class LayerRowToImageDataRow2DTask implements Callable<Void>
 	{
 		private int i;
 		PixelDouble pixel = pixelDoubleFactory.of(0, -Double.NaN, -Double.NaN);
+		
 		public LayerRowToImageDataRow2DTask(int i)
 		{
 			this.i = i;
@@ -122,9 +151,12 @@ public class VtkImageRendererOperator extends BasePipelineOperator<Layer, vtkIma
 					PixelDouble vecPixel = (PixelDouble) pixel.get(k);
 					int yIndex = invertY ? layerHeight - j - 1 : j;
 					output.SetScalarComponentFromFloat(i, yIndex, 0, k, (float)vecPixel.get());
+					if (k == 0) redOutput.SetScalarComponentFromFloat(i, yIndex, 0, 0, (float)vecPixel.get());
+					if (k == 1) greenOutput.SetScalarComponentFromFloat(i, yIndex, 0, 0, (float)vecPixel.get());
+					if (k == 2) blueOutput.SetScalarComponentFromFloat(i, yIndex, 0, 0, (float)vecPixel.get());
 				}
 			}
-
+			
 			return null;
 		}
 	}

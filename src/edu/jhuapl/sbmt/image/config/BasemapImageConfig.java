@@ -9,6 +9,7 @@ import com.google.common.collect.Lists;
 
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
+import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 import edu.jhuapl.sbmt.core.body.BodyViewConfig;
 import edu.jhuapl.sbmt.core.config.IFeatureConfig;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
@@ -112,21 +113,28 @@ public class BasemapImageConfig implements IFeatureConfig
 			}
 			else
 			{
-				// Final option (legacy behavior). The key is hardwired. The
-				// file could be in
-				// either of two places.
-				if (FileCache.isFileGettable(config.serverPath("image_map.png")))
-				{
-					imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "image_map.png",
-							ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
-				}
-				else if (FileCache.isFileGettable(config.serverPath("basemap/image_map.png")))
-				{
-					imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "basemap/image_map.png",
-							ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
-				}
+//				try {
+					// Final option (legacy behavior). The key is hardwired. The
+					// file could be in
+					// either of two places.
+					if (FileCache.isFileGettable(config.serverPath("image_map.png")))
+					{
+						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "image_map.png",
+								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
+					}
+					else if (FileCache.isFileGettable(config.serverPath("basemap/image_map.png")))
+					{
+						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "basemap/image_map.png",
+								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
+					}
+//				} 
+//				catch (UnauthorizedAccessException uae)
+//				{
+//					imageMapKeys = ImmutableList.of();
+//				}
+				
 			}
-			System.out.println("BasemapImageConfig: generateImageMapKeys: number of keys " + imageMapKeys.size() + " for " + config.getUniqueName());
+//			System.out.println("BasemapImageConfig: generateImageMapKeys: number of keys " + imageMapKeys.size() + " for " + config.getUniqueName());
 			this.imageMapKeys = correctMapKeys(imageMapKeys/*, metadataFile.getParent()*/);
 		}
 		for (ImageKeyInterface key : imageMapKeys)

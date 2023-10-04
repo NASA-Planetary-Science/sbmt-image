@@ -2,6 +2,7 @@ package edu.jhuapl.sbmt.image.ui.table.popup.properties;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
@@ -40,6 +41,7 @@ public class ShowImagePropertiesAction<G1 extends IPerspectiveImage & IPerspecti
 	private VtkLayerPreview<G1> preview = null;
 	private VtkImagePreview imageDataPreview = null;
 	private PerspectiveImageCollection<G1> aManager;
+	Logger log = Logger.getAnonymousLogger();
 
 	/**
 	 * @param imagePopupMenu
@@ -118,17 +120,16 @@ public class ShowImagePropertiesAction<G1 extends IPerspectiveImage & IPerspecti
 					Just.of(List.of(imageAndPolyData[0].getLeft()))
 						.subscribe(imageDataPreview)
 						.run();
-//					preview.getPanel().setVisible(true);
 				}
 				else
 				{
-//					PerspectiveImageToRenderableImagePipeline pipeline = new PerspectiveImageToRenderableImagePipeline(List.of(aItemL.get(0)));
 					IPerspectiveImageToLayerAndMetadataPipeline inputPipeline = IPerspectiveImageToLayerAndMetadataPipeline.of(image);
 					List<Layer> updatedLayers = inputPipeline.getLayers();
 					List<HashMap<String, String>> metadata = inputPipeline.getMetadata();
 					preview = new VtkLayerPreview<G1>(image, "Image Properties - " + image.getName(), image.getCurrentLayer(), image.getIntensityRange(), image.getMaskValues(), image.getFillValues(), false);
 					preview.setCompletionBlock(completionBlock);
 					preview.setImage(image);
+					preview.setSmallBodyModel(smallBodyModel);
 					List<HashMap<String, String>> metadatas = List.of(metadata.get(0));
 					List<Pair<Layer, List<HashMap<String, String>>>> inputList = Lists.newArrayList();
 

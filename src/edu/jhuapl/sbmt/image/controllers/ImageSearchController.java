@@ -101,8 +101,8 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
         imagePicker.InitializePickList();
         vtkPropCollection smallBodyPickList = imagePicker.GetPickList();
         smallBodyPickList.RemoveAllItems();
-		this.imageSearchModel = new ImageSearchParametersModel(config, modelManager, renderer, instrument.orElse(null));
-		instrument.ifPresent(inst -> {
+        instrument.ifPresent(inst -> {
+        	this.imageSearchModel = new ImageSearchParametersModel(config, modelManager, renderer, instrument.orElse(null));
 			this.searchParametersController = new SpectralImageSearchParametersController(config, collection, imageSearchModel, modelManager, pickManager);
 			this.searchParametersController.setupSearchParametersPanel();
 		});
@@ -573,43 +573,43 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 //		if (collection.getPainterFor(aPrimaryTarg) == null)
 //			return;
 		// Bail if not a valid pick action
-		if (/*PickUtil.isPopupTrigger(aEvent) == false ||*/ aMode != PickMode.ActiveSec)
+		if (/*PickUtil.isPopupTrigger(aEvent) == false ||*/ aMode == PickMode.ActiveSec || aMode != PickMode.Passive)
 			return;
-
-
-		vtkActor actor = aPrimaryTarg.getActor();
-		imagePicker.GetPickList().RemoveAllItems();
-		Optional<G1> image = collection.getImage(actor);
-		image.ifPresent(e -> {
-			if (collection.getImageMapped(e))
-			{
-				imagePicker.AddPickList(actor);
-				collection.setSelectedItems(List.of(e));
-				// Show the popup
-				Component tmpComp = aEvent.getComponent();
-				int posX = ((MouseEvent) aEvent).getX();
-				int posY = ((MouseEvent) aEvent).getY();
-				if (PickUtil.isPopupTrigger(aEvent) == true)
-					popupMenu.show(tmpComp, posX, posY);
-				updateStatusBar(((MouseEvent) aEvent));
-			}
-		});
-		image = collection.getImageBoundary(actor);
-		image.ifPresent(e -> {
-			if (collection.getImageBoundaryShowing(e));
-			{
-				imagePicker.AddPickList(actor);
-				collection.setSelectedItems(List.of(e));
-				// Show the popup
-				Component tmpComp = aEvent.getComponent();
-				int posX = ((MouseEvent) aEvent).getX();
-				int posY = ((MouseEvent) aEvent).getY();
-				if (PickUtil.isPopupTrigger(aEvent) == true)
-					popupMenu.show(tmpComp, posX, posY);
-				updateStatusBar(((MouseEvent) aEvent));
-			}
-		});
-
+		if (((MouseEvent)aEvent).getID() == MouseEvent.MOUSE_RELEASED || ((MouseEvent)aEvent).getID() == MouseEvent.MOUSE_MOVED)
+		{
+			vtkActor actor = aPrimaryTarg.getActor();
+			imagePicker.GetPickList().RemoveAllItems();
+			Optional<G1> image = collection.getImage(actor);
+			image.ifPresent(e -> {
+				if (collection.getImageMapped(e))
+				{
+					imagePicker.AddPickList(actor);
+					collection.setSelectedItems(List.of(e));
+					// Show the popup
+					Component tmpComp = aEvent.getComponent();
+					int posX = ((MouseEvent) aEvent).getX();
+					int posY = ((MouseEvent) aEvent).getY();
+					if (PickUtil.isPopupTrigger(aEvent) == true)
+						popupMenu.show(tmpComp, posX, posY);
+//					updateStatusBar(((MouseEvent) aEvent));
+				}
+			});
+			image = collection.getImageBoundary(actor);
+			image.ifPresent(e -> {
+				if (collection.getImageBoundaryShowing(e));
+				{
+					imagePicker.AddPickList(actor);
+					collection.setSelectedItems(List.of(e));
+					// Show the popup
+					Component tmpComp = aEvent.getComponent();
+					int posX = ((MouseEvent) aEvent).getX();
+					int posY = ((MouseEvent) aEvent).getY();
+					if (PickUtil.isPopupTrigger(aEvent) == true)
+						popupMenu.show(tmpComp, posX, posY);
+//					updateStatusBar(((MouseEvent) aEvent));
+				}
+			});
+		}
 
 	}
 

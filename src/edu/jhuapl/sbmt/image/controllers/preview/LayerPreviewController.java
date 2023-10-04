@@ -72,7 +72,7 @@ public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveI
 		if (model.getLayers().size() > 1)
 		{
 			String[] layerNames = new String[model.getLayers().size()];
-			if (model.getMetadatas().size() != 0 && model.getMetadatas().get(0).get(0).size() > 0)
+			if (model.getMetadatas().size() != 0 && model.getMetadatas().get(0).get(0).size() > 0 && layerNames.length != 4)
 			{
 				List<HashMap<String, String>> list = model.getMetadatas().get(0);
 				HashMap<String, String> values = list.get(0);
@@ -108,7 +108,7 @@ public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveI
 
 			}
 			else
-				for (int i=0; i<5; i++)
+				for (int i=0; i<layerNames.length; i++)
 				{
 					String paddedIndex = StringUtils.leftPad(""+(i+1), 2);
 					layerNames[i] = "PLANE" + paddedIndex;
@@ -140,7 +140,7 @@ public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveI
 				public void actionPerformed(ActionEvent arg0)
 				{
 					String title = (String)panel.getLayerComboBox().getSelectedItem();
-					int index = Integer.parseInt(title.split(" ")[0].replace("PLANE", "")) - 1;
+					int index = Integer.parseInt(title.split(" ")[1]/*.replace("PLANE", "")*/) - 1;
 					try
 					{
 						model.setDisplayedLayerIndex(index);
@@ -285,7 +285,7 @@ public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveI
 		panel.getApplyToBodyButton().addActionListener(evt -> {
 			if (panel.getLayerComboBox() == null) return;
 			String title = (String)panel.getLayerComboBox().getSelectedItem();
-			model.setDisplayedLayerIndex(Integer.parseInt(title.split(" ")[0].replace("PLANE", "")) - 1);
+			model.setDisplayedLayerIndex(Integer.parseInt(title.split(" ")[1]/*.replace("PLANE", "")*/) - 1);
 			if (completionBlock != null && panel.getSyncCheckBox().isSelected()) completionBlock.run();
 		});
 

@@ -61,7 +61,11 @@ public class GDALReader extends BasePipelinePublisher<Layer>
 				}
 
 				//insert a composite RGB(A) layer as the 0th layer
-				if (dataset.GetDriver().getShortName().equals("PNG") || dataset.GetDriver().getShortName().equals("JPEG") || dataset.GetDriver().getShortName().equals("JPG"))
+				if (dataset.GetDriver().getShortName().equals("PNG") 
+					|| dataset.GetDriver().getShortName().equals("JPEG") 
+					|| dataset.GetDriver().getShortName().equals("JPG")
+					|| numLayers == 3
+				 )
 				{
 					outputs.add(0, layer);
 				}
@@ -80,7 +84,7 @@ public class GDALReader extends BasePipelinePublisher<Layer>
 
 	public static void main(String[] args) throws InvalidGDALFileTypeException
 	{
-		NativeLibraryLoader.loadAllVtkLibraries();
+		NativeLibraryLoader.loadVtkLibraries();
         gdal.AllRegister();
         // This is a DART/LICIA/LUKE test image, which is a 3-band UNSIGNED byte
         // image that has both Didymos and Dimorphos visible and fairly large.

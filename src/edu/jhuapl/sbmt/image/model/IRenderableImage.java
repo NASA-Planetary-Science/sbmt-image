@@ -31,5 +31,8 @@ public interface IRenderableImage
 	public String getFilename();
 
 	public void setFilename(String filename);
+	
+	public int getLayerIndex();
 
+	public void setLayerIndex(int layerIndex);
 }

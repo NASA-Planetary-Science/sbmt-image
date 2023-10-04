@@ -51,6 +51,8 @@ public class RenderablePointedImageToScenePipeline<G1 extends IPerspectiveImage 
 	private IPipelinePublisher<PointingFileReader> pointingPublisher = null;
 	private IPipelinePublisher<PointingFileReader> modifiedPointingPublisher = null;
 	List<RenderablePointedImage> renderableImages = Lists.newArrayList();
+	private HashMap<G1, List<Layer>> imageLayers = new HashMap<G1, List<Layer>>();
+	private HashMap<G1, List<HashMap<String, String>>> imageMetadata = new HashMap<G1, List<HashMap<String, String>>>();
 
 	public RenderablePointedImageToScenePipeline(G1 image, List<SmallBodyModel> smallBodyModels) throws Exception
 	{
@@ -97,9 +99,21 @@ public class RenderablePointedImageToScenePipeline<G1 extends IPerspectiveImage 
 
 	private void generateImageLayer() throws InvalidGDALFileTypeException, Exception
 	{
-		IPerspectiveImageToLayerAndMetadataPipeline inputPipeline = IPerspectiveImageToLayerAndMetadataPipeline.of(image);
-		updatedLayers = inputPipeline.getLayers();
-		metadataReader = Just.of(inputPipeline.getMetadata());
+		List<Layer> existingLayers = imageLayers.get(image);
+		List<HashMap<String, String>> existingMetadata = imageMetadata.get(image);
+		if (existingLayers == null)
+		{
+			IPerspectiveImageToLayerAndMetadataPipeline inputPipeline = IPerspectiveImageToLayerAndMetadataPipeline.of(image);
+			updatedLayers = inputPipeline.getLayers();
+			metadataReader = Just.of(inputPipeline.getMetadata());
+			imageLayers.put(image, updatedLayers);
+			imageMetadata.put(image, inputPipeline.getMetadata());
+		}
+		else
+		{
+			updatedLayers = existingLayers;
+			metadataReader = Just.of(existingMetadata);
+		}
 	}
 
 	private IPipelinePublisher<PointingFileReader> generatePointing(String pointingFile) throws IOException
@@ -139,6 +153,7 @@ public class RenderablePointedImageToScenePipeline<G1 extends IPerspectiveImage 
 
 		for (RenderablePointedImage renderableImage : renderableImages)
 		{
+			renderableImage.setLayerIndex(image.getCurrentLayer());
 			renderableImage.setImageSource(image.getPointingSourceType());
 			renderableImage.setOfflimbShowing(image.isOfflimbShowing());
 			renderableImage.setFilename(image.getFilename());

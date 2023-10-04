@@ -1091,17 +1091,17 @@ public class ImagePreviewPanel extends ModelInfoWindow implements MouseListener,
 		JMenuBar menuBar = new JMenuBar();
 
 		JMenu fileMenu = new JMenu("File");
-		JMenuItem mi = new JMenuItem(new AbstractAction("Export to Image...")
-		{
-			@Override
-			public void actionPerformed(ActionEvent e)
-			{
-				File file = CustomFileChooser.showSaveDialog(renWin.getComponent(), "Export to PNG Image...",
-						"image.png", "png");
-				RenderIoUtil.saveToFile(file, renWin, null);
-			}
-		});
-		fileMenu.add(mi);
+//		JMenuItem mi = new JMenuItem(new AbstractAction("Export to Image...")
+//		{
+//			@Override
+//			public void actionPerformed(ActionEvent e)
+//			{
+//				File file = CustomFileChooser.showSaveDialog(renWin.getComponent(), "Export to PNG Image...",
+//						"image.png", "png");
+//				RenderIoUtil.saveToFile(file, renWin, null);
+//			}
+//		});
+//		fileMenu.add(mi);
 		fileMenu.setMnemonic('F');
 		menuBar.add(fileMenu);
 

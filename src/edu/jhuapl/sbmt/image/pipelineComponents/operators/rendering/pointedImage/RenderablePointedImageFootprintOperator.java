@@ -1,6 +1,7 @@
 package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -8,36 +9,43 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkFloatArray;
-import vtk.vtkImageData;
-import vtk.vtkPointData;
-import vtk.vtkPolyData;
-
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.Frustum;
 import edu.jhuapl.saavtk.util.PolyDataUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
+import edu.jhuapl.saavtk.util.VtkDataTypes;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.model.BinTranslations;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
 import edu.jhuapl.sbmt.image.model.ImageBinPadding;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.PadImageOperator;
+import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.color.RGBALayerMergeOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageContrastOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageVtkMaskingOperator;
+import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadCachedSupportFilesPipeline;
+import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadImageDataFromCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadPolydataFromCachePipeline;
+import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SaveImageDataToCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SavePolydataToCachePipeline;
+import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pipeline.operator.IPipelineOperator;
 import edu.jhuapl.sbmt.pipeline.operator.PassthroughOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import vtk.vtkFloatArray;
+import vtk.vtkImageData;
+import vtk.vtkPointData;
+import vtk.vtkPolyData;
 
 public class RenderablePointedImageFootprintOperator extends BasePipelineOperator<IRenderableImage, Pair<List<vtkImageData>, List<vtkPolyData>>>
 {
 	List<SmallBodyModel> smallBodyModels;
 	private boolean useModifiedPointing = false;
+	private static HashMap<String, vtkImageData> layerImageData = new HashMap<String, vtkImageData>();
+
 
 	public RenderablePointedImageFootprintOperator(List<SmallBodyModel> smallBodyModels)
 	{
@@ -88,51 +96,85 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
     	}
     	if (renderableImage.getImageBinPadding() != null) padOperator = new PadImageOperator(renderableImage.getImageBinPadding(), renderableImage.getBinning());
 
-        VtkImageRendererOperator imageRenderer = new VtkImageRendererOperator();
-        List<vtkImageData> imageData = Lists.newArrayList();
-        Just.of(renderableImage.getLayer())
-        	.operate(imageRenderer)
-        	.operate(padOperator)
-        	.operate(new VtkImageContrastOperator(renderableImage.getIntensityRange()))
-        	.operate(new VtkImageVtkMaskingOperator(renderableImage.getMasking().getMask()))
-        	.subscribe(Sink.of(imageData)).run();
-        List<vtkPolyData> footprints = Lists.newArrayList();
-        synchronized(RenderablePointedImageFootprintOperator.class)
-        {
-	    	for (SmallBodyModel smallBody : smallBodyModels)
-	    	{
-	    		String imageFilename = getPrerenderingFileNameBase(renderableImage, smallBody) + "_footprintImageData.vtk.gz";
-	    		vtkPolyData existingFootprint = LoadPolydataFromCachePipeline.of(imageFilename).orNull();
+     	 List<vtkImageData> imageData = Lists.newArrayList();
+    	 List<vtkPolyData> footprints = Lists.newArrayList();
+    	 
+    	 int layerIndex = renderableImage.getLayerIndex();
+    	 
+    	 synchronized(RenderablePointedImageFootprintOperator.class)
+         {
+ 	    	for (SmallBodyModel smallBody : smallBodyModels)
+ 	    	{
+ 	    		String prefix = getPrerenderingFileNameBase(renderableImage, smallBody) + "_" + layerIndex;
+	    		String imageDataFilename = prefix + "_footprintImageData.vtk.gz";
+ 	    		LoadCachedSupportFilesPipeline cachedPipeline = LoadCachedSupportFilesPipeline.of(prefix);
+ 	    		vtkImageData existingImageData = cachedPipeline.getImageData();
+				if (existingImageData != null)
+				{
+					//this restretches things to the proper contrast 
+					Just.of(existingImageData)
+						.operate(new VtkImageContrastOperator(renderableImage.getIntensityRange()))
+						.subscribe(Sink.of(imageData))
+						.run();					
+				}
+				else
+				{
+			        IPipelineOperator<Layer, vtkImageData> imageRenderer = new VtkImageRendererOperator();
+			        if (renderableImage.getLayer().dataSizes().get(0) == 1)
+					{
+			        	imageRenderer = new VtkImageRendererOperator();
+					}
+			        else if (renderableImage.getLayer().dataSizes().get(0) == 3)
+			        {
+			        	imageRenderer = new RGBALayerMergeOperator();
+			        }
+			        
+			        Just.of(renderableImage.getLayer())
+			        	.operate(imageRenderer)
+			        	.operate(padOperator)
+			        	.operate(new VtkImageContrastOperator(renderableImage.getIntensityRange()))
+			        	.operate(new VtkImageVtkMaskingOperator(renderableImage.getMasking().getMask()))
+			        	.subscribe(Sink.of(imageData)).run();
+			        SaveImageDataToCachePipeline.of(imageData.get(0), imageDataFilename);
+				}
+				
+				
+				//Footprints
+				String imageFootprintFilename = prefix + "_footprintData.vtk.gz";
+				vtkPolyData existingFootprint = cachedPipeline.getFootprintPolyData();
 	    		if (existingFootprint != null)
 	    		{
 	    			footprints.add(existingFootprint);
+	    			PolyDataUtil.shiftPolyDataInMeanNormalDirection(existingFootprint, renderableImage.getOffset());
 	    			continue;
 	    		}
-
-	    		vtkFloatArray textureCoords = new vtkFloatArray();
-	    		vtkPolyData tmp = null;
-	    		vtkPolyData footprint = new vtkPolyData();
-		        tmp = smallBody.computeFrustumIntersection(spacecraftPositionAdjusted,
-		        															frustum1Adjusted,
-		        															frustum3Adjusted,
-		        															frustum4Adjusted,
-		        															frustum2Adjusted);
-
-		        if (tmp == null) continue;
-
-		        // Need to clear out scalar data since if coloring data is being shown,
-		        // then the color might mix-in with the image.
-		        tmp.GetCellData().SetScalars(null);
-		        tmp.GetPointData().SetScalars(null);
-
-		        footprint.DeepCopy(tmp);
-		        vtkPointData pointData = footprint.GetPointData();
-		        pointData.SetTCoords(textureCoords);
-		        PolyDataUtil.generateTextureCoordinates(frustum, renderableImage.getImageWidth(), renderableImage.getImageHeight(), footprint);
-		        pointData.Delete();
-		        PolyDataUtil.shiftPolyDataInNormalDirection(footprint, renderableImage.getOffset());
-				SavePolydataToCachePipeline.of(footprint, imageFilename);
-				footprints.add(footprint);
+	    		else 
+	    		{
+		    		vtkFloatArray textureCoords = new vtkFloatArray();
+		    		vtkPolyData tmp = null;
+		    		vtkPolyData footprint = new vtkPolyData();
+			        tmp = smallBody.computeFrustumIntersection(spacecraftPositionAdjusted,
+			        															frustum1Adjusted,
+			        															frustum3Adjusted,
+			        															frustum4Adjusted,
+			        															frustum2Adjusted);
+	
+			        if (tmp == null) continue;
+	
+			        // Need to clear out scalar data since if coloring data is being shown,
+			        // then the color might mix-in with the image.
+			        tmp.GetCellData().SetScalars(null);
+			        tmp.GetPointData().SetScalars(null);
+	
+			        footprint.DeepCopy(tmp);
+			        vtkPointData pointData = footprint.GetPointData();
+			        pointData.SetTCoords(textureCoords);
+			        PolyDataUtil.generateTextureCoordinates(frustum, renderableImage.getImageWidth(), renderableImage.getImageHeight(), footprint);
+			        pointData.Delete();
+			        PolyDataUtil.shiftPolyDataInMeanNormalDirection(footprint, renderableImage.getOffset());
+					SavePolydataToCachePipeline.of(footprint, imageFootprintFilename);
+					footprints.add(footprint);
+	    		}
 	    	}
         }
     	outputs.add(Pair.of(imageData, footprints));

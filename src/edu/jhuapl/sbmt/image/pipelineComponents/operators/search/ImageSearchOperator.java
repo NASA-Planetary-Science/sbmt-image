@@ -11,8 +11,6 @@ import org.joda.time.DateTimeZone;
 
 import com.google.common.collect.Range;
 
-import vtk.vtkPolyData;
-
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.model.ModelNames;
 import edu.jhuapl.saavtk.model.structure.AbstractEllipsePolygonModel;
@@ -27,7 +25,9 @@ import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.query.database.ImageDatabaseSearchMetadata;
 import edu.jhuapl.sbmt.query.fixedlist.FixedListQuery;
 import edu.jhuapl.sbmt.query.fixedlist.FixedListSearchMetadata;
+import edu.jhuapl.sbmt.query.v2.FixedListDataQuery;
 import edu.jhuapl.sbmt.query.v2.QueryException;
+import vtk.vtkPolyData;
 
 public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParametersModel, Triple<List<List<String>>, IImagingInstrument, PointingSource>>
 {
@@ -136,10 +136,10 @@ public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParamet
             sumOfProductsSearch = false;
         }
         List<List<String>> results = null;
-        if (instrument.getSearchQuery() instanceof FixedListQuery)
+        if (instrument.getSearchQuery() instanceof FixedListDataQuery)
         {
-            FixedListQuery query = (FixedListQuery) instrument.getSearchQuery();
-            results = query.runQuery(FixedListSearchMetadata.of("Imaging Search", "imagelist", "images", query.getRootPath(), imageSource, searchFilename)).getResultlist();
+            FixedListDataQuery query = (FixedListDataQuery) instrument.getSearchQuery();
+            results = query.runQuery(FixedListSearchMetadata.of("Imaging Search", "imagelist", "images", query.getRootPath(), imageSource, searchFilename)).getFetchedData();
         }
         else
         {
@@ -162,10 +162,10 @@ public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParamet
         if (imageSource == PointingSource.SPICE && excludeGaskell)
         {
             List<List<String>> resultsOtherSource = null;
-            if (instrument.getSearchQuery() instanceof FixedListQuery)
+            if (instrument.getSearchQuery() instanceof FixedListDataQuery)
             {
-                FixedListQuery query = (FixedListQuery)instrument.getSearchQuery();
-                resultsOtherSource = query.runQuery(FixedListSearchMetadata.of("Imaging Search", "imagelist", "images", query.getRootPath(), imageSource)).getResultlist();
+                FixedListDataQuery query = (FixedListDataQuery)instrument.getSearchQuery();
+                resultsOtherSource = query.runQuery(FixedListSearchMetadata.of("Imaging Search", "imagelist", "images", query.getRootPath(), imageSource)).getFetchedData();
             }
             else
             {
