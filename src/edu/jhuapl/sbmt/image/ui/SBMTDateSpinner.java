@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import javax.swing.JSpinner;
 import javax.swing.SpinnerDateModel;
@@ -53,7 +54,7 @@ public class SBMTDateSpinner extends JSpinner
         setEditor(dateEditor);
 
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MMM-dd HH:mm:ss.SSS");
-//        format.setTimeZone(TimeZone.getTimeZone("America/New_York"));
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
 //        DateTimeZone dtZone = DateTimeZone.getDefault();
         ((JSpinner.DefaultEditor) getEditor()).getTextField()
             .setFormatterFactory(new DefaultFormatterFactory(
@@ -64,7 +65,7 @@ public class SBMTDateSpinner extends JSpinner
 	{
 		DateTime dt = new DateTime((Date)getValue());
 //    	DateTimeZone dtZone = DateTimeZone.forID("America/New_York");
-		DateTimeZone dtZone = DateTimeZone.getDefault();
+		DateTimeZone dtZone = DateTimeZone.UTC;
     	DateTime dtus = dt.withZone(dtZone);
     	return dtus.toLocalDateTime().toDateTime().toDate();
 	}
