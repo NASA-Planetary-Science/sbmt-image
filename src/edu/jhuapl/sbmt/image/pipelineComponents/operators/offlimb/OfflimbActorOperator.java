@@ -102,6 +102,7 @@ public class OfflimbActorOperator extends BasePipelineOperator<Pair<RenderablePo
                 offLimbActor=new vtkActor();
             offLimbActor.SetMapper(offLimbMapper);
             offLimbActor.SetTexture(offLimbTexture);
+            offLimbActor.SetForceOpaque(true);
             offLimbActor.Modified();
 
             outputs.add(offLimbActor);

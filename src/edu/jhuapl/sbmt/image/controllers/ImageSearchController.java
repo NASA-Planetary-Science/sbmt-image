@@ -573,9 +573,9 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 //		if (collection.getPainterFor(aPrimaryTarg) == null)
 //			return;
 		// Bail if not a valid pick action
-		if (/*PickUtil.isPopupTrigger(aEvent) == false ||*/ aMode == PickMode.ActiveSec || aMode != PickMode.Passive)
-			return;
-		if (((MouseEvent)aEvent).getID() == MouseEvent.MOUSE_RELEASED || ((MouseEvent)aEvent).getID() == MouseEvent.MOUSE_MOVED)
+		if (aMode != PickMode.ActiveSec) return;
+
+		if (((MouseEvent)aEvent).getID() == MouseEvent.MOUSE_RELEASED || ((MouseEvent)aEvent).getID() == MouseEvent.MOUSE_MOVED || ((MouseEvent)aEvent).getID() == MouseEvent.MOUSE_FIRST)
 		{
 			vtkActor actor = aPrimaryTarg.getActor();
 			imagePicker.GetPickList().RemoveAllItems();

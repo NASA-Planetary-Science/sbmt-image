@@ -16,14 +16,19 @@ import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
+import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.PadImageOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.color.RGBALayerMergeOperator;
+import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageContrastOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
+import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageVtkMaskingOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.IPerspectiveImageToLayerAndMetadataPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadCachedSupportFilesPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SaveImageDataToCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.vtk.VtkImageContrastPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.publishers.gdal.InvalidGDALFileTypeException;
 import edu.jhuapl.sbmt.layer.api.Layer;
+import edu.jhuapl.sbmt.pipeline.operator.IPipelineOperator;
+import edu.jhuapl.sbmt.pipeline.operator.PassthroughOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
@@ -201,12 +206,19 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 			setDisplayedImage(existingImageData);
 			return;
 		}
+		IPipelineOperator<vtkImageData, vtkImageData> padOperator = new PassthroughOperator<>();
+		if (image.getImageBinPadding() != null) padOperator = new PadImageOperator(image.getImageBinPadding(), image.getImageBinning());
 		if (layer.dataSizes().get(0) == 1)
 		{
 			List<vtkImageData> displayedImages = new ArrayList<vtkImageData>();
 			IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
+			
+
 			reader.
 				operate(new VtkImageRendererOperator(isInvertY())).
+				operate(padOperator).
+				operate(new VtkImageContrastOperator(image.getIntensityRange())).
+				operate(new VtkImageVtkMaskingOperator(image.getMaskValues())).
 				subscribe(new Sink<vtkImageData>(displayedImages)).run();
 			setDisplayedImage(displayedImages.get(0));
 			SaveImageDataToCachePipeline.of(displayedImages.get(0), imageDataFilename);
@@ -217,6 +229,9 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 			IPipelinePublisher<Layer> reader = new Just<Layer>(layer);
 			reader.
 				operate(new RGBALayerMergeOperator()).
+				operate(padOperator).
+				operate(new VtkImageContrastOperator(image.getIntensityRange())).
+				operate(new VtkImageVtkMaskingOperator(image.getMaskValues())).
 				subscribe(new Sink<vtkImageData>(displayedImages)).run();
 			setDisplayedImage(displayedImages.get(displayedLayerIndex));
 			SaveImageDataToCachePipeline.of(displayedImages.get(0), imageDataFilename);
