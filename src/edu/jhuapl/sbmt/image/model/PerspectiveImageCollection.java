@@ -48,6 +48,7 @@ import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
+import edu.jhuapl.sbmt.image.interfaces.PerspectiveImageCollectionListener;
 import edu.jhuapl.sbmt.image.keys.CustomImageKeyInterface;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.LowResolutionBoundaryOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
@@ -88,12 +89,12 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	private IdPair currentBoundaryRange = new IdPair(0, 9);
 	private int currentBoundaryOffsetAmount = 10;
 	private boolean firstCustomLoad = true;
-//	private HashMap<G1, PerspectiveImageRenderingState<G1>> hashMap;
-	private List<SmallBodyModel> list;
+	private List<PerspectiveImageCollectionListener> listeners;
 	private static ExecutorService executor = Executors.newCachedThreadPool();
 
 	public PerspectiveImageCollection(List<SmallBodyModel> smallBodyModels)
 	{
+		this.listeners = Lists.newArrayList();
 		this.imagesByInstrument = new ConcurrentHashMap<IImagingInstrument, List<G1>>();
 		this.userImages = Lists.newArrayList();
 		this.userImagesModified = Lists.newArrayList();
@@ -138,6 +139,21 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 
 			});
 		}
+	}
+	
+	public void addListener(PerspectiveImageCollectionListener picl)
+	{
+		listeners.add(picl);
+	}
+	
+	private void fireImageMapStartedListeners()
+	{
+		listeners.forEach(listener -> listener.imageMapStarted());
+	}
+	
+	private void fireImageMapEndedListeners()
+	{
+		listeners.forEach(listener -> listener.imageMapEnded());
 	}
 
 	public void clearSearchedImages()
@@ -535,6 +551,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 				@Override
 				public void run()
 				{
+					fireImageMapStartedListeners();
 					image.setStatus("Loading...");
 					RenderableImageActorPipeline pipeline = ImagePipelineFactory.of(image, smallBodyModels);
 
@@ -557,6 +574,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 					SwingUtilities.invokeLater( () -> {
 						pcs.firePropertyChange(Properties.MODEL_CHANGED, null, null);
 					});
+					fireImageMapEndedListeners();
 				}
 			});
 			runThreadOnExecutorService(thread);
