@@ -17,11 +17,13 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JPanel;
 import javax.swing.SpinnerDateModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
+import com.beust.jcommander.internal.Lists;
 import com.jidesoft.swing.CheckBoxTree;
 
 import edu.jhuapl.saavtk.model.ModelManager;
@@ -34,6 +36,7 @@ import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.interfaces.ImageSearchModelListener;
+import edu.jhuapl.sbmt.image.interfaces.PerspectiveImageCollectionListener;
 import edu.jhuapl.sbmt.image.model.ImageSearchParametersModel;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.search.ImageSearchPipeline;
@@ -68,6 +71,27 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
                 pullFromModel();
             }
         });
+        
+        collection.addListener(new PerspectiveImageCollectionListener()
+		{
+			
+			@Override
+			public void imageMapStarted()
+			{
+				SwingUtilities.invokeLater(() -> {
+					panel.getSubmitButton().setEnabled(false);
+				});
+				
+			}
+			
+			@Override
+			public void imageMapEnded()
+			{
+				SwingUtilities.invokeLater(() -> {
+					panel.getSubmitButton().setEnabled(true);
+				});
+			}
+		});
     }
 
 
@@ -213,6 +237,13 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
         panel.getClearRegionButton().addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 clearRegionButtonActionPerformed(evt);
+            }
+        });
+        
+        panel.getClearResultsButton().setText("Clear Results");
+        panel.getClearResultsButton().addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                clearResultsButtonActionPerformed(evt);
             }
         });
 
@@ -401,6 +432,12 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
     {
         AbstractEllipsePolygonModel selectionModel = (AbstractEllipsePolygonModel)modelManager.getModel(ModelNames.CIRCLE_SELECTION);
         selectionModel.removeAllStructures();
+    }
+    
+    private void clearResultsButtonActionPerformed(ActionEvent evt)
+    {
+    	collection.clearSearchedImages();
+    	collection.setImages(Lists.newArrayList());
     }
 
     public ImageSearchParametersPanel getPanel()
