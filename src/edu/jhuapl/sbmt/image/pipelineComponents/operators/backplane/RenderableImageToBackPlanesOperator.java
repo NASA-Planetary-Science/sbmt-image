@@ -50,8 +50,6 @@ public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pa
 			.subscribe(Sink.of(hasLimb))
 			.run();
 		
-		System.out.println("RenderableImageToBackPlanesOperator: processData: has limb is " + hasLimb);
-
 		double[] spacecraftPositionAdjusted = pointing.getSpacecraftPosition();
     	double[] frustum1Adjusted = pointing.getFrustum1();
     	double[] frustum2Adjusted = pointing.getFrustum2();
