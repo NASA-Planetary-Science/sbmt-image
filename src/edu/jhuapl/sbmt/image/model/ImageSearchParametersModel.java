@@ -19,8 +19,6 @@ import com.google.common.collect.ImmutableSortedSet;
 import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.saavtk.model.Controller.Model;
 import edu.jhuapl.saavtk.model.ModelManager;
-import edu.jhuapl.saavtk.model.ModelNames;
-import edu.jhuapl.saavtk.model.structure.AbstractEllipsePolygonModel;
 import edu.jhuapl.saavtk.util.IdPair;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
@@ -55,7 +53,6 @@ public class ImageSearchParametersModel implements Model, MetadataManager
     final Key<String> searchByFileNameKey = Key.of("searchByFileName");
     final Key<Map<String, Boolean>> filterMapKey = Key.of("filters");
     final Key<Map<String, Boolean>> userCheckBoxMapKey = Key.of("userCheckBoxes");
-    final Key<Metadata> circleSelectionKey = Key.of("circleSelection");
     final Key<Metadata> imageTreeFilterKey = Key.of("imageTreeFilters");
     final Key<List<String[]>> imageListKey = Key.of("imageList");
     final Key<Set<String>> selectedImagesKey = Key.of("imagesSelected");
@@ -619,10 +616,6 @@ public class ImageSearchParametersModel implements Model, MetadataManager
                 result.put(userCheckBoxMapKey, filterBuilder.build());
             }
         }
-
-        // Save region selected.
-        AbstractEllipsePolygonModel selectionModel = (AbstractEllipsePolygonModel)modelManager.getModel(ModelNames.CIRCLE_SELECTION);
-        result.put(circleSelectionKey, selectionModel.store());
 
         // Save list of images.
         result.put(imageListKey, listToOutputFormat(imageResults));

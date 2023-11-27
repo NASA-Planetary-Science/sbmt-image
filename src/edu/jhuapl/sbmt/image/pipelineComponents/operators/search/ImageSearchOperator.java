@@ -13,7 +13,7 @@ import com.google.common.collect.Range;
 
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.model.ModelNames;
-import edu.jhuapl.saavtk.model.structure.AbstractEllipsePolygonModel;
+import edu.jhuapl.saavtk.pick.PickManager;
 import edu.jhuapl.saavtk.structure.Ellipse;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
@@ -33,12 +33,14 @@ public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParamet
 {
 	private ImageSearchParametersModel searchParameterModel;
 	private ImagingInstrumentConfig config;
+	private PickManager refPickManager;
 	private ModelManager modelManager;
 
-	public ImageSearchOperator(ImagingInstrumentConfig config, ModelManager modelManager)
+	public ImageSearchOperator(ImagingInstrumentConfig config, ModelManager modelManager, PickManager aPickManager)
 	{
 		this.modelManager = modelManager;
 		this.config = config;
+		this.refPickManager = aPickManager;
 	}
 
 	@Override
@@ -91,12 +93,12 @@ public class ImageSearchOperator extends BasePipelineOperator<ImageSearchParamet
                 DateTimeZone.UTC);
 
         TreeSet<Integer> cubeList = null;
-        AbstractEllipsePolygonModel selectionModel = (AbstractEllipsePolygonModel)modelManager.getModel(ModelNames.CIRCLE_SELECTION);
+        var selectionModel = refPickManager.getSelectionPicker().getSelectionManager();
         SmallBodyModel smallBodyModel = (SmallBodyModel)modelManager.getModel(ModelNames.SMALL_BODY);
         if (selectionModel.getNumItems() > 0)
         {
-            int numberOfSides = selectionModel.getNumberOfSides();
-            Ellipse region = selectionModel.getItem(0);
+            int numberOfSides = selectionModel.getRenderAttr().numRoundSides();
+            Ellipse region = (Ellipse)selectionModel.getItem(0);
 
             // Always use the lowest resolution model for getting the intersection cubes list.
             // Therefore, if the selection region was created using a higher resolution model,
