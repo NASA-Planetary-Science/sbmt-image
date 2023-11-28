@@ -71,6 +71,7 @@ public class ImageSearchParametersPanel extends JPanel
     private JLabel hasLimbLabel;
     protected JScrollPane hierarchicalSearchScrollPane;
     private JButton clearRegionButton;
+    private JButton clearResultsButton;
     private JTextField textField;
     private JPanel auxPanel;
     private JRadioButton parametersRadioButton;
@@ -417,6 +418,9 @@ public class ImageSearchParametersPanel extends JPanel
 
         submitButton = new JButton("Search");
         panel_10.add(submitButton);
+        
+        clearResultsButton = new JButton("Clear Results");
+        panel_10.add(clearResultsButton);
 
         Component verticalStrut_1 = Box.createVerticalStrut(20);
         add(verticalStrut_1);
@@ -675,6 +679,11 @@ public class ImageSearchParametersPanel extends JPanel
     public JButton getClearRegionButton()
     {
         return clearRegionButton;
+    }
+    
+    public JButton getClearResultsButton()
+    {
+        return clearResultsButton;
     }
 
     public JPanel getAuxPanel()
