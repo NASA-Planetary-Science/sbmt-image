@@ -8,11 +8,6 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.collect.Lists;
 
-import vtk.vtkDataArray;
-import vtk.vtkGenericCell;
-import vtk.vtkImageData;
-import vtk.vtksbCellLocator;
-
 import edu.jhuapl.saavtk.util.ImageDataUtil;
 import edu.jhuapl.saavtk.util.LatLon;
 import edu.jhuapl.saavtk.util.MathUtil;
@@ -26,16 +21,18 @@ import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import vtk.vtkDataArray;
+import vtk.vtkGenericCell;
+import vtk.vtkImageData;
+import vtk.vtksbCellLocator;
 
-public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pair<RenderablePointedImage, SmallBodyModel>, float[]>
+public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pair<RenderablePointedImage, SmallBodyModel>, Pair<float[], Boolean>>
 {
-	boolean returnNullIfContainsLimb;
 	private RenderablePointedImage image;
 	public static final float PDS_NA = -ImageDataUtil.FILL_CUTOFF;
 
-	public RenderableImageToBackPlanesOperator(boolean returnNullIfContainsLimb)
+	public RenderableImageToBackPlanesOperator()
 	{
-		this.returnNullIfContainsLimb = returnNullIfContainsLimb;
 	}
 
 	@Override
@@ -46,7 +43,13 @@ public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pa
 		PointingFileReader pointing = image.getPointing();
 		//TODO fix this
 		int numberOfBackplanes = 1;
-
+		
+		boolean hasLimb = false;
+		Just.of(inputs.get(0))
+			.operate(new RenderableImageLimbDetectionOperator())
+			.subscribe(Sink.of(hasLimb))
+			.run();
+		
 		double[] spacecraftPositionAdjusted = pointing.getSpacecraftPosition();
     	double[] frustum1Adjusted = pointing.getFrustum1();
     	double[] frustum2Adjusted = pointing.getFrustum2();
@@ -54,8 +57,7 @@ public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pa
 //    	int currentSlice = image.currentSlice;
         // We need to use cell normals not point normals for the calculations
         vtkDataArray normals = null;
-        if (!returnNullIfContainsLimb)
-            normals = smallBodyModel.getCellNormals();
+        normals = smallBodyModel.getCellNormals();
 
         float[] data = new float[numberOfBackplanes * image.getImageHeight() * image.getImageWidth()];
 
@@ -121,14 +123,14 @@ public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pa
                 // If we're just trying to know if there is a limb, we
                 // only need to do intersections around the boundary of
                 // the backplane, not the interior pixels.
-                if (returnNullIfContainsLimb)
-                {
-                    if (j == 1 && i > 0 && i < image.getImageHeight() - 1)
-                    {
-                        j = image.getImageWidth() - 2;
-                        continue;
-                    }
-                }
+//                if (returnNullIfContainsLimb)
+//                {
+//                    if (j == 1 && i > 0 && i < image.getImageHeight() - 1)
+//                    {
+//                        j = image.getImageWidth() - 2;
+//                        continue;
+//                    }
+//                }
 
                 double fracWidth = ((double) j / (double) (image.getImageWidth() - 1));
                 double[] vec = {
@@ -164,11 +166,11 @@ public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pa
 
                 if (result > 0)
                 {
-                    // If we're just trying to know if there is a limb, do not
-                    // compute the values of the backplane (It will crash since
-                    // we don't have normals of the asteroid itself)
-                    if (returnNullIfContainsLimb)
-                        continue;
+//                    // If we're just trying to know if there is a limb, do not
+//                    // compute the values of the backplane (It will crash since
+//                    // we don't have normals of the asteroid itself)
+//                    if (returnNullIfContainsLimb)
+//                        continue;
 
                     // double[] closestPoint = intersectPoints.GetPoint(0);
                     // int closestCell = intersectCells.GetId(0);
@@ -234,8 +236,8 @@ public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pa
                 }
                 else
                 {
-                    if (returnNullIfContainsLimb)
-                        return;
+//                    if (returnNullIfContainsLimb)
+//                        return;
 
                     data[index(j, i, 0)] = (float) rawImage.GetScalarComponentAsFloat(j, i, 0, 0);
                     for (int k = 1; k < numberOfBackplanes; ++k)
@@ -244,7 +246,7 @@ public class RenderableImageToBackPlanesOperator extends BasePipelineOperator<Pa
             }
         }
 
-        outputs.add(data);
+        outputs.add(Pair.of(data, hasLimb));
 	}
 
 	int index(int i, int j, int k)
