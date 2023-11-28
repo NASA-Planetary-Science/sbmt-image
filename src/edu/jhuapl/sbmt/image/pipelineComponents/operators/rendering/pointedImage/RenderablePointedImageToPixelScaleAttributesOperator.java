@@ -1,6 +1,7 @@
 package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -49,20 +50,21 @@ public class RenderablePointedImageToPixelScaleAttributesOperator extends BasePi
         pixelScale.minVerticalPixelScale = Double.MAX_VALUE;
         pixelScale.maxVerticalPixelScale = -Double.MAX_VALUE;
         pixelScale.meanVerticalPixelScale = 0.0;
-
-        double horizScaleFactor = 2.0 * Math.tan(MathUtil.vsep(pointing.getFrustum1(), pointing.getFrustum3()) / 2.0) / imageHeight;
-        double vertScaleFactor = 2.0 * Math.tan(MathUtil.vsep(pointing.getFrustum1(), pointing.getFrustum2()) / 2.0) / imageWidth;
+        
+        double horizScaleFactor = 2.0 * Math.tan(MathUtil.vsep(pointing.getFrustum1(), pointing.getFrustum3()) / 2.0) / imageWidth;
+        double vertScaleFactor = 2.0 * Math.tan(MathUtil.vsep(pointing.getFrustum1(), pointing.getFrustum2()) / 2.0) / imageHeight;
 
         double[] vec = new double[3];
 
         for (int i = 0; i < numberOfPoints; ++i)
         {
             double[] pt = points.GetPoint(i);
-
+            
             vec[0] = pt[0] - spacecraftPosition[0];
             vec[1] = pt[1] - spacecraftPosition[1];
             vec[2] = pt[2] - spacecraftPosition[2];
             double dist = MathUtil.vnorm(vec);
+
             double horizPixelScale = dist * horizScaleFactor;
             double vertPixelScale = dist * vertScaleFactor;
 
