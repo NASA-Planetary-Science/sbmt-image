@@ -28,9 +28,7 @@ import com.jidesoft.swing.CheckBoxTree;
 
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.model.ModelNames;
-import edu.jhuapl.saavtk.model.structure.AbstractEllipsePolygonModel;
 import edu.jhuapl.saavtk.pick.PickManager;
-import edu.jhuapl.saavtk.pick.PickManager.PickMode;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
@@ -254,12 +252,12 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
                 pushInputToModel();
                 panel.setCursor(new Cursor(Cursor.WAIT_CURSOR));
                 panel.getSelectRegionButton().setSelected(false);
-                pickManager.setPickMode(PickMode.DEFAULT);
+                pickManager.setActivePicker(null);
                 ImageSearchPipeline<G1> pipeline = null;
                 collection.clearSearchedImages();
 				try
 				{
-					pipeline = new ImageSearchPipeline<G1>(config, modelManager, model);
+					pipeline = new ImageSearchPipeline<G1>(config, modelManager, pickManager, model);
 				} catch (Exception e)
 				{
 					// TODO Auto-generated catch block
@@ -385,7 +383,7 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
     private void formComponentHidden(ComponentEvent evt)
     {
         panel.getSelectRegionButton().setSelected(false);
-        pickManager.setPickMode(PickMode.DEFAULT);
+        pickManager.setActivePicker(null);
     }
 
     private void startSpinnerStateChanged(ChangeEvent evt)
@@ -423,15 +421,14 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
     private void selectRegionButtonActionPerformed(ActionEvent evt)
     {
         if (panel.getSelectRegionButton().isSelected())
-            pickManager.setPickMode(PickMode.CIRCLE_SELECTION);
+            pickManager.setActivePicker(pickManager.getSelectionPicker());
         else
-            pickManager.setPickMode(PickMode.DEFAULT);
+            pickManager.setActivePicker(null);
     }
 
     private void clearRegionButtonActionPerformed(ActionEvent evt)
     {
-        AbstractEllipsePolygonModel selectionModel = (AbstractEllipsePolygonModel)modelManager.getModel(ModelNames.CIRCLE_SELECTION);
-        selectionModel.removeAllStructures();
+        pickManager.getSelectionPicker().clearSelection();
     }
     
     private void clearResultsButtonActionPerformed(ActionEvent evt)
