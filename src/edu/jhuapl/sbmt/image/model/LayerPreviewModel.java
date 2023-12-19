@@ -164,11 +164,11 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
 
 	public void setIntensityRange(IntensityRange intensityRange) throws IOException, Exception
 	{
-//		dataNeedsUpdate = true;
+		dataNeedsUpdate = true;
 		this.intensityRange = intensityRange;
 		image.setIntensityRange(intensityRange);
 		renderLayer();
-//		dataNeedsUpdate = false;
+		dataNeedsUpdate = false;
 	}
 
 	public void setIntensity(IntensityRange range) throws IOException, Exception
