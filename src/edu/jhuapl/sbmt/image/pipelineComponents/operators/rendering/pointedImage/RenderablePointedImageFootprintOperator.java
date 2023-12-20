@@ -1,5 +1,6 @@
 package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +14,6 @@ import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.Frustum;
 import edu.jhuapl.saavtk.util.PolyDataUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
-import edu.jhuapl.saavtk.util.VtkDataTypes;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.model.BinTranslations;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
@@ -24,8 +24,6 @@ import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImage
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageVtkMaskingOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadCachedSupportFilesPipeline;
-import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadImageDataFromCachePipeline;
-import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadPolydataFromCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SaveImageDataToCachePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SavePolydataToCachePipeline;
 import edu.jhuapl.sbmt.layer.api.Layer;
@@ -109,7 +107,7 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
 	    		String imageDataFilename = prefix + "_footprintImageData.vtk.gz";
  	    		LoadCachedSupportFilesPipeline cachedPipeline = LoadCachedSupportFilesPipeline.of(prefix);
  	    		vtkImageData existingImageData = cachedPipeline.getImageData();
-				if (existingImageData != null)
+				if (existingImageData != null && renderableImage.getForceUpdate() == false)
 				{
 					//this restretches things to the proper contrast 
 					Just.of(existingImageData)
@@ -184,6 +182,7 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
     {
         String imageName = renderableImage.getFilename();
         String topPath = FileCache.instance().getFile(imageName).getParent();
+        if (new File(imageName).exists()) topPath = new File(imageName).getParent();
         String result = SafeURLPaths.instance().getString(topPath, "support",
         												  renderableImage.getImageSource().name(),
         												  FilenameUtils.getBaseName(imageName) + "_" + smallBodyModel.getModelResolution() + "_" + smallBodyModel.getModelName()/* + "_" + renderableImage.getPointing().hashCode()*/);

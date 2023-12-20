@@ -33,11 +33,17 @@ public class RenderableCylindricalImageToScenePipeline extends ImageToScenePipel
 
 	public RenderableCylindricalImageToScenePipeline(IPerspectiveImage image, List<SmallBodyModel> smallBodyModel) throws InvalidGDALFileTypeException, Exception
 	{
+		this(image, smallBodyModel, false);
+	}
+
+	public RenderableCylindricalImageToScenePipeline(IPerspectiveImage image, List<SmallBodyModel> smallBodyModel, boolean forceUpdate) throws InvalidGDALFileTypeException, Exception
+	{
 		activeLayerIndex = image.getCurrentLayer();
 		sceneOutputs = new Pair[1];
 		List<IRenderableImage> renderableImages = CylindricalImageToRenderableImagePipeline.of(List.of(image)).getRenderableImages();
 		for (IRenderableImage renderableImage : renderableImages)
 		{
+			((RenderableCylindricalImage)renderableImage).setForceUpdate(forceUpdate);
 			((RenderableCylindricalImage)renderableImage).setOffset(3.0 * smallBodyModel.get(0).getMinShiftAmount());
 			((RenderableCylindricalImage)renderableImage).setDefaultOffset(3.0 * smallBodyModel.get(0).getMinShiftAmount());
 			((RenderableCylindricalImage)renderableImage).setIntensityRange(image.getIntensityRange());

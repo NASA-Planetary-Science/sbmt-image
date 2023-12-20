@@ -1,5 +1,6 @@
 package edu.jhuapl.sbmt.image.pipelineComponents.operators.offlimb;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,7 +72,7 @@ public class OfflimbPlaneGeneratorOperators extends BasePipelineOperator<Rendera
 
 		//check for an existing footprint first
 		imagePolyData = LoadPolydataFromCachePipeline.of(offLimbImageDataFileName).orNull();
-//		if (imagePolyData == null)
+		if (imagePolyData == null)
 		{
 			imagePolyData=new vtkPolyData();
 			processStep1();
@@ -88,6 +89,7 @@ public class OfflimbPlaneGeneratorOperators extends BasePipelineOperator<Rendera
     {
         String imageName = renderableImage.getFilename();
         String topPath = FileCache.instance().getFile(imageName).getParent();
+        if (new File(imageName).exists()) topPath = new File(imageName).getParent();
         String result = SafeURLPaths.instance().getString(topPath, "support",
         												  renderableImage.getImageSource().name(),
         												  FilenameUtils.getBaseName(imageName) + "_" + smallBodyModels.get(0).getModelResolution() + "_" + smallBodyModels.get(0).getModelName());

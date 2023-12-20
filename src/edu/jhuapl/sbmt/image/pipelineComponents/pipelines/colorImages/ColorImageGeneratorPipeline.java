@@ -40,12 +40,18 @@ public class ColorImageGeneratorPipeline extends ImageToScenePipeline //implemen
 	List<vtkImageData> imageDatas = Lists.newArrayList();
 	Pair<vtkImageData, vtkPolyData>[] imageAndPolyData = new Pair[1];
 	List<SmallBodyModel> smallBodyModels;
+	
 	public ColorImageGeneratorPipeline(List<IPerspectiveImage> images, List<SmallBodyModel> smallBodyModels) throws Exception
+	{
+		this(images, smallBodyModels, false);
+	}
+	
+	public ColorImageGeneratorPipeline(List<IPerspectiveImage> images, List<SmallBodyModel> smallBodyModels, boolean forceUpdate) throws Exception
 	{
 		sceneOutputs = new Pair[1];
 		this.smallBodyModels = smallBodyModels;
 		Just.of(images)
-			.operate(new ColorImageGeneratorOperator())
+			.operate(new ColorImageGeneratorOperator(forceUpdate))
 			.operate(new ColorImageFootprintGeneratorOperator(smallBodyModels))
 			.subscribe(PairSink.of(imageAndPolyData))
 			.run();

@@ -18,6 +18,7 @@ public class RenderableCylindricalImage implements IRenderableImage
 	private CylindricalBounds bounds;
 	private IntensityRange intensityRange = new IntensityRange(0, 255);
 	private String filename;
+	private boolean forceUpdate = false;
 
 	public RenderableCylindricalImage(Layer layer, HashMap<String, String> metadata, CylindricalBounds bounds)
 	{
@@ -164,5 +165,17 @@ public class RenderableCylindricalImage implements IRenderableImage
 	@Override
 	public void setLayerIndex(int layerIndex) {
 		
+	}
+
+	@Override
+	public boolean getForceUpdate()
+	{
+		return forceUpdate;
+	}
+
+	@Override
+	public void setForceUpdate(boolean forceUpdate)
+	{
+		this.forceUpdate = forceUpdate;
 	}
 }

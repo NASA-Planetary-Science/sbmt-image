@@ -18,6 +18,11 @@ public class ImagePipelineFactory
 {
 	public static <G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> ImageToScenePipeline of(G1 image, List<SmallBodyModel> smallBodyModels)
 	{
+		return ImagePipelineFactory.of(image, smallBodyModels, false);
+	}
+	
+	public static <G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> ImageToScenePipeline of(G1 image, List<SmallBodyModel> smallBodyModels, boolean forceUpdate)
+	{
 		ImageToScenePipeline pipeline = null;
 		try
 		{
@@ -26,25 +31,25 @@ public class ImagePipelineFactory
 				if (image.getNumberOfLayers() == 1)
 					if (image.getPointingSourceType() == PointingSource.LOCAL_CYLINDRICAL)
 					{
-						pipeline = new RenderableCylindricalImageToScenePipeline(image, smallBodyModels);
+						pipeline = new RenderableCylindricalImageToScenePipeline(image, smallBodyModels, forceUpdate);
 					}
 					else
 					{
-						pipeline = new RenderablePointedImageToScenePipeline<G1>(image, smallBodyModels);
+						pipeline = new RenderablePointedImageToScenePipeline<G1>(image, smallBodyModels, forceUpdate);
 					}
 				else if (image.getNumberOfLayers() == 3)
 				{
-					pipeline = new ColorImageGeneratorPipeline(image.getImages(), smallBodyModels);
+					pipeline = new ColorImageGeneratorPipeline(image.getImages(), smallBodyModels, forceUpdate);
 				}
 				else
 				{
 					if (image.getPointingSourceType() == PointingSource.LOCAL_CYLINDRICAL)
 					{
-						pipeline = new RenderableCylindricalImageToScenePipeline(image, smallBodyModels);
+						pipeline = new RenderableCylindricalImageToScenePipeline(image, smallBodyModels, forceUpdate);
 					}
 					else
 					{
-						pipeline = new RenderablePointedImageToScenePipeline<G1>(image, smallBodyModels);
+						pipeline = new RenderablePointedImageToScenePipeline<G1>(image, smallBodyModels, forceUpdate);
 					}
 				}
 			}
@@ -56,7 +61,7 @@ public class ImagePipelineFactory
 				}
 				else
 				{
-					pipeline = new RenderablePointedImageToScenePipeline<G1>(image, smallBodyModels);
+					pipeline = new RenderablePointedImageToScenePipeline<G1>(image, smallBodyModels, forceUpdate);
 				}
 
 			}

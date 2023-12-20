@@ -518,9 +518,10 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	public void updateUserImage(G1 image)
 	{
 		RenderableImageActorPipeline pipeline = null;
+		boolean forceUpdate = true;
 		try
 		{
-			pipeline = ImagePipelineFactory.of(image, smallBodyModels);
+			pipeline = ImagePipelineFactory.of(image, smallBodyModels, forceUpdate);
 		} catch (Exception e)
 		{
 			// TODO Auto-generated catch block
@@ -1176,6 +1177,12 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 		this.currentBoundaryRange.id2 = this.currentBoundaryRange.id1 + currentBoundaryOffsetAmount - 1;
 		updateActiveBoundaries(previousRange);
 	}
+	
+	private File getResolvedPointingFile(String source)
+	{
+		if (new File(source).exists()) return new File(source);
+		else return FileCache.getFileFromServer(source);
+	}
 
 	@Override
 	public String getClickStatusBarText(vtkProp prop, int cellId, double[] pickPosition)
@@ -1200,9 +1207,9 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 
 	        IPipelinePublisher<PointingFileReader> pointingPublisher = null;
 			if (image.getPointingSourceType() == PointingSource.SPICE || image.getPointingSourceType() == PointingSource.CORRECTED_SPICE)
-				pointingPublisher = new InfofileReaderPublisher(FileCache.getFileFromServer(image.getPointingSource()).getAbsolutePath());
+				pointingPublisher = new InfofileReaderPublisher(getResolvedPointingFile(image.getPointingSource()).getAbsolutePath());
 			else
-				pointingPublisher = new SumfileReaderPublisher(FileCache.getFileFromServer(image.getPointingSource()).getAbsolutePath());
+				pointingPublisher = new SumfileReaderPublisher(getResolvedPointingFile(image.getPointingSource()).getAbsolutePath());
 			Frustum frustum = new Frustum(pointingPublisher.getOutput().getSpacecraftPosition(), pointingPublisher.getOutput().getFrustum1(), pointingPublisher.getOutput().getFrustum3(), pointingPublisher.getOutput().getFrustum4(), pointingPublisher.getOutput().getFrustum2());
 	        pickedPixel = getPixelFromPoint(pickPosition, frustum, layer.iSize(), layer.jSize());
 	        pixelLocation = new double[]{layer.iSize()-1-pickedPixel[0], pickedPixel[1]};

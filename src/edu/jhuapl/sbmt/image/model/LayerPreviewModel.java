@@ -1,5 +1,6 @@
 package edu.jhuapl.sbmt.image.model;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -354,6 +355,7 @@ public class LayerPreviewModel<G1 extends IPerspectiveImage & IPerspectiveImageT
     {
         String imageName = image.getFilename();
         String topPath = FileCache.instance().getFile(imageName).getParent();
+        if (new File(imageName).exists()) topPath = new File(imageName).getParent();
         String result = SafeURLPaths.instance().getString(topPath, "support",
         												  image.getPointingSourceType().name(),
         												  FilenameUtils.getBaseName(imageName) + "_" + smallBodyModel.getModelResolution() + "_" + smallBodyModel.getModelName());

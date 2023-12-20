@@ -9,10 +9,17 @@ import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class ColorImageGeneratorOperator extends BasePipelineOperator<IPerspectiveImage, IRenderableImage>
 {
+	private boolean forceUpdate = false;
+	
+	public ColorImageGeneratorOperator(boolean forceUpdate)
+	{
+		this.forceUpdate = forceUpdate;
+	}
+	
 	@Override
 	public void processData() throws IOException, Exception
 	{
-		PerspectiveImageToRenderableImagePipeline pipeline = new PerspectiveImageToRenderableImagePipeline(inputs);
+		PerspectiveImageToRenderableImagePipeline pipeline = new PerspectiveImageToRenderableImagePipeline(inputs, forceUpdate);
 		outputs.addAll(pipeline.getRenderableImages());
 	}
 }

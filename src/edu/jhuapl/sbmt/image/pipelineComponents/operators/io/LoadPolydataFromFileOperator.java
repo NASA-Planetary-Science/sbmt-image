@@ -17,13 +17,23 @@ public class LoadPolydataFromFileOperator extends BasePipelineOperator<String, v
 	public void processData() throws IOException, Exception
 	{
 		String imageDataFileName;
+		vtkPolyDataReader reader = new vtkPolyDataReader();
+		if (inputs.get(0).contains("models"))
+		{
+			reader.SetFileName(inputs.get(0));
+		    reader.Update();
+		    vtkPolyData imageData = reader.GetOutput();
+		    outputs.add(imageData);
+		    return;
+		}
 		if ((inputs.get(0).split("cache/2/").length != 2) && (inputs.get(0).split("cache/").length != 2)) return;
 		int numSegments = inputs.get(0).split("cache/2/").length;
 		if (numSegments == 2)
 			imageDataFileName = inputs.get(0).split("cache/2/")[1];
 		else
 			imageDataFileName = inputs.get(0).split("cache")[1];
-		File file;
+		File file = null;
+		
 		try
 		{
 			file = FileCache.getFileFromServer(imageDataFileName);
@@ -40,7 +50,7 @@ public class LoadPolydataFromFileOperator extends BasePipelineOperator<String, v
 //			e.printStackTrace();
 		    file = null;
 		}
-		vtkPolyDataReader reader = new vtkPolyDataReader();
+		
 		if (file != null && file.exists())
 		{
 		    reader.SetFileName(file.getAbsolutePath());

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import vtk.vtkImageData;
+import vtk.vtkPolyData;
 import vtk.vtkXMLImageDataReader;
 
 import edu.jhuapl.saavtk.util.FileCache;
@@ -17,6 +18,15 @@ public class LoadImageDataFromFileOperator extends BasePipelineOperator<String, 
 	public void processData() throws IOException, Exception
 	{
 		String imageDataFileName;
+		vtkXMLImageDataReader reader = new vtkXMLImageDataReader();
+		if (inputs.get(0).contains("models"))
+		{
+			reader.SetFileName(inputs.get(0));
+		    reader.Update();
+		    vtkImageData imageData = reader.GetOutput();
+		    outputs.add(imageData);
+		    return;
+		}
 		if ((inputs.get(0).split("cache/2/").length != 2) && (inputs.get(0).split("cache/").length != 2)) return;
 		int numSegments = inputs.get(0).split("cache/2/").length;
 		if (numSegments == 2)
@@ -40,7 +50,7 @@ public class LoadImageDataFromFileOperator extends BasePipelineOperator<String, 
 //			e.printStackTrace();
 		    file = null;
 		}
-		vtkXMLImageDataReader reader = new vtkXMLImageDataReader();
+		
 		if (file != null && file.exists())
 		{
 		    

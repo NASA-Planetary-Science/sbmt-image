@@ -106,7 +106,7 @@ public class ShowImagePropertiesAction<G1 extends IPerspectiveImage & IPerspecti
 					Pair<vtkImageData, vtkPolyData>[] imageAndPolyData = new Pair[1];
 
 					Just.of(image.getImages())
-						.operate(new ColorImageGeneratorOperator())
+						.operate(new ColorImageGeneratorOperator(false))
 						.operate(new ColorImageFootprintGeneratorOperator(List.of(smallBodyModel)))
 						.subscribe(PairSink.of(imageAndPolyData))
 						.run();

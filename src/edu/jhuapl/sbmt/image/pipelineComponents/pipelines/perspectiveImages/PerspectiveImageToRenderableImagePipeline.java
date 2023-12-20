@@ -31,9 +31,16 @@ public class PerspectiveImageToRenderableImagePipeline
 {
 	List<RenderablePointedImage> renderableImages = Lists.newArrayList();
 	List<HashMap<String, String>> metadata = Lists.newArrayList();
-
+	private boolean forceUpdate = false;
+	
 	public PerspectiveImageToRenderableImagePipeline(List<IPerspectiveImage> images) throws InvalidGDALFileTypeException, Exception
 	{
+		this(images, false);
+	}
+	
+	public PerspectiveImageToRenderableImagePipeline(List<IPerspectiveImage> images, boolean forceUpdate) throws InvalidGDALFileTypeException, Exception
+	{
+		this.forceUpdate = forceUpdate;
 		for (IPerspectiveImage image : images)
 		{
 			String filename = image.getFilename();
@@ -97,6 +104,7 @@ public class PerspectiveImageToRenderableImagePipeline
 
 		for (RenderablePointedImage renderableImg : renderableImages)
 		{
+			renderableImg.setForceUpdate(forceUpdate);
 			renderableImg.setLayerIndex(image.getCurrentLayer());
 			renderableImg.setImageSource(image.getPointingSourceType());
 			renderableImg.setFilename(image.getFilename());

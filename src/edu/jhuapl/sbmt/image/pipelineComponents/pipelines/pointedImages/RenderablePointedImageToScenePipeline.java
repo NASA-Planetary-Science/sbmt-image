@@ -53,12 +53,19 @@ public class RenderablePointedImageToScenePipeline<G1 extends IPerspectiveImage 
 	List<RenderablePointedImage> renderableImages = Lists.newArrayList();
 	private HashMap<G1, List<Layer>> imageLayers = new HashMap<G1, List<Layer>>();
 	private HashMap<G1, List<HashMap<String, String>>> imageMetadata = new HashMap<G1, List<HashMap<String, String>>>();
+	private boolean forceUpdate;
 
 	public RenderablePointedImageToScenePipeline(G1 image, List<SmallBodyModel> smallBodyModels) throws Exception
+	{
+		this(image, smallBodyModels, false);
+	}
+	
+	public RenderablePointedImageToScenePipeline(G1 image, List<SmallBodyModel> smallBodyModels, boolean forceUpdate) throws Exception
 	{
 		sceneOutputs = new Pair[1];
 		this.image = image;
 		this.smallBodyModels = smallBodyModels;
+		this.forceUpdate = forceUpdate;
 		loadFiles();
 		generateImageLayer();
 		pointingPublisher = generatePointing(pointingFile);
@@ -153,6 +160,7 @@ public class RenderablePointedImageToScenePipeline<G1 extends IPerspectiveImage 
 
 		for (RenderablePointedImage renderableImage : renderableImages)
 		{
+			renderableImage.setForceUpdate(forceUpdate);
 			renderableImage.setLayerIndex(image.getCurrentLayer());
 			renderableImage.setImageSource(image.getPointingSourceType());
 			renderableImage.setOfflimbShowing(image.isOfflimbShowing());

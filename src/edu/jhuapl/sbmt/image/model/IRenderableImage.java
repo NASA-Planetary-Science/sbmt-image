@@ -35,4 +35,8 @@ public interface IRenderableImage
 	public int getLayerIndex();
 
 	public void setLayerIndex(int layerIndex);
+	
+	public boolean getForceUpdate();
+	
+	public void setForceUpdate(boolean forceUpdate);
 }

@@ -306,6 +306,7 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 		dialog.getImageFlipComboBox().addActionListener(e -> {
 			existingImage.setFlip((String)dialog.getImageFlipComboBox().getSelectedItem());
 			Thread thread = new Thread(() -> {
+				layer = null;
 				renderLayerAndAddAttributes();
 			});
 			thread.start();
@@ -315,6 +316,7 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 		dialog.getImageRotationComboBox().addActionListener(e -> {
 			existingImage.setRotation(Double.parseDouble((String)dialog.getImageRotationComboBox().getSelectedItem()));
 			Thread thread = new Thread(() -> {
+				layer = null;
 				renderLayerAndAddAttributes();
 			});
 			thread.start();
@@ -335,6 +337,7 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 			}
 			existingImage.setFillValues(doubleArray);
 			Thread thread = new Thread(() -> {
+				layer = null;
 				renderLayerAndAddAttributes();
 			});
 			thread.start();

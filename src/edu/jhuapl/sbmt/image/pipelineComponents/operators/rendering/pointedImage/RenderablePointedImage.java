@@ -36,8 +36,7 @@ public class RenderablePointedImage implements IRenderableImage
 	private Integer startH;
 	private Integer lastV;
 	private int layerIndex;
-//	private int[] pad;
-//	private int[] fullSize;
+	private boolean forceUpdate = false;
 
 	public RenderablePointedImage(Layer layer, HashMap<String, String> metadata, PointingFileReader pointing)
 	{
@@ -46,6 +45,16 @@ public class RenderablePointedImage implements IRenderableImage
 		this.metadata = metadata;
 		this.imageWidth = layer.iSize();
 		this.imageHeight = layer.jSize();
+	}
+	
+	public void setForceUpdate(boolean forceUpdate)
+	{
+		this.forceUpdate = forceUpdate;
+	}
+	
+	public boolean getForceUpdate()
+	{
+		return forceUpdate;
 	}
 
 
