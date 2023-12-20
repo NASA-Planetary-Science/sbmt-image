@@ -20,7 +20,8 @@ public class LoadPolydataFromFileOperator extends BasePipelineOperator<String, v
 		vtkPolyDataReader reader = new vtkPolyDataReader();
 		if (inputs.get(0).contains("models"))
 		{
-			reader.SetFileName(inputs.get(0));
+			if (!(new File(inputs.get(0)).exists())) return;
+ 			reader.SetFileName(inputs.get(0));
 		    reader.Update();
 		    vtkPolyData imageData = reader.GetOutput();
 		    outputs.add(imageData);

@@ -21,6 +21,7 @@ public class LoadImageDataFromFileOperator extends BasePipelineOperator<String, 
 		vtkXMLImageDataReader reader = new vtkXMLImageDataReader();
 		if (inputs.get(0).contains("models"))
 		{
+			if (!(new File(inputs.get(0)).exists())) return;
 			reader.SetFileName(inputs.get(0));
 		    reader.Update();
 		    vtkImageData imageData = reader.GetOutput();
