@@ -140,15 +140,7 @@ public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveI
 				public void actionPerformed(ActionEvent arg0)
 				{
 					String title = (String)panel.getLayerComboBox().getSelectedItem();
-					String[] titlePartsAroundDash = title.split("-")[0].split(" ");
-					int index = 0;
-					if (titlePartsAroundDash.length > 1)
-						index = Integer.parseInt(titlePartsAroundDash[1]) - 1;
-					else
-					{
-						String[] paddedIndex = titlePartsAroundDash[0].split("PLANE");
-						index = Integer.parseInt(paddedIndex[1]) - 1;
-					}
+					int index = getSelectedIndex(title);
 					try
 					{
 						model.setDisplayedLayerIndex(index);
@@ -276,6 +268,20 @@ public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveI
 
 		panel.getControlsPanel().add(fillValuesController.getView(), gridBagConstraints);
 	}
+	
+	private int getSelectedIndex(String title)
+	{
+		String[] titlePartsAroundDash = title.split("-")[0].split(" ");
+		int index = 0;
+		if (titlePartsAroundDash.length > 1)
+			index = Integer.parseInt(titlePartsAroundDash[1]) - 1;
+		else
+		{
+			String[] paddedIndex = titlePartsAroundDash[0].split("PLANE");
+			index = Integer.parseInt(paddedIndex[1]) - 1;
+		}
+		return index;
+	}
 
 	private void initializeListeners()
 	{
@@ -293,7 +299,7 @@ public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveI
 		panel.getApplyToBodyButton().addActionListener(evt -> {
 			if (panel.getLayerComboBox() == null) return;
 			String title = (String)panel.getLayerComboBox().getSelectedItem();
-			model.setDisplayedLayerIndex(Integer.parseInt(title.split(" ")[1]/*.replace("PLANE", "")*/) - 1);
+			model.setDisplayedLayerIndex(getSelectedIndex(title));
 			if (completionBlock != null && panel.getSyncCheckBox().isSelected()) completionBlock.run();
 		});
 
