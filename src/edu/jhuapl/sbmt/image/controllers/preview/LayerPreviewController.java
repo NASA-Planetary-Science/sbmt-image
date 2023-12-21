@@ -149,6 +149,7 @@ public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveI
 //						generateVtkImageData(model.getLayer());
 //						setIntensity(null);
 						panel.getRenWin().Render();
+						if (completionBlock != null && panel.getSyncCheckBox().isSelected()) completionBlock.run();
 					}
 					catch (Exception e)
 					{
