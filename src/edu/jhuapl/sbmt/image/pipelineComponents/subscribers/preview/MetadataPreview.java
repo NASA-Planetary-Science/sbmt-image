@@ -98,8 +98,11 @@ public class MetadataPreview implements IPipelineSubscriber<HashMap<String, Stri
 		tablePanel = fitsHeaderPropertiesController.getView();
 
 		List<ImageProperty> derivedProperties = new ArrayList<ImageProperty>();
-		for (String str : metadata.get(1).keySet())
-			derivedProperties.add(new ImageProperty(str, metadata.get(1).get(str)));
+		if (metadata.size() > 1)
+		{
+			for (String str : metadata.get(1).keySet())
+				derivedProperties.add(new ImageProperty(str, metadata.get(1).get(str)));
+		}
 		ImagePropertiesController derivedPropertiesController = new ImagePropertiesController(derivedProperties);
 		tablePanel2 = derivedPropertiesController.getView();
 

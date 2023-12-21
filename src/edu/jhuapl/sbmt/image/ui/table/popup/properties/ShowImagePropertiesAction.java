@@ -89,6 +89,7 @@ public class ShowImagePropertiesAction<G1 extends IPerspectiveImage & IPerspecti
 				preview = new VtkLayerPreview<G1>(image, "Image Properties - " + image.getName(), image.getCurrentLayer(), image.getIntensityRange(), image.getMaskValues(), image.getFillValues(), invertY);
 				preview.setImage(image);
 				preview.setCompletionBlock(completionBlock);
+				preview.setSmallBodyModel(smallBodyModel);
 				List<Pair<Layer, List<HashMap<String, String>>>> inputList = Lists.newArrayList();
 				List<HashMap<String, String>> metadatas = List.of(pipeline.getMetadata().get(0));
 				for (int i=0; i<renderableImages.size(); i++)
