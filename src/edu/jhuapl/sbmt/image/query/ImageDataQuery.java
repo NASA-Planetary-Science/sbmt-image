@@ -246,6 +246,7 @@ public class ImageDataQuery extends DatabaseDataQuery
 	
 	public String getTablePrefix(PointingSource source)
     {
+		System.out.println("ImageDataQuery: getTablePrefix: source is " + source + " " + tablePrefixSpice + " " + tablePrefixSpc);
         return source == PointingSource.SPICE ? tablePrefixSpice : tablePrefixSpc;
     }
 	
@@ -291,7 +292,7 @@ public class ImageDataQuery extends DatabaseDataQuery
 
             }
             DataQuerySourcesMetadata sourceMetadata =
-            		DataQuerySourcesMetadata.of(rootPath, dataPath, tablePrefixSpice, tablePrefixSpc, galleryPath);
+            		DataQuerySourcesMetadata.of(rootPath, dataPath, tablePrefixSpc, tablePrefixSpice, galleryPath);
             ImageDataQuery query = new ImageDataQuery(sourceMetadata);
     		return query;
 
