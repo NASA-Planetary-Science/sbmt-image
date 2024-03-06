@@ -40,7 +40,7 @@
 	<dependency>
 		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>
 		<artifactId>sbmt-pointing</artifactId>
-		<version>1.0.3-b5-SNAPSHOT</version>
+		<version>1.0.3-b6-SNAPSHOT</version>
 	</dependency>
 	<dependency>
 		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>

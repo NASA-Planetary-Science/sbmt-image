@@ -118,26 +118,27 @@ public class BasemapImageConfig implements IFeatureConfig
 					// Final option (legacy behavior). The key is hardwired. The
 					// file could be in
 					// either of two places.
-					try {
-						FileCache.getFileFromServer(config.serverPath("image_map.png"));
-						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "image_map.png",
-								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
-					}
-					catch (Exception nrf)
-					{
-						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "basemap/image_map.png",
-								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
-					}
-//					if (FileCache.isFileGettable(config.serverPath("image_map.png")))
-//					{
+//					try {
+//						FileCache.getFileFromServer(config.serverPath("image_map.png"));
 //						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "image_map.png",
 //								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
 //					}
-//					else if (FileCache.isFileGettable(config.serverPath("basemap/image_map.png")))
+//					catch (Exception nrf)
 //					{
 //						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "basemap/image_map.png",
 //								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
 //					}
+					
+					if (FileCache.isFileGettable(config.serverPath("image_map.png")))
+					{
+						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "image_map.png",
+								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
+					}
+					else if (FileCache.isFileGettable(config.serverPath("basemap/image_map.png")))
+					{
+						imageMapKeys = ImmutableList.of(new CustomCylindricalImageKey("image_map", "basemap/image_map.png",
+								ImageType.GENERIC_IMAGE, PointingSource.IMAGE_MAP, new Date(), "image_map"));
+					}
 //				} 
 //				catch (UnauthorizedAccessException uae)
 //				{
