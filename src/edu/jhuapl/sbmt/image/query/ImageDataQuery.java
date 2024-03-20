@@ -246,7 +246,6 @@ public class ImageDataQuery extends DatabaseDataQuery
 	
 	public String getTablePrefix(PointingSource source)
     {
-		System.out.println("ImageDataQuery: getTablePrefix: source is " + source + " " + tablePrefixSpice + " " + tablePrefixSpc);
         return source == PointingSource.SPICE ? tablePrefixSpice : tablePrefixSpc;
     }
 	
