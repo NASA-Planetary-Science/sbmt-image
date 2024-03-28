@@ -103,13 +103,15 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 	private JCheckBox modifiedEnabled;
 	private JSlider modifiedAlphaSlider;
 	private JSlider originalAlphaSlider;
+	private boolean isCustom = false;
 
-	public PointedImageEditingPanel(G1 image, SmallBodyModel smallBodyModel, List<vtkActor> inputs)
+	public PointedImageEditingPanel(G1 image, SmallBodyModel smallBodyModel, List<vtkActor> inputs, boolean isCustom)
 	{
 		this.image = image;
 		this.inputs = inputs;
 		this.smallBodyModel = smallBodyModel;
 		this.renderer = new Renderer(smallBodyModel);
+		this.isCustom = isCustom;
 		renderer.setLightCfg(LightUtil.getSystemLightCfg());
 		propProvider = new VtkPropProvider()
 		{
@@ -570,7 +572,7 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 		Triple<G1, SpacecraftPointingState, SpacecraftPointingDelta> input =
 				Triple.of(image, updatedState.getLeft(), delta);
 		Just.of(input)
-			.operate(new SaveModifiedImagePointingFileToCacheOperator<G1>())
+			.operate(new SaveModifiedImagePointingFileToCacheOperator<G1>(isCustom))
 			.subscribe(Sink.of(updatedPointingFiles))
 			.run();
 		image.setModifiedPointingSource(Optional.of(updatedPointingFiles.get(0).getAbsolutePath()));
@@ -606,9 +608,10 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 			currentSampleDeltaLabel.setText("" + delta.getSampleOffset());
 			currentLineDeltaLabel.setText("" + delta.getLineOffset());
 			currentRotationDeltaLabel.setText("" + delta.getRotationOffset());
-
+			modifiedEnabled.setSelected(false);
 			return delta;
 		}
+		modifiedEnabled.setSelected(true);
 		delta.setLineOffset(currentLineOffset);
 		delta.setRotationOffset(currentRotationAngle);
 		delta.setSampleOffset(currentSampleOffset);

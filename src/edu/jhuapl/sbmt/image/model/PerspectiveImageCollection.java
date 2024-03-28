@@ -208,6 +208,11 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 		userImagesModified.add(image);
 		updateUserList();	//update the user created list, stored in metadata
 	}
+	
+	public boolean isUserImage(G1 image)
+	{
+		return userImages.contains(image);
+	}
 
 	private void migrateOldUserList()
 	{

@@ -19,7 +19,7 @@ import edu.jhuapl.sbmt.pipeline.publisher.Publishers;
 
 public class PointedRenderableImageEditingPipeline<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>
 {
-	public PointedRenderableImageEditingPipeline(G1 image, List<SmallBodyModel> smallBodies) throws Exception
+	public PointedRenderableImageEditingPipeline(G1 image, List<SmallBodyModel> smallBodies, boolean isCustom) throws Exception
 	{
 		RenderablePointedImageToScenePipeline<G1> actorPipeline =
 				new RenderablePointedImageToScenePipeline<G1>(image, smallBodies);
@@ -36,7 +36,7 @@ public class PointedRenderableImageEditingPipeline<G1 extends IPerspectiveImage 
 		//*******************************
 		//Throw them to the preview tool
 		//*******************************
-		PointedImageEditingWindow<G1> preview = new PointedImageEditingWindow<G1>(image, smallBodies.get(0));
+		PointedImageEditingWindow<G1> preview = new PointedImageEditingWindow<G1>(image, smallBodies.get(0), isCustom);
 
 		sceneObjects
 			.operate(sceneBuilder)
