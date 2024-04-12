@@ -291,7 +291,7 @@ public class ImageDataQuery extends DatabaseDataQuery
 
             }
             DataQuerySourcesMetadata sourceMetadata =
-            		DataQuerySourcesMetadata.of(rootPath, dataPath, tablePrefixSpice, tablePrefixSpc, galleryPath);
+            		DataQuerySourcesMetadata.of(rootPath, dataPath, tablePrefixSpc, tablePrefixSpice, galleryPath);
             ImageDataQuery query = new ImageDataQuery(sourceMetadata);
     		return query;
 
