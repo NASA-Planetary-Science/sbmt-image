@@ -57,7 +57,11 @@ public class IPerspectiveImageToLayerAndMetadataPipeline
 		if (FilenameUtils.getExtension(fileName).toLowerCase().equals("fit") || FilenameUtils.getExtension(fileName).toLowerCase().equals("fits"))
 		{
 			if (useGDAL && !ArrayUtils.contains(badGDALTypes, image.getImageType()))
-				reader = new GDALReader(fileName, false, new ValidityCheckerDoubleFactory().checker2d(image.getFillValues()), Double.NaN);
+				try {
+					reader = new GDALReader(fileName, false, new ValidityCheckerDoubleFactory().checker2d(image.getFillValues()), Double.NaN);
+				} catch (InvalidGDALFileTypeException igfte){
+					reader = new BuiltInFitsReader(fileName, new double[] {});
+				}
 			else
 				reader = new BuiltInFitsReader(fileName, new double[] {});
 			metadataReader = new BuiltInFitsHeaderReader(fileName);

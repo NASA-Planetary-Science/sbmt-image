@@ -52,6 +52,10 @@ public class GDALReader extends BasePipelinePublisher<Layer>
 						.checker(checker)
 						.build()
 						.load();
+				if (layer.dataSizes().size() == 0)
+				{
+					throw new InvalidGDALFileTypeException("GDAL is reporting no layers in this file; SBMT will attempt to fall back to an internal reader");
+				}
 				int numLayers = layer.dataSizes().get(0);
 				for (int i=0; i < numLayers; i++)
 				{
