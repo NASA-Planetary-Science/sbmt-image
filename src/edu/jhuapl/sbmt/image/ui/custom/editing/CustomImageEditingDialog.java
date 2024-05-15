@@ -62,6 +62,7 @@ public class CustomImageEditingDialog<G1 extends IPerspectiveImage & IPerspectiv
 	private JCheckBox flipAboutXCheckBox;
 	private JButton browseButton;
 	private JButton okButton;
+	private JButton imagePathBrowseButton;
 
 	ImageMaskController maskController;
 	ImageContrastController contrastController;
@@ -156,24 +157,9 @@ public class CustomImageEditingDialog<G1 extends IPerspectiveImage & IPerspectiv
 		panel.add(Box.createHorizontalStrut(20));
 		panel.add(imagePathTextField);
 
-		JButton browseButton = new JButton("Browse");
-		browseButton.addActionListener(e ->
-		{
-			File[] files = CustomFileChooser.showOpenDialog(this, "Select Image", List.of("fits", "fit", "FIT", "FITS", "png", "PNG", "JPG", "jpg", "IMG", "img"), false);
-			if (files == null || files.length == 0)
-	        {
-	            return;
-	        }
+		imagePathBrowseButton = new JButton("Browse");
 
-			String filename = files[0].getAbsolutePath();
-			imagePathTextField.setText(filename);
-			String imageFileName = files[0].getName();
-			String extension = FilenameUtils.getExtension(imageFileName).toLowerCase();
-
-			imageNameTextField.setText(imageFileName);
-		});
-
-		panel.add(browseButton);
+		panel.add(imagePathBrowseButton);
 		panel.add(Box.createGlue());
 		return panel;
 	}
@@ -543,6 +529,11 @@ public class CustomImageEditingDialog<G1 extends IPerspectiveImage & IPerspectiv
 		return browseButton;
 	}
 
+	public JButton getImagePathBrowseButton()
+	{
+		return imagePathBrowseButton;
+	}
+	
 	/**
 	 * @return the okButton
 	 */
