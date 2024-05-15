@@ -143,6 +143,11 @@ public class CompositePerspectiveImage implements IPerspectiveImage, IPerspectiv
 	{
 		return images.get(0).getFilename();
 	}
+	
+	public void setFilename(String filename)
+	{
+		images.get(0).setFilename(filename);
+	}
 
 	public PointingSource getPointingSourceType()
 	{
