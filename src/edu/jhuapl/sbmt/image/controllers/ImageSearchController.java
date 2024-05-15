@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -50,6 +51,7 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.ImageSearchParametersModel;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
+import edu.jhuapl.sbmt.image.model.PerspectiveImageRenderingState;
 import edu.jhuapl.sbmt.image.model.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.model.SbmtSpectralImageWindowManager;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.CustomImageListToSavedFilePipeline;
@@ -426,9 +428,17 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 		customImageListTableController.getPanel().getLoadImageButton().addActionListener(e -> {
 			try
 			{
-				LoadFileToCustomImageListPipeline<G1> pipeline = LoadFileToCustomImageListPipeline.of();
+				LoadFileToCustomImageListPipeline<G1> pipeline = LoadFileToCustomImageListPipeline.of(instrument.orElse(null), collection.getSmallBodyModels().get(0).getCustomDataFolder());
+				if (pipeline.getResults() == null) return;
 				List<G1> images = pipeline.getResults().getLeft();
-				collection.setImages(images);
+				HashMap<G1, PerspectiveImageRenderingState<G1>> states = pipeline.getResults().getRight();
+//				collection.setImages(images);
+				for (G1 image : images)
+				{
+					collection.addUserImage(image, states.get(image));
+				}
+				collection.loadUserList();
+//				customImageListTableController.getPanel().repaint();
 			}
 			catch (Exception e1)
 			{
@@ -489,6 +499,8 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 						modelManager.getPolyhedralModel().isEllipsoid(), !image.getPointingSourceType().toString().contains("Cylindrical"), image, instrument.orElse(null), completionBlock);
 		        dialog.getDialog().setLocationRelativeTo(customImageListTableController.getPanel());
 		        dialog.getDialog().setVisible(true);
+		        collection.setImageMapped(image, false, true);
+		        
 			}
 			else if (image.getNumberOfLayers() == 3) //editing custom color image
 			{

@@ -208,6 +208,16 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 		userImagesModified.add(image);
 		updateUserList();	//update the user created list, stored in metadata
 	}
+	
+	public void addUserImage(G1 image, PerspectiveImageRenderingState<G1> state)
+	{
+		userImages.add(image);
+		Color color = ColorUtil.generateColor(userImages.indexOf(image)%100, 100);
+		state.boundaryColor = color;
+		renderingStates.put(image,state);
+		userImagesModified.add(image);
+		updateUserList();	//update the user created list, stored in metadata
+	}
 
 	private void migrateOldUserList()
 	{
