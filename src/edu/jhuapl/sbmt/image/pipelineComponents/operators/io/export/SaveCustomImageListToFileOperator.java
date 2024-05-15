@@ -27,6 +27,7 @@ public class SaveCustomImageListToFileOperator<G1 extends IPerspectiveImage & IP
 	{
 		List<G1> images = inputs;
 		File file = CustomFileChooser.showSaveDialog(null, "Select File", "imagelist.txt");
+		if (file == null) return;
 		String filename = file.getAbsolutePath();
 		SettableMetadata configMetadata = SettableMetadata.of(Version.of(1, 0));
         final Key<List<G1>> userImagesKey = Key.of("UserImages");
