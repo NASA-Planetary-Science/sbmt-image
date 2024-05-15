@@ -82,6 +82,9 @@ public class ColorImageBuilderController<G1 extends IPerspectiveImage & IPerspec
 			imageCollection.addUserImage((G1)colorImage);
 			SwingUtilities.getWindowAncestor(panel).setVisible(false);
 		});
+		
+		panel.getPreviewButton().setEnabled(false);
+		panel.getSaveAndCloseButton().setEnabled(false);
 	}
 
 	public void setImages(List<G1> images)
