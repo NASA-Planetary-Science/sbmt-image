@@ -24,13 +24,14 @@ public class ColorImageBuilderPanel<G1 extends IPerspectiveImage & IPerspectiveI
 	private JButton saveAndCloseButton;
 	private JButton previewButton;
 	private JButton cancelButton;
+	private boolean redComplete = false, greenComplete = false, blueComplete = false;
 
 	public ColorImageBuilderPanel(List<SmallBodyModel> smallBodyModels)
 	{
 		this.smallBodyModels = smallBodyModels;
-		redPreview = new SingleImagePreviewPanel("Red Image");
-		greenPreview = new SingleImagePreviewPanel("Green Image");
-		bluePreview = new SingleImagePreviewPanel("Blue Image");
+		redPreview = new SingleImagePreviewPanel("Red Image", s ->  { this.redComplete = true; checkForButtonStatus(); });
+		greenPreview = new SingleImagePreviewPanel("Green Image", s -> { this.greenComplete = true; checkForButtonStatus(); } );
+		bluePreview = new SingleImagePreviewPanel("Blue Image", s ->   { this.blueComplete = true; checkForButtonStatus(); } );
 		initGUI();
 	}
 
@@ -96,6 +97,12 @@ public class ColorImageBuilderPanel<G1 extends IPerspectiveImage & IPerspectiveI
 		redPreview.setPerspectiveImage(images.get(0));
 		greenPreview.setPerspectiveImage(images.get(1));
 		bluePreview.setPerspectiveImage(images.get(2));
+	}
+	
+	private void checkForButtonStatus()
+	{
+		previewButton.setEnabled(redComplete && greenComplete && blueComplete);
+		saveAndCloseButton.setEnabled(redComplete && greenComplete && blueComplete);
 	}
 
 	/**

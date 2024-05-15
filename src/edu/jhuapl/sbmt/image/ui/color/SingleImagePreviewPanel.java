@@ -8,6 +8,8 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -27,14 +29,16 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.perspectiveImages.Pers
 import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.VtkLayerRenderer;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 
+
 public class SingleImagePreviewPanel extends JPanel
 {
 	JTextField imageTextField;
 	String title;
 	IPerspectiveImage perspectiveImage;
 	JPanel previewPanel;
+	Consumer<Void> closure;
 
-	public SingleImagePreviewPanel(String title)
+	public SingleImagePreviewPanel(String title, Consumer<Void> closure)
 	{
 		this.title = title;
 		imageTextField = new JTextField();
@@ -45,7 +49,7 @@ public class SingleImagePreviewPanel extends JPanel
         setSize(300, 300);
 		setPreferredSize(new Dimension(250, 270));
 		setMaximumSize(new Dimension(250, 270));
-
+		this.closure = closure;
         makeImagePanel();
 	}
 
@@ -140,6 +144,7 @@ public class SingleImagePreviewPanel extends JPanel
                             perspectiveImage = image;
                             runPreviewPipeline();
                             accept = true;
+                            closure.accept(null);
                         }
                     }
                 } catch (Exception exp) {
