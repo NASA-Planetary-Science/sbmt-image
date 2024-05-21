@@ -101,6 +101,7 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 	private JLabel currentLineDeltaLabel;
 	private JLabel currentZoomDeltaLabel;
 	private JCheckBox modifiedEnabled;
+	private JCheckBox originalEnabled;
 	private JSlider modifiedAlphaSlider;
 	private JSlider originalAlphaSlider;
 	private boolean isCustom = false;
@@ -590,6 +591,8 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 		exportModifiedPointingFileButton.setEnabled(true);
 		adjustPropOpactity(props.get(1), originalAlphaSlider.getValue());
 		adjustPropOpactity(props.get(2), modifiedAlphaSlider.getValue());
+		props.get(1).SetVisibility(originalEnabled.isSelected() ? 1 : 0);
+		props.get(2).SetVisibility(modifiedEnabled.isSelected() ? 1 : 0);
 	}
 
 	private SpacecraftPointingDelta generateDelta()
@@ -817,7 +820,7 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		JCheckBox originalEnabled = new JCheckBox("Original Image");
+		originalEnabled = new JCheckBox("Original Image");
 		originalEnabled.setSelected(true);
 		originalEnabled.addActionListener(e -> {
 			JCheckBox checkBox = (JCheckBox)e.getSource();
