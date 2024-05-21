@@ -449,7 +449,7 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 		gridBagConstraints.gridwidth = 2;
 		gridBagConstraints.ipadx = 15;
 		gridBagConstraints.weightx = 1.0;
-		pointingPanel.add(adjustFrameCheckBox3, gridBagConstraints);
+//		pointingPanel.add(adjustFrameCheckBox3, gridBagConstraints);
 
 		factorLabel1.setText("Factor");
 		gridBagConstraints = new GridBagConstraints();

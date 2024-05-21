@@ -39,7 +39,11 @@ public class SaveModifiedImagePointingFileToCacheOperator<G1 extends IPerspectiv
 			SpacecraftPointingDelta delta = input.getRight();
 			File cachedFile = null;
 			if (isCustom)
+			{
 				cachedFile = new File(image.getPointingSource());
+				if (cachedFile.exists() == false)
+					cachedFile = FileCache.getFileFromServer(image.getPointingSource());
+			}
 			else
 				cachedFile = FileCache.getFileFromServer(image.getPointingSource());
 			String nameNoExtension = FilenameUtils.removeExtension(cachedFile.getAbsolutePath());
