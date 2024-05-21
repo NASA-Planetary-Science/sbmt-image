@@ -74,6 +74,8 @@ import vtk.vtkProperty;
 public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends SaavtkItemManager<G1> implements PropertyChangeListener
 {
 	private ConcurrentHashMap<IImagingInstrument, List<G1>> imagesByInstrument;
+	private ConcurrentHashMap<IImagingInstrument, IdPair> currentBoundaryRangeByInstrument;
+	private ConcurrentHashMap<IImagingInstrument, Integer> currentBoundaryOffsetByInstrument;
 	private List<G1> userImages;
 	private List<G1> userImagesModified;
 	private List<SmallBodyModel> smallBodyModels;
@@ -86,8 +88,9 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	@SuppressWarnings("unused")
 	private SimpleLogger logger = SimpleLogger.getInstance();
 	private IImagingInstrument imagingInstrument;
-	private IdPair currentBoundaryRange = new IdPair(0, 9);
-	private int currentBoundaryOffsetAmount = 10;
+//	private IdPair currentBoundaryRange = new IdPair(0, 9);
+//	private int currentBoundaryOffsetAmount = 10;
+	
 	private boolean firstCustomLoad = true;
 	private List<PerspectiveImageCollectionListener> listeners;
 	private static ExecutorService executor = Executors.newCachedThreadPool();
@@ -96,6 +99,8 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	{
 		this.listeners = Lists.newArrayList();
 		this.imagesByInstrument = new ConcurrentHashMap<IImagingInstrument, List<G1>>();
+		this.currentBoundaryRangeByInstrument = new ConcurrentHashMap<IImagingInstrument, IdPair>();
+		this.currentBoundaryOffsetByInstrument = new ConcurrentHashMap<IImagingInstrument, Integer>();
 		this.userImages = Lists.newArrayList();
 		this.userImagesModified = Lists.newArrayList();
 		this.imageRenderers = new ConcurrentHashMap<G1, List<vtkActor>>();
@@ -175,7 +180,9 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 			renderingStates.remove(image);
 		}
 		imagesByInstrument.clear();
-		currentBoundaryRange = new IdPair(0, currentBoundaryOffsetAmount-1);
+		currentBoundaryOffsetByInstrument.put(imagingInstrument, 10);
+		currentBoundaryRangeByInstrument.put(imagingInstrument, new IdPair(0, currentBoundaryOffsetByInstrument.get(imagingInstrument)-1));
+// 		currentBoundaryRange = new IdPair(0, currentBoundaryOffsetAmount-1);
 	}
 
 	public void clearUserImages()
@@ -202,6 +209,16 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	{
 		userImages.add(image);
 		PerspectiveImageRenderingState<G1> state = new PerspectiveImageRenderingState<G1>();
+		Color color = ColorUtil.generateColor(userImages.indexOf(image)%100, 100);
+		state.boundaryColor = color;
+		renderingStates.put(image,state);
+		userImagesModified.add(image);
+		updateUserList();	//update the user created list, stored in metadata
+	}
+	
+	public void addUserImage(G1 image, PerspectiveImageRenderingState<G1> state)
+	{
+		userImages.add(image);
 		Color color = ColorUtil.generateColor(userImages.indexOf(image)%100, 100);
 		state.boundaryColor = color;
 		renderingStates.put(image,state);
@@ -388,7 +405,13 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 			PerspectiveImageRenderingState<G1> state = new PerspectiveImageRenderingState<G1>();
 			renderingStates.put(image,state);
 		}
-//		updateActiveBoundaries();
+//		currentBoundaryOffsetAmount = 10;
+//		currentBoundaryRange = new IdPair(0, currentBoundaryOffsetAmount-1);
+		
+		currentBoundaryOffsetByInstrument.put(imagingInstrument, 10);
+		currentBoundaryRangeByInstrument.put(imagingInstrument, new IdPair(0, currentBoundaryOffsetByInstrument.get(imagingInstrument)-1));
+		
+		updateActiveBoundaries(null);
 	}
 
 	@Override
@@ -477,30 +500,6 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 			}
 		});
 		if (userImages.contains(image)) updateUserList();
-	}
-
-	public void updateActiveBoundaries(IdPair previousRange)
-	{
-		int lowBound, highBound;
-		if (previousRange == null)
-		{
-			lowBound = currentBoundaryRange.id1;
-			highBound = currentBoundaryRange.id2;
-		}
-		else
-		{
-			lowBound = Math.min(previousRange.id1, currentBoundaryRange.id1);
-			highBound = Math.max(previousRange.id2, currentBoundaryRange.id2);
-		}
-		lowBound = Math.max(0, lowBound);
-		highBound = Math.min(highBound, getAllItems().size()-1);
-		for (int i=lowBound; i<=highBound; i++)
-		{
-			G1 image = getAllItems().get(i);
-			boolean validIndex = new Range(currentBoundaryRange.id1, currentBoundaryRange.id2).contains(i) /*&& renderingStates.get(image).isBoundaryShowing*/;
-			setImageBoundaryShowing(image, validIndex);
-		}
-		pcs.firePropertyChange(Properties.MODEL_CHANGED, null, null);
 	}
 
 	public void updateImage(G1 image)
@@ -1025,12 +1024,54 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	{
 		return this.imagingInstrument;
 	}
+	
+	public void updateActiveBoundaries(IdPair previousRange)
+	{
+		int lowBound, highBound;
+		IdPair currentBoundaryRange = currentBoundaryRangeByInstrument.get(imagingInstrument);
+		if (previousRange == null)
+		{
+			lowBound = currentBoundaryRange.id1;
+			highBound = currentBoundaryRange.id2;
+		}
+		else
+		{
+			lowBound = Math.min(previousRange.id1, currentBoundaryRange.id1);
+			highBound = Math.max(previousRange.id2, currentBoundaryRange.id2);
+		}
+		lowBound = Math.max(0, lowBound);
+		highBound = Math.min(highBound, getAllItems().size()-1);
+		for (int i=lowBound; i<=highBound; i++)
+		{
+			G1 image = getAllItems().get(i);
+			boolean validIndex = new Range(currentBoundaryRange.id1, currentBoundaryRange.id2).contains(i) /*&& renderingStates.get(image).isBoundaryShowing*/;
+			setImageBoundaryShowing(image, validIndex);
+		}
+		pcs.firePropertyChange(Properties.MODEL_CHANGED, null, null);
+	}
 
 	public void offsetBoundariesRange(int offsetAmount)
 	{
-		IdPair previousRange = new IdPair(this.currentBoundaryRange.id1, this.currentBoundaryRange.id2);
-		currentBoundaryOffsetAmount = offsetAmount;
+		IdPair currentBoundaryRange = currentBoundaryRangeByInstrument.get(imagingInstrument);
+		IdPair previousRange = new IdPair(currentBoundaryRange.id1, currentBoundaryRange.id2);
+//		currentBoundaryOffsetAmount = offsetAmount;
+		currentBoundaryOffsetByInstrument.put(imagingInstrument, offsetAmount);
 		currentBoundaryRange.offset(offsetAmount);
+		if (currentBoundaryRange.id1 > getAllItems().size()-1)
+		{
+			currentBoundaryRange = new IdPair(0, offsetAmount-1);
+		}
+		if (currentBoundaryRange.id2 < 0) //update to show the most complete multiple at the end of the list
+		{
+			int remainder = (getAllItems().size() - 1)%offsetAmount;
+			currentBoundaryRange = new IdPair(getAllItems().size()-1-remainder, getAllItems().size() - 1);
+		}
+		if (currentBoundaryRange.id1 == 0) currentBoundaryRange.id2 = Math.abs(offsetAmount) - 1;
+		if (currentBoundaryRange.id2 < getAllItems().size()-1 && currentBoundaryRange.id2-currentBoundaryRange.id1 != currentBoundaryOffsetByInstrument.get(imagingInstrument))
+		{
+			currentBoundaryRange.id2 = currentBoundaryRange.id1 + Math.abs(offsetAmount) - 1;
+ 		}
+		currentBoundaryRangeByInstrument.put(imagingInstrument, currentBoundaryRange);
 		updateActiveBoundaries(previousRange);
 	}
 
@@ -1169,17 +1210,20 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	}
 
 
-	public int getCurrentBoundaryOffsetAmount()
-	{
-		return currentBoundaryOffsetAmount;
-	}
+//	public int getCurrentBoundaryOffsetAmount()
+//	{
+//		return currentBoundaryOffsetAmount;
+//	}
 
 	public void setCurrentBoundaryOffsetAmount(int currentBoundaryOffsetAmount)
 	{
-		if (this.currentBoundaryOffsetAmount == currentBoundaryOffsetAmount) return;
-		IdPair previousRange = new IdPair(this.currentBoundaryRange.id1, this.currentBoundaryRange.id2);
-		this.currentBoundaryOffsetAmount = currentBoundaryOffsetAmount;
-		this.currentBoundaryRange.id2 = this.currentBoundaryRange.id1 + currentBoundaryOffsetAmount - 1;
+		Integer currentBoundaryOffset = currentBoundaryOffsetByInstrument.get(imagingInstrument);
+		IdPair currentBoundaryRange = currentBoundaryRangeByInstrument.get(imagingInstrument);
+		if (currentBoundaryOffset == currentBoundaryOffsetAmount) return;
+		IdPair previousRange = new IdPair(currentBoundaryRange.id1, currentBoundaryRange.id2);
+		currentBoundaryOffsetByInstrument.put(imagingInstrument, currentBoundaryOffsetAmount);
+//		this.currentBoundaryOffsetAmount = currentBoundaryOffsetAmount;
+		currentBoundaryRange.id2 = currentBoundaryRange.id1 + currentBoundaryOffsetAmount - 1;
 		updateActiveBoundaries(previousRange);
 	}
 	

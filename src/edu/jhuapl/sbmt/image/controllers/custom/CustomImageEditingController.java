@@ -265,6 +265,37 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 
 		dialog.getMaskController().setMaskValues(existingImage.getMaskValues());
 
+		dialog.getImagePathBrowseButton().addActionListener(e ->
+		{
+			File[] files = CustomFileChooser.showOpenDialog(this.getDialog(), "Select Image", List.of("fits", "fit", "FIT", "FITS", "png", "PNG", "JPG", "jpg", "IMG", "img"), false);
+			if (files == null || files.length == 0)
+	        {
+	            return;
+	        }
+
+			String filename = files[0].getAbsolutePath();
+			dialog.getImagePathTextField().setText(filename);
+			String imageFileName = files[0].getName();
+
+			dialog.getImageNameTextField().setText(imageFileName);
+			existingImage.setFilename(filename);
+			layer = null;
+			renderLayerAndAddAttributes();
+			
+			javax.swing.SwingUtilities.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if (renWin != null)
+					{
+						renWin.resetCamera();
+						renWin.Render();
+					}
+				}
+			});
+		});
+		
 		dialog.getBrowseButton().addActionListener(e ->
 		{
 			File[] files = CustomFileChooser.showOpenDialog(this.getDialog(), "Select Pointing File...", List.of("info", "INFO", "sum", "SUM"), false);
@@ -286,7 +317,22 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 				dialog.getImageRotationComboBox().setSelectedItem("" + (int) (orientation2.getRotation()));
 				dialog.getImageFlipComboBox().setSelectedItem(orientation2.getFlip().toString());
 			}
+			layer = null;
 			renderLayerAndAddAttributes();
+			
+			javax.swing.SwingUtilities.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if (renWin != null)
+					{
+						renWin.resetCamera();
+						renWin.Render();
+					}
+				}
+			});
+			
 		});
 
 		dialog.getOkButton().addActionListener(e ->
@@ -425,6 +471,7 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 	{
 		imageType = existingImage.getImageType();
 		existingImage.setName(dialog.getImageNameTextField().getText());
+		existingImage.setFilename(dialog.getImagePathTextField().getText());
 		if (dialog.getPointingTypeComboBox().getSelectedItem().equals("Perspective Projection"))
 		{
 			existingImage.setPointingSource(dialog.getPointingFilenameTextField().getText());

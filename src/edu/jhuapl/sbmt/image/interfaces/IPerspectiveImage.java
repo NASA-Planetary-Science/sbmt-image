@@ -13,6 +13,8 @@ import edu.jhuapl.sbmt.image.model.ImageType;
 public interface IPerspectiveImage
 {
 	public String getFilename();
+	
+	public void setFilename(String filename);
 
 	public void setImageType(ImageType imageType);
 
