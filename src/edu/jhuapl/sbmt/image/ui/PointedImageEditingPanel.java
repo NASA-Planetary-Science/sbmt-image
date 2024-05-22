@@ -612,9 +612,11 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 			currentLineDeltaLabel.setText("" + delta.getLineOffset());
 			currentRotationDeltaLabel.setText("" + delta.getRotationOffset());
 			modifiedEnabled.setSelected(false);
+			originalEnabled.setSelected(true);
 			return delta;
 		}
 		modifiedEnabled.setSelected(true);
+		originalEnabled.setSelected(false);
 		delta.setLineOffset(currentLineOffset);
 		delta.setRotationOffset(currentRotationAngle);
 		delta.setSampleOffset(currentSampleOffset);
