@@ -104,10 +104,10 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
  	    	for (SmallBodyModel smallBody : smallBodyModels)
  	    	{
  	    		String prefix = getPrerenderingFileNameBase(renderableImage, smallBody) + "_" + layerIndex;
-	    		String imageDataFilename = prefix + "_footprintImageData.vtk.gz";
+	    		String imageDataFilename = prefix + "_footprintImageData" + (useModifiedPointing ? ".modified" : "") + ".vtk.gz";
  	    		LoadCachedSupportFilesPipeline cachedPipeline = LoadCachedSupportFilesPipeline.of(prefix);
  	    		vtkImageData existingImageData = cachedPipeline.getImageData();
-				if (existingImageData != null && renderableImage.getForceUpdate() == false)
+				if (existingImageData != null && renderableImage.getForceUpdate() == false && !useModifiedPointing)
 				{
 					//this restretches things to the proper contrast 
 					Just.of(existingImageData)
@@ -138,9 +138,9 @@ public class RenderablePointedImageFootprintOperator extends BasePipelineOperato
 				
 				
 				//Footprints
-				String imageFootprintFilename = prefix + "_footprintData.vtk.gz";
+				String imageFootprintFilename = prefix + "_footprintData" + (useModifiedPointing ? ".modified" : "") + ".vtk.gz";
 				vtkPolyData existingFootprint = cachedPipeline.getFootprintPolyData();
-	    		if (existingFootprint != null)
+	    		if (existingFootprint != null && !useModifiedPointing)
 	    		{
 	    			footprints.add(existingFootprint);
 	    			PolyDataUtil.shiftPolyDataInNormalDirection(existingFootprint, renderableImage.getOffset());

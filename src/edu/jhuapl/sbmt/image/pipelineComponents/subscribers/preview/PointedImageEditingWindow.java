@@ -19,11 +19,13 @@ public class PointedImageEditingWindow<G1 extends IPerspectiveImage & IPerspecti
 	private SmallBodyModel smallBodyModel;
 	private PointedImageEditingPanel<G1> preview;
 	private G1 image;
+	private boolean isCustom;
 
-	public PointedImageEditingWindow(G1 image, SmallBodyModel smallBodyModel)
+	public PointedImageEditingWindow(G1 image, SmallBodyModel smallBodyModel, boolean isCustom)
 	{
 		this.image = image;
 		this.smallBodyModel = smallBodyModel;
+		this.isCustom = isCustom;
 	}
 
 	@Override
@@ -31,7 +33,7 @@ public class PointedImageEditingWindow<G1 extends IPerspectiveImage & IPerspecti
 	{
 		try
 		{
-			preview = new PointedImageEditingPanel<G1>(image, smallBodyModel, items);
+			preview = new PointedImageEditingPanel<G1>(image, smallBodyModel, items, isCustom);
 		}
 		catch (Exception e)
 		{

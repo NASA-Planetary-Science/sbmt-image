@@ -28,8 +28,9 @@ public class EditPointingAction<G1 extends IPerspectiveImage & IPerspectiveImage
 		if (aItemL.get(0).getPointingSourceType() == PointingSource.LOCAL_CYLINDRICAL) return;	//maybe do error message here
 		try
 		{
+			boolean isCustom = aManager.isUserImage(aItemL.get(0));
 			PointedRenderableImageEditingPipeline pipeline =
-					new PointedRenderableImageEditingPipeline(aItemL.get(0), aManager.getSmallBodyModels());
+					new PointedRenderableImageEditingPipeline(aItemL.get(0), aManager.getSmallBodyModels(), isCustom);
 		}
 		catch (Exception e)
 		{
