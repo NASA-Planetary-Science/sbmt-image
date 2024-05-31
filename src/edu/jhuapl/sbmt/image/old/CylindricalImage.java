@@ -44,10 +44,10 @@ import edu.jhuapl.sbmt.image.keys.CustomImageKeyInterface;
 import edu.jhuapl.sbmt.image.keys.CustomPerspectiveImageKey;
 import edu.jhuapl.sbmt.image.model.Image;
 
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.gson.Serializers;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 
 public class CylindricalImage extends Image
 {

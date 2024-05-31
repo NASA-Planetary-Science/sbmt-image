@@ -10,7 +10,7 @@ import edu.jhuapl.sbmt.image.model.Orientation;
 import edu.jhuapl.sbmt.image.model.SpectralImageMode;
 import edu.jhuapl.sbmt.query.v2.IDataQuery;
 
-import crucible.crust.metadata.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
 
 public interface IImagingInstrument
 {

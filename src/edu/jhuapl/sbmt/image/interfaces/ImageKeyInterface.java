@@ -4,7 +4,7 @@ import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.model.ImageType;
 
-import crucible.crust.metadata.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
 
 public interface ImageKeyInterface
 {

@@ -22,10 +22,10 @@ import edu.jhuapl.sbmt.image.model.ImageFlip;
 import edu.jhuapl.sbmt.image.model.ImageRotation;
 import edu.jhuapl.sbmt.image.model.ImageType;
 
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.gson.Serializers;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 
 public class BasemapImageConfig implements IFeatureConfig
 {

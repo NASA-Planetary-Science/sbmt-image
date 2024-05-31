@@ -7,10 +7,10 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.InstanceGetter;
-import crucible.crust.metadata.impl.gson.Serializers;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.InstanceGetter;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 
 public class LoadImageStateFromDiskOperator<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends BasePipelineOperator<File, G1>
 {
