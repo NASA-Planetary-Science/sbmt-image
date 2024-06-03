@@ -42,7 +42,7 @@ public class ImagingInstrumentConfigIO extends BaseFeatureConfigIO // BaseInstru
 	{
 		featureConfig = new ImagingInstrumentConfig((BodyViewConfig)viewConfig);
 		ImagingInstrumentConfig c = (ImagingInstrumentConfig) featureConfig;
-
+		if (!configMetadata.hasKey(imagingInstruments)) return;
 //		Metadata imagingMetadata = read(imagingInstruments, configMetadata);
 //		if (imagingMetadata == null) return;
 //		c.imagingInstruments = null; 
@@ -52,10 +52,18 @@ public class ImagingInstrumentConfigIO extends BaseFeatureConfigIO // BaseInstru
 //		inst.retrieve(imagingMetadata);
 //		c.imagingInstruments = Lists.newArrayList(inst);
 
-		Long imageSearchDefaultStart = read(imageSearchDefaultStartDate, configMetadata);
-		Long imageSearchDefaultEnd = read(imageSearchDefaultEndDate, configMetadata);
-		c.imageSearchDefaultStartDate = new Date(imageSearchDefaultStart);
-		c.imageSearchDefaultEndDate = new Date(imageSearchDefaultEnd);
+		if (configMetadata.hasKey(imageSearchDefaultStartDate))
+		{
+			Long imageSearchDefaultStart = read(imageSearchDefaultStartDate, configMetadata);
+			c.imageSearchDefaultStartDate = new Date(imageSearchDefaultStart);
+		}
+		if (configMetadata.hasKey(imageSearchDefaultEndDate))
+		{
+			Long imageSearchDefaultEnd = read(imageSearchDefaultEndDate, configMetadata);
+			c.imageSearchDefaultEndDate = new Date(imageSearchDefaultEnd);
+
+		}
+		
 		c.imageSearchFilterNames = read(imageSearchFilterNames, configMetadata);
 		c.imageSearchUserDefinedCheckBoxesNames = read(imageSearchUserDefinedCheckBoxesNames, configMetadata);
 		c.imageSearchDefaultMaxSpacecraftDistance = read(imageSearchDefaultMaxSpacecraftDistance, configMetadata);
