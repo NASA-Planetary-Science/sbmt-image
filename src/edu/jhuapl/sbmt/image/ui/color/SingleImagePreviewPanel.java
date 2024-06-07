@@ -111,6 +111,8 @@ public class SingleImagePreviewPanel extends JPanel
 		previewPanel.setMaximumSize(new Dimension(250, 250));
 		previewPanel.repaint();
 		previewPanel.validate();
+		perspectiveImage = null;
+		closure.accept(null);
 	}
 
 	private void makeRGBPreviewPanel()
