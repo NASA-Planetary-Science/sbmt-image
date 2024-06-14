@@ -179,7 +179,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 				setOffLimbBoundaryShowing(image, false);
 			renderingStates.remove(image);
 		}
-		imagesByInstrument.clear();
+		imagesByInstrument.get(imagingInstrument).clear();
 		currentBoundaryOffsetByInstrument.put(imagingInstrument, 10);
 		currentBoundaryRangeByInstrument.put(imagingInstrument, new IdPair(0, currentBoundaryOffsetByInstrument.get(imagingInstrument)-1));
 // 		currentBoundaryRange = new IdPair(0, currentBoundaryOffsetAmount-1);
@@ -648,6 +648,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 
 	public boolean getFrustumShowing(G1 image)
 	{
+		if (renderingStates.get(image) == null) return false;
 		return renderingStates.get(image).isFrustumShowing;
 //		return image.isFrustumShowing();
 	}
@@ -699,6 +700,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 
 	public boolean getImageOfflimbShowing(G1 image)
 	{
+		if (renderingStates.get(image) == null) return false;
 		return renderingStates.get(image).isOfflimbShowing;
 //		return image.isOfflimbShowing();
 	}
@@ -792,6 +794,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 
 	public boolean getImageBoundaryShowing(G1 image)
 	{
+		if (renderingStates.get(image) == null) return false;
 		return renderingStates.get(image).isBoundaryShowing;
 //		return image.isBoundaryShowing();
 	}
