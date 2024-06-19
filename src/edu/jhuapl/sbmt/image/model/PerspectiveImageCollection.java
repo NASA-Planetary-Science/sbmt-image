@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -16,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import javax.swing.JOptionPane;
@@ -1330,8 +1330,26 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 		return actorsToSave;
     }
 
-    private void runThreadOnExecutorService(Thread thread)
+    public List<Future<?>> imageFutures = new ArrayList<Future<?>>();
+    
+    private Future<?> runThreadOnExecutorService(Thread thread)
     {
-    	executor.execute(thread);
+    	Future<?> future = executor.submit(thread);
+    	imageFutures.add(future);
+    	return future;
+    }
+    
+    public boolean isExecutorDone() {
+    
+    	boolean allDone = true;
+    	for(Future<?> future : imageFutures){
+    	    allDone &= future.isDone(); // check if future is done
+    	}
+    	if (allDone == true)
+		{
+    		imageFutures.clear();
+    		executor = Executors.newCachedThreadPool();
+		}
+    	return allDone;
     }
 }

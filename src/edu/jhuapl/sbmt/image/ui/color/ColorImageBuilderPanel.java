@@ -29,9 +29,9 @@ public class ColorImageBuilderPanel<G1 extends IPerspectiveImage & IPerspectiveI
 	public ColorImageBuilderPanel(List<SmallBodyModel> smallBodyModels)
 	{
 		this.smallBodyModels = smallBodyModels;
-		redPreview = new SingleImagePreviewPanel("Red Image", s ->  { this.redComplete = true; checkForButtonStatus(); });
-		greenPreview = new SingleImagePreviewPanel("Green Image", s -> { this.greenComplete = true; checkForButtonStatus(); } );
-		bluePreview = new SingleImagePreviewPanel("Blue Image", s ->   { this.blueComplete = true; checkForButtonStatus(); } );
+		redPreview = new SingleImagePreviewPanel("Red Image", s ->  { this.redComplete = redPreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); });
+		greenPreview = new SingleImagePreviewPanel("Green Image", s -> { this.greenComplete = greenPreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); } );
+		bluePreview = new SingleImagePreviewPanel("Blue Image", s ->   { this.blueComplete = bluePreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); } );
 		initGUI();
 	}
 
