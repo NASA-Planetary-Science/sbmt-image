@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import vtk.vtkActor;
-
 import edu.jhuapl.sbmt.image.ui.ActorPreviewPanel;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.subscriber.IPipelineSubscriber;
+import vtk.vtkActor;
 
 public class VtkActorPreview implements IPipelineSubscriber<vtkActor>
 {

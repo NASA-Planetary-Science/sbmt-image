@@ -27,7 +27,6 @@ import com.beust.jcommander.internal.Lists;
 import com.jidesoft.swing.CheckBoxTree;
 
 import edu.jhuapl.saavtk.model.ModelManager;
-import edu.jhuapl.saavtk.model.ModelNames;
 import edu.jhuapl.saavtk.pick.PickManager;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;

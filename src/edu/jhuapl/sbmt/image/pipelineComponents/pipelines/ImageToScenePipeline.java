@@ -6,10 +6,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Lists;
 
-import vtk.vtkActor;
-
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.ImageRenderable;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.RenderableImageActorPipeline;
+import vtk.vtkActor;
 
 public class ImageToScenePipeline implements RenderableImageActorPipeline
 {

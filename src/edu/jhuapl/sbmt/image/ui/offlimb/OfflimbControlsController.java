@@ -13,8 +13,6 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import vtk.vtkImageData;
-
 import edu.jhuapl.saavtk.gui.dialog.ColorChooser;
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.image.controllers.preview.ImageContrastController;
@@ -27,6 +25,7 @@ import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImage
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.perspectiveImages.PerspectiveImageToRenderableImagePipeline;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
 
 public class OfflimbControlsController<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>
 {

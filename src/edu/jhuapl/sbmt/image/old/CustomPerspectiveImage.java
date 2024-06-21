@@ -2,14 +2,12 @@ package edu.jhuapl.sbmt.image.old;
 
 import java.io.IOException;
 
-import vtk.vtkImageData;
-
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
 import edu.jhuapl.sbmt.image.model.PerspectiveImage;
-
 import nom.tam.fits.FitsException;
+import vtk.vtkImageData;
 
 public class CustomPerspectiveImage extends PerspectiveImage
 {

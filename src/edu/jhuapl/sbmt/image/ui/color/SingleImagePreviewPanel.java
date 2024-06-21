@@ -9,7 +9,6 @@ import java.awt.dnd.DnDConstants;
 import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;

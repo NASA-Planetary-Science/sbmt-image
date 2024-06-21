@@ -25,7 +25,6 @@ import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.ImageSearchModelListener;
 import edu.jhuapl.sbmt.image.interfaces.ImageSearchResultsListener;
-
 import edu.jhuapl.ses.jsqrl.api.Key;
 import edu.jhuapl.ses.jsqrl.api.Metadata;
 import edu.jhuapl.ses.jsqrl.api.MetadataManager;

@@ -15,12 +15,9 @@ import edu.jhuapl.sbmt.core.config.Instrument;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.query.ImageDataQuery;
-import edu.jhuapl.sbmt.query.database.GenericPhpQuery;
-import edu.jhuapl.sbmt.query.fixedlist.FixedListQuery;
 import edu.jhuapl.sbmt.query.v2.DatabaseDataQuery;
 import edu.jhuapl.sbmt.query.v2.FixedListDataQuery;
 import edu.jhuapl.sbmt.query.v2.IDataQuery;
-
 import edu.jhuapl.ses.jsqrl.api.Key;
 import edu.jhuapl.ses.jsqrl.api.Metadata;
 import edu.jhuapl.ses.jsqrl.api.MetadataManager;

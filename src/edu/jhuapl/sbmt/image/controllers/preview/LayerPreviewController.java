@@ -18,15 +18,14 @@ import javax.swing.SwingUtilities;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import vtk.vtkImageData;
-import vtk.vtkInteractorStyleImage;
-import vtk.rendering.jogl.vtkJoglPanelComponent;
-
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.LayerPreviewModel;
 import edu.jhuapl.sbmt.image.ui.LayerPreviewPanel;
 import edu.jhuapl.sbmt.layer.api.Layer;
+import vtk.vtkImageData;
+import vtk.vtkInteractorStyleImage;
+import vtk.rendering.jogl.vtkJoglPanelComponent;
 
 public class LayerPreviewController<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>
 {

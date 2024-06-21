@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.jhuapl.saavtk.util.Frustum;
+import edu.jhuapl.saavtk.util.MathUtil;
 import vtk.vtkActor;
 import vtk.vtkCellArray;
 import vtk.vtkIdList;
@@ -12,9 +14,6 @@ import vtk.vtkPolyData;
 import vtk.vtkPolyDataMapper;
 import vtk.vtkProp;
 import vtk.vtkProperty;
-
-import edu.jhuapl.saavtk.util.Frustum;
-import edu.jhuapl.saavtk.util.MathUtil;
 
 public class PerspectiveFrustum
 {

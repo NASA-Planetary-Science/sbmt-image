@@ -3,7 +3,6 @@ package edu.jhuapl.sbmt.image.util;
 import java.io.File;
 
 import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta.BPMetaBuilder;
-
 import nom.tam.fits.FitsException;
 
 /**

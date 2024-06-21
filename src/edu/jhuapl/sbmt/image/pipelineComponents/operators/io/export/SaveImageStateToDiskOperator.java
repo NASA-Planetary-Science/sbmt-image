@@ -10,7 +10,6 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageMetadata;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
-
 import edu.jhuapl.ses.jsqrl.api.Metadata;
 import edu.jhuapl.ses.jsqrl.impl.InstanceGetter;
 import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;

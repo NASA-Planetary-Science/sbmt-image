@@ -32,15 +32,14 @@ import javax.swing.JTextField;
 
 import org.apache.commons.io.FilenameUtils;
 
-import vtk.vtkImageReader2;
-import vtk.vtkImageReader2Factory;
-
 import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
 import edu.jhuapl.sbmt.core.util.VtkENVIReader;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.CylindricalBounds;
 import edu.jhuapl.sbmt.image.model.ImageType;
+import vtk.vtkImageReader2;
+import vtk.vtkImageReader2Factory;
 
 
 public class CustomImageImporterDialog<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends JDialog

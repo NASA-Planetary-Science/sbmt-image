@@ -3,7 +3,6 @@ package edu.jhuapl.sbmt.image.interfaces;
 import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.model.ImageType;
-
 import edu.jhuapl.ses.jsqrl.api.Metadata;
 
 public interface ImageKeyInterface

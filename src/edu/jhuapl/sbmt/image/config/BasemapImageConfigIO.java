@@ -5,7 +5,6 @@ import java.util.List;
 import edu.jhuapl.sbmt.core.config.BaseFeatureConfigIO;
 import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
 import edu.jhuapl.sbmt.image.model.BasemapImage;
-
 import edu.jhuapl.ses.jsqrl.api.Key;
 import edu.jhuapl.ses.jsqrl.api.Metadata;
 import edu.jhuapl.ses.jsqrl.api.Version;

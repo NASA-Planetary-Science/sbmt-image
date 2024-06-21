@@ -4,10 +4,9 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import vtk.vtkPolyData;
-
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.io.SavePolydataToFileOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
+import vtk.vtkPolyData;
 
 public class SavePolydataToCachePipeline
 {

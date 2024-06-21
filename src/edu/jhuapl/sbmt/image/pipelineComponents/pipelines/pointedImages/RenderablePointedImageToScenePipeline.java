@@ -11,8 +11,6 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.collect.Lists;
 
-import vtk.vtkActor;
-
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.MathUtil;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
@@ -37,6 +35,7 @@ import edu.jhuapl.sbmt.pipeline.publisher.Publishers;
 import edu.jhuapl.sbmt.pipeline.subscriber.PairSink;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import vtk.vtkActor;
 
 public class RenderablePointedImageToScenePipeline<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends ImageToScenePipeline
 {

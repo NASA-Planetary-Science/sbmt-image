@@ -3,11 +3,6 @@ package edu.jhuapl.sbmt.image.pipelineComponents.publishers.builtin;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import vtk.vtkImageData;
-import vtk.vtkImageMapToColors;
-import vtk.vtkLookupTable;
-import vtk.vtkPNGReader;
-
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.saavtk.util.NativeLibraryLoader;
 import edu.jhuapl.sbmt.layer.api.Layer;
@@ -23,8 +18,11 @@ import edu.jhuapl.sbmt.layer.impl.RangeGetterDoubleBuilder;
 import edu.jhuapl.sbmt.layer.impl.RangeGetterVectorDoubleFactory;
 import edu.jhuapl.sbmt.layer.impl.ValidityChecker3d;
 import edu.jhuapl.sbmt.pipeline.publisher.BasePipelinePublisher;
-
 import nom.tam.fits.FitsException;
+import vtk.vtkImageData;
+import vtk.vtkImageMapToColors;
+import vtk.vtkLookupTable;
+import vtk.vtkPNGReader;
 
 //TODO: this is a placeholder until we get GDAL support in place - this reads data into a vtkImageData and then back to a layer so it goes with the FITS paradigm already established
 //Once GDAL is in place this will go right into a Layer

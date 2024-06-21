@@ -4,14 +4,13 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkActor;
 import vtk.vtkImageData;
 import vtk.vtkPolyData;
 import vtk.vtkPolyDataMapper;
 import vtk.vtkProperty;
 import vtk.vtkTexture;
-
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class VTKImagePolyDataRendererOperator extends BasePipelineOperator<Pair<vtkImageData, vtkPolyData>, vtkActor>
 {

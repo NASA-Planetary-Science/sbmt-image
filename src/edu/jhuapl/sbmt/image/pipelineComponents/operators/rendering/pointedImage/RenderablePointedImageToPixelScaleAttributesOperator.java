@@ -1,16 +1,14 @@
 package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.apache.commons.lang3.tuple.Pair;
-
-import vtk.vtkPoints;
-import vtk.vtkPolyData;
 
 import edu.jhuapl.saavtk.util.MathUtil;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import vtk.vtkPoints;
+import vtk.vtkPolyData;
 
 public class RenderablePointedImageToPixelScaleAttributesOperator extends BasePipelineOperator<Pair<vtkPolyData, RenderablePointedImage>, ImagePixelScale>
 {

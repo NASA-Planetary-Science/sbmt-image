@@ -8,7 +8,6 @@ import com.beust.jcommander.internal.Lists;
 
 import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
-
 import edu.jhuapl.ses.jsqrl.api.Key;
 import edu.jhuapl.ses.jsqrl.api.Version;
 import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;

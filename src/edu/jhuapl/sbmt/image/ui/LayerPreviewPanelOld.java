@@ -11,7 +11,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,14 +19,12 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
@@ -36,17 +33,7 @@ import javax.swing.WindowConstants;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
-import vtk.vtkImageData;
-import vtk.vtkImageReslice;
-import vtk.vtkImageSlice;
-import vtk.vtkImageSliceMapper;
-import vtk.vtkInteractorStyleImage;
-import vtk.vtkTransform;
-import vtk.rendering.jogl.vtkJoglPanelComponent;
-
 import edu.jhuapl.saavtk.gui.ModelInfoWindow;
-import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
-import edu.jhuapl.saavtk.gui.render.RenderIoUtil;
 import edu.jhuapl.saavtk.model.Model;
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.image.controllers.preview.ImageContrastController;
@@ -61,6 +48,13 @@ import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
+import vtk.vtkImageReslice;
+import vtk.vtkImageSlice;
+import vtk.vtkImageSliceMapper;
+import vtk.vtkInteractorStyleImage;
+import vtk.vtkTransform;
+import vtk.rendering.jogl.vtkJoglPanelComponent;
 
 public class LayerPreviewPanelOld<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends ModelInfoWindow implements MouseListener, MouseMotionListener, PropertyChangeListener
 {

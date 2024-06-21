@@ -10,9 +10,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkImageData;
-import vtk.vtkPolyData;
-
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
@@ -29,8 +26,9 @@ import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.VtkLayerPrev
 import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.PairSink;
-
 import glum.gui.action.PopAction;
+import vtk.vtkImageData;
+import vtk.vtkPolyData;
 
 public class ShowImagePropertiesAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>
 {

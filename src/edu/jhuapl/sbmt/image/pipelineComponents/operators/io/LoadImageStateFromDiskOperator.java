@@ -6,7 +6,6 @@ import java.io.IOException;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
-
 import edu.jhuapl.ses.jsqrl.api.Key;
 import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
 import edu.jhuapl.ses.jsqrl.impl.InstanceGetter;

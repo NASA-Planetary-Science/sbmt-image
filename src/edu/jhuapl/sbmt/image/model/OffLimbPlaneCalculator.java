@@ -6,6 +6,9 @@ import java.io.File;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
+import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.PolyDataUtil;
+import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 import vtk.vtkActor;
 import vtk.vtkCell;
 import vtk.vtkCellArray;
@@ -20,10 +23,6 @@ import vtk.vtkPolyDataMapper;
 import vtk.vtkPolyDataReader;
 import vtk.vtkPolyDataWriter;
 import vtk.vtkTexture;
-
-import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.PolyDataUtil;
-import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 
 public class OffLimbPlaneCalculator
 {

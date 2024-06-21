@@ -11,7 +11,6 @@ import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.io.export.SaveImageFileFromCacheOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
-
 import glum.gui.action.PopAction;
 
 public class SaveImageAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>

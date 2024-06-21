@@ -10,33 +10,19 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Function;
 
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.WindowConstants;
 
-import vtk.vtkImageData;
-import vtk.vtkImageReslice;
-import vtk.vtkImageSlice;
-import vtk.vtkImageSliceMapper;
-import vtk.vtkInteractorStyleImage;
-import vtk.vtkPropPicker;
-import vtk.vtkTransform;
-import vtk.rendering.jogl.vtkJoglPanelComponent;
-
 import edu.jhuapl.saavtk.gui.ModelInfoWindow;
-import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
-import edu.jhuapl.saavtk.gui.render.RenderIoUtil;
 import edu.jhuapl.saavtk.model.Model;
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.image.controllers.preview.ImageContrastController;
@@ -46,6 +32,14 @@ import edu.jhuapl.sbmt.image.controllers.preview.ImageTrimController;
 import edu.jhuapl.sbmt.image.model.ImageProperty;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.vtk.VtkImageContrastPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.vtk.VtkImageMaskingPipeline;
+import vtk.vtkImageData;
+import vtk.vtkImageReslice;
+import vtk.vtkImageSlice;
+import vtk.vtkImageSliceMapper;
+import vtk.vtkInteractorStyleImage;
+import vtk.vtkPropPicker;
+import vtk.vtkTransform;
+import vtk.rendering.jogl.vtkJoglPanelComponent;
 
 public class ImagePreviewPanel extends ModelInfoWindow implements MouseListener, MouseMotionListener, PropertyChangeListener
 {

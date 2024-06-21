@@ -2,6 +2,7 @@ package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.cylindrical
 
 import java.io.IOException;
 
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkAlgorithmOutput;
 import vtk.vtkAppendPolyData;
 import vtk.vtkClipPolyData;
@@ -9,8 +10,6 @@ import vtk.vtkCone;
 import vtk.vtkPlane;
 import vtk.vtkPolyData;
 import vtk.vtkTransform;
-
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class GeneralShapeCylindicalClipOperator extends BasePipelineOperator<vtkPolyData, vtkPolyData>
 {

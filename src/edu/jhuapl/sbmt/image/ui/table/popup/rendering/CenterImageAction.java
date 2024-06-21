@@ -10,7 +10,6 @@ import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.PerspectiveImageCenterImagePipeline;
-
 import glum.gui.action.PopAction;
 
 public class CenterImageAction<G1 extends IPerspectiveImage> extends PopAction<G1>

@@ -5,6 +5,11 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import edu.jhuapl.saavtk.util.MathUtil;
+import edu.jhuapl.saavtk.util.PolyDataUtil;
+import edu.jhuapl.sbmt.core.body.SmallBodyModel;
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
+import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
 import vtk.vtkActor;
 import vtk.vtkCellArray;
 import vtk.vtkGenericCell;
@@ -13,12 +18,6 @@ import vtk.vtkPoints;
 import vtk.vtkPolyData;
 import vtk.vtkPolyDataMapper;
 import vtk.vtksbCellLocator;
-
-import edu.jhuapl.saavtk.util.MathUtil;
-import edu.jhuapl.saavtk.util.PolyDataUtil;
-import edu.jhuapl.sbmt.core.body.SmallBodyModel;
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
-import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
 
 public class LowResolutionBoundaryOperator extends BasePipelineOperator<Pair<PointingFileReader, List<SmallBodyModel>>, vtkActor>
 {

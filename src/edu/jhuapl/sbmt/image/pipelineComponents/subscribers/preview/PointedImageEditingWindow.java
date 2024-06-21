@@ -4,14 +4,13 @@ import java.awt.Container;
 import java.io.IOException;
 import java.util.List;
 
-import vtk.vtkActor;
-
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.ui.PointedImageEditingPanel;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.subscriber.IPipelineSubscriber;
+import vtk.vtkActor;
 
 public class PointedImageEditingWindow<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> implements IPipelineSubscriber<vtkActor>
 {
