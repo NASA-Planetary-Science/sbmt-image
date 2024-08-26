@@ -8,14 +8,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkCleanPolyData;
-import vtk.vtkFeatureEdges;
-import vtk.vtkImageData;
-import vtk.vtkPolyData;
-import vtk.vtkPolyDataMapper;
-import vtk.vtkTexture;
-
 import edu.jhuapl.saavtk.util.Frustum;
 import edu.jhuapl.saavtk.util.PolyDataUtil;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage.RenderablePointedImage;
@@ -26,6 +18,13 @@ import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import vtk.vtkActor;
+import vtk.vtkCleanPolyData;
+import vtk.vtkFeatureEdges;
+import vtk.vtkImageData;
+import vtk.vtkPolyData;
+import vtk.vtkPolyDataMapper;
+import vtk.vtkTexture;
 
 public class OfflimbActorOperator extends BasePipelineOperator<Pair<RenderablePointedImage, vtkPolyData>, vtkActor>
 {

@@ -4,6 +4,15 @@ import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.jhuapl.saavtk.util.FillDetector;
+import edu.jhuapl.saavtk.util.Frustum;
+import edu.jhuapl.saavtk.util.ImageDataUtil;
+import edu.jhuapl.saavtk.util.PolyDataUtil;
+import edu.jhuapl.saavtk.util.Properties;
+import edu.jhuapl.sbmt.core.body.SmallBodyModel;
+import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
+import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
+import edu.jhuapl.sbmt.image.model.PerspectiveImage;
 import vtk.vtkActor;
 import vtk.vtkFloatArray;
 import vtk.vtkImageCanvasSource2D;
@@ -15,16 +24,6 @@ import vtk.vtkPolyDataNormals;
 import vtk.vtkProp;
 import vtk.vtkProperty;
 import vtk.vtkTexture;
-
-import edu.jhuapl.saavtk.util.FillDetector;
-import edu.jhuapl.saavtk.util.Frustum;
-import edu.jhuapl.saavtk.util.ImageDataUtil;
-import edu.jhuapl.saavtk.util.PolyDataUtil;
-import edu.jhuapl.saavtk.util.Properties;
-import edu.jhuapl.sbmt.core.body.SmallBodyModel;
-import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
-import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
-import edu.jhuapl.sbmt.image.model.PerspectiveImage;
 
 public class PerspectiveImageRendererHelper2
 {

@@ -7,7 +7,6 @@ import edu.jhuapl.saavtk.popup.PopupManager;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.model.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.model.SbmtSpectralImageWindowManager;
-
 import glum.gui.action.PopupMenu;
 
 /**

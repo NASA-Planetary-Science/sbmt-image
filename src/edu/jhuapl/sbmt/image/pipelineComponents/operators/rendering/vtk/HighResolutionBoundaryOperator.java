@@ -7,14 +7,13 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
+import edu.jhuapl.saavtk.util.PolyDataUtil;
+import edu.jhuapl.sbmt.core.body.SmallBodyModel;
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkActor;
 import vtk.vtkFeatureEdges;
 import vtk.vtkPolyData;
 import vtk.vtkPolyDataMapper;
-
-import edu.jhuapl.saavtk.util.PolyDataUtil;
-import edu.jhuapl.sbmt.core.body.SmallBodyModel;
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class HighResolutionBoundaryOperator extends BasePipelineOperator<Pair<List<vtkPolyData>, List<SmallBodyModel>>, vtkActor>
 {

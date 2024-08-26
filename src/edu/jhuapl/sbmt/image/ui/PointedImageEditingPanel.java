@@ -15,14 +15,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -36,13 +34,8 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkProp;
-import vtk.vtkProperty;
-
 import edu.jhuapl.saavtk.gui.ModelInfoWindow;
 import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
-import edu.jhuapl.saavtk.gui.render.RenderIoUtil;
 import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.saavtk.gui.render.VtkPropProvider;
 import edu.jhuapl.saavtk.model.Model;
@@ -60,6 +53,9 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointedImages.Renderab
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointing.offset.PointedImageEditingPipeline;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkActor;
+import vtk.vtkProp;
+import vtk.vtkProperty;
 
 public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends ModelInfoWindow
 		implements MouseListener, MouseMotionListener
@@ -101,15 +97,18 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 	private JLabel currentLineDeltaLabel;
 	private JLabel currentZoomDeltaLabel;
 	private JCheckBox modifiedEnabled;
+	private JCheckBox originalEnabled;
 	private JSlider modifiedAlphaSlider;
 	private JSlider originalAlphaSlider;
+	private boolean isCustom = false;
 
-	public PointedImageEditingPanel(G1 image, SmallBodyModel smallBodyModel, List<vtkActor> inputs)
+	public PointedImageEditingPanel(G1 image, SmallBodyModel smallBodyModel, List<vtkActor> inputs, boolean isCustom)
 	{
 		this.image = image;
 		this.inputs = inputs;
 		this.smallBodyModel = smallBodyModel;
 		this.renderer = new Renderer(smallBodyModel);
+		this.isCustom = isCustom;
 		renderer.setLightCfg(LightUtil.getSystemLightCfg());
 		propProvider = new VtkPropProvider()
 		{
@@ -447,7 +446,7 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 		gridBagConstraints.gridwidth = 2;
 		gridBagConstraints.ipadx = 15;
 		gridBagConstraints.weightx = 1.0;
-		pointingPanel.add(adjustFrameCheckBox3, gridBagConstraints);
+//		pointingPanel.add(adjustFrameCheckBox3, gridBagConstraints);
 
 		factorLabel1.setText("Factor");
 		gridBagConstraints = new GridBagConstraints();
@@ -570,7 +569,7 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 		Triple<G1, SpacecraftPointingState, SpacecraftPointingDelta> input =
 				Triple.of(image, updatedState.getLeft(), delta);
 		Just.of(input)
-			.operate(new SaveModifiedImagePointingFileToCacheOperator<G1>())
+			.operate(new SaveModifiedImagePointingFileToCacheOperator<G1>(isCustom))
 			.subscribe(Sink.of(updatedPointingFiles))
 			.run();
 		image.setModifiedPointingSource(Optional.of(updatedPointingFiles.get(0).getAbsolutePath()));
@@ -588,6 +587,8 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 		exportModifiedPointingFileButton.setEnabled(true);
 		adjustPropOpactity(props.get(1), originalAlphaSlider.getValue());
 		adjustPropOpactity(props.get(2), modifiedAlphaSlider.getValue());
+		props.get(1).SetVisibility(originalEnabled.isSelected() ? 1 : 0);
+		props.get(2).SetVisibility(modifiedEnabled.isSelected() ? 1 : 0);
 	}
 
 	private SpacecraftPointingDelta generateDelta()
@@ -606,9 +607,12 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 			currentSampleDeltaLabel.setText("" + delta.getSampleOffset());
 			currentLineDeltaLabel.setText("" + delta.getLineOffset());
 			currentRotationDeltaLabel.setText("" + delta.getRotationOffset());
-
+			modifiedEnabled.setSelected(false);
+			originalEnabled.setSelected(true);
 			return delta;
 		}
+		modifiedEnabled.setSelected(true);
+		originalEnabled.setSelected(false);
 		delta.setLineOffset(currentLineOffset);
 		delta.setRotationOffset(currentRotationAngle);
 		delta.setSampleOffset(currentSampleOffset);
@@ -814,7 +818,7 @@ public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiv
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		JCheckBox originalEnabled = new JCheckBox("Original Image");
+		originalEnabled = new JCheckBox("Original Image");
 		originalEnabled.setSelected(true);
 		originalEnabled.addActionListener(e -> {
 			JCheckBox checkBox = (JCheckBox)e.getSource();

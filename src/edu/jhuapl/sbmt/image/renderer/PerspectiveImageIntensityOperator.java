@@ -2,16 +2,15 @@ package edu.jhuapl.sbmt.image.renderer;
 
 import com.google.common.base.Preconditions;
 
+import edu.jhuapl.saavtk.util.IntensityRange;
+import edu.jhuapl.saavtk.util.Properties;
+import edu.jhuapl.sbmt.image.model.PerspectiveImage;
 import vtk.vtkImageCanvasSource2D;
 import vtk.vtkImageData;
 import vtk.vtkImageMapToColors;
 import vtk.vtkImageMask;
 import vtk.vtkImageReslice;
 import vtk.vtkLookupTable;
-
-import edu.jhuapl.saavtk.util.IntensityRange;
-import edu.jhuapl.saavtk.util.Properties;
-import edu.jhuapl.sbmt.image.model.PerspectiveImage;
 
 public class PerspectiveImageIntensityOperator
 {

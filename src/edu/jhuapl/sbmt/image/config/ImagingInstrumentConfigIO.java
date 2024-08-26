@@ -3,14 +3,14 @@ package edu.jhuapl.sbmt.image.config;
 import java.util.Date;
 import java.util.List;
 
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.SettableMetadata;
 import edu.jhuapl.saavtk.config.ViewConfig;
 import edu.jhuapl.sbmt.core.body.BodyViewConfig;
 import edu.jhuapl.sbmt.core.config.BaseFeatureConfigIO;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
 
 public class ImagingInstrumentConfigIO extends BaseFeatureConfigIO // BaseInstrumentConfigIO implements MetadataManager
 {
@@ -42,7 +42,7 @@ public class ImagingInstrumentConfigIO extends BaseFeatureConfigIO // BaseInstru
 	{
 		featureConfig = new ImagingInstrumentConfig((BodyViewConfig)viewConfig);
 		ImagingInstrumentConfig c = (ImagingInstrumentConfig) featureConfig;
-
+		if (!configMetadata.hasKey(imagingInstruments)) return;
 //		Metadata imagingMetadata = read(imagingInstruments, configMetadata);
 //		if (imagingMetadata == null) return;
 //		c.imagingInstruments = null; 
@@ -52,10 +52,18 @@ public class ImagingInstrumentConfigIO extends BaseFeatureConfigIO // BaseInstru
 //		inst.retrieve(imagingMetadata);
 //		c.imagingInstruments = Lists.newArrayList(inst);
 
-		Long imageSearchDefaultStart = read(imageSearchDefaultStartDate, configMetadata);
-		Long imageSearchDefaultEnd = read(imageSearchDefaultEndDate, configMetadata);
-		c.imageSearchDefaultStartDate = new Date(imageSearchDefaultStart);
-		c.imageSearchDefaultEndDate = new Date(imageSearchDefaultEnd);
+		if (configMetadata.hasKey(imageSearchDefaultStartDate))
+		{
+			Long imageSearchDefaultStart = read(imageSearchDefaultStartDate, configMetadata);
+			c.imageSearchDefaultStartDate = new Date(imageSearchDefaultStart);
+		}
+		if (configMetadata.hasKey(imageSearchDefaultEndDate))
+		{
+			Long imageSearchDefaultEnd = read(imageSearchDefaultEndDate, configMetadata);
+			c.imageSearchDefaultEndDate = new Date(imageSearchDefaultEnd);
+
+		}
+		
 		c.imageSearchFilterNames = read(imageSearchFilterNames, configMetadata);
 		c.imageSearchUserDefinedCheckBoxesNames = read(imageSearchUserDefinedCheckBoxesNames, configMetadata);
 		c.imageSearchDefaultMaxSpacecraftDistance = read(imageSearchDefaultMaxSpacecraftDistance, configMetadata);

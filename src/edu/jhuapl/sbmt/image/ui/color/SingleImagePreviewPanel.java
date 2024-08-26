@@ -6,11 +6,15 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.dnd.DnDConstants;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Consumer;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -18,6 +22,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.TransferHandler;
 
+import edu.jhuapl.saavtk.gui.util.IconUtil;
+import edu.jhuapl.saavtk.gui.util.ToolTipUtil;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
@@ -26,15 +32,19 @@ import edu.jhuapl.sbmt.image.model.PerspectiveImageMetadata;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.perspectiveImages.PerspectiveImageToRenderableImagePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.VtkLayerRenderer;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
+import glum.gui.GuiUtil;
+
 
 public class SingleImagePreviewPanel extends JPanel
 {
 	JTextField imageTextField;
+	JButton deleteImageButton;
 	String title;
 	IPerspectiveImage perspectiveImage;
 	JPanel previewPanel;
+	Consumer<Void> closure;
 
-	public SingleImagePreviewPanel(String title)
+	public SingleImagePreviewPanel(String title, Consumer<Void> closure)
 	{
 		this.title = title;
 		imageTextField = new JTextField();
@@ -45,7 +55,7 @@ public class SingleImagePreviewPanel extends JPanel
         setSize(300, 300);
 		setPreferredSize(new Dimension(250, 270));
 		setMaximumSize(new Dimension(250, 270));
-
+		this.closure = closure;
         makeImagePanel();
 	}
 
@@ -67,10 +77,42 @@ public class SingleImagePreviewPanel extends JPanel
 		labelPanel.setLayout(new BoxLayout(labelPanel, BoxLayout.X_AXIS));
 		labelPanel.add(imageTextField);
 		imageTextField.setTransferHandler(new PerspectiveImageTransferHandler());
+		deleteImageButton = GuiUtil.formButton(new ActionListener()
+		{
+			
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				imageTextField.setText("");
+				deleteImageButton.setEnabled(false);
+				clearRGBPreviewPanel();
+			}
+		}, IconUtil.getItemDel());
+		deleteImageButton.setToolTipText(ToolTipUtil.getItemDel());
+		deleteImageButton.setEnabled(false);
+		labelPanel.add(deleteImageButton);
 		add(labelPanel);
 
 		makeRGBPreviewPanel();
 		add(previewPanel);
+	}
+	
+	private void clearRGBPreviewPanel()
+	{
+		previewPanel.removeAll();
+		JTextArea label = new JTextArea("Drag and drop a row from the table\n to the text field above for the " + title);
+		label.setMinimumSize(new Dimension(250, 100));
+		label.setColumns(20);
+		label.setLineWrap(true);
+		label.setWrapStyleWord(true);
+		previewPanel.add(label);
+		previewPanel.setSize(250, 250);
+		previewPanel.setPreferredSize(new Dimension(250, 250));
+		previewPanel.setMaximumSize(new Dimension(250, 250));
+		previewPanel.repaint();
+		previewPanel.validate();
+		perspectiveImage = null;
+		closure.accept(null);
 	}
 
 	private void makeRGBPreviewPanel()
@@ -140,6 +182,8 @@ public class SingleImagePreviewPanel extends JPanel
                             perspectiveImage = image;
                             runPreviewPipeline();
                             accept = true;
+                            deleteImageButton.setEnabled(true);
+                            closure.accept(null);
                         }
                     }
                 } catch (Exception exp) {

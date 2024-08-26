@@ -25,12 +25,11 @@ import edu.jhuapl.sbmt.image.config.ImagingInstrumentConfig;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.ImageSearchModelListener;
 import edu.jhuapl.sbmt.image.interfaces.ImageSearchResultsListener;
-
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.api.MetadataManager;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.SettableMetadata;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.MetadataManager;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
 
 public class ImageSearchParametersModel implements Model, MetadataManager
 {

@@ -23,7 +23,6 @@ import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.model.ImageSearchParametersModel;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.query.database.ImageDatabaseSearchMetadata;
-import edu.jhuapl.sbmt.query.fixedlist.FixedListQuery;
 import edu.jhuapl.sbmt.query.fixedlist.FixedListSearchMetadata;
 import edu.jhuapl.sbmt.query.v2.FixedListDataQuery;
 import edu.jhuapl.sbmt.query.v2.QueryException;

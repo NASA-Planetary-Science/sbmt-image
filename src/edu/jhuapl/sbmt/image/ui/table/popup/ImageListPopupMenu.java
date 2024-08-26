@@ -30,7 +30,6 @@ import edu.jhuapl.sbmt.image.ui.table.popup.rendering.MapImageAction;
 import edu.jhuapl.sbmt.image.ui.table.popup.rendering.RemapImageAction;
 import edu.jhuapl.sbmt.image.ui.table.popup.rendering.ShowFrustumAction;
 import edu.jhuapl.sbmt.image.ui.table.popup.rendering.SimulateLightingAction;
-
 import glum.gui.action.PopupMenu;
 
 public class ImageListPopupMenu<G1 extends IPerspectiveImage  & IPerspectiveImageTableRepresentable> extends PopupMenu<G1>

@@ -8,6 +8,17 @@ import java.util.List;
 import java.util.Vector;
 import java.util.logging.Logger;
 
+import edu.jhuapl.saavtk.colormap.Colormap;
+import edu.jhuapl.saavtk.colormap.Colormaps;
+import edu.jhuapl.saavtk.model.plateColoring.ColoringData;
+import edu.jhuapl.saavtk.model.plateColoring.FacetColoringData;
+import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.MathUtil;
+import edu.jhuapl.saavtk.util.PolyDataUtil;
+import edu.jhuapl.sbmt.core.body.SmallBodyModel;
+import edu.jhuapl.sbmt.core.pointing.PointingSource;
+import edu.jhuapl.sbmt.core.rendering.DataActor;
+import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
 import vtk.vtkActor;
 import vtk.vtkCellArray;
 import vtk.vtkFeatureEdges;
@@ -30,18 +41,6 @@ import vtk.vtkTexture;
 import vtk.vtkUnsignedCharArray;
 import vtk.vtkXMLPolyDataReader;
 import vtk.vtksbCellLocator;
-
-import edu.jhuapl.saavtk.colormap.Colormap;
-import edu.jhuapl.saavtk.colormap.Colormaps;
-import edu.jhuapl.saavtk.model.plateColoring.ColoringData;
-import edu.jhuapl.saavtk.model.plateColoring.FacetColoringData;
-import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.MathUtil;
-import edu.jhuapl.saavtk.util.PolyDataUtil;
-import edu.jhuapl.sbmt.core.body.SmallBodyModel;
-import edu.jhuapl.sbmt.core.pointing.PointingSource;
-import edu.jhuapl.sbmt.core.rendering.DataActor;
-import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
 
 public class PerspectiveFootprint implements DataActor
 {

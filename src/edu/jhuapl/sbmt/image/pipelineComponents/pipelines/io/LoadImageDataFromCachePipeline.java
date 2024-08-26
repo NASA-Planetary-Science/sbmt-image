@@ -6,11 +6,10 @@ import java.util.List;
 import com.beust.jcommander.internal.Lists;
 import com.google.common.base.Optional;
 
-import vtk.vtkImageData;
-
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.io.LoadImageDataFromFileOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
 
 public class LoadImageDataFromCachePipeline
 {

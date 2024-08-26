@@ -8,14 +8,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkCellArray;
-import vtk.vtkIdList;
-import vtk.vtkImageData;
-import vtk.vtkPoints;
-import vtk.vtkPolyData;
-import vtk.vtkPolyDataMapper;
-
 import edu.jhuapl.saavtk.util.MathUtil;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.offlimb.OfflimbActorOperator;
@@ -25,6 +17,13 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointedImages.Renderab
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import vtk.vtkActor;
+import vtk.vtkCellArray;
+import vtk.vtkIdList;
+import vtk.vtkImageData;
+import vtk.vtkPoints;
+import vtk.vtkPolyData;
+import vtk.vtkPolyDataMapper;
 
 public class PointedImageRenderables extends ImageRenderable
 {

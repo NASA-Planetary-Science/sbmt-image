@@ -8,9 +8,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
 import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.NonexistentRemoteFile;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
-import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 import edu.jhuapl.sbmt.core.body.BodyViewConfig;
 import edu.jhuapl.sbmt.core.config.IFeatureConfig;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
@@ -21,11 +19,10 @@ import edu.jhuapl.sbmt.image.model.BasemapImage;
 import edu.jhuapl.sbmt.image.model.ImageFlip;
 import edu.jhuapl.sbmt.image.model.ImageRotation;
 import edu.jhuapl.sbmt.image.model.ImageType;
-
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.gson.Serializers;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 
 public class BasemapImageConfig implements IFeatureConfig
 {

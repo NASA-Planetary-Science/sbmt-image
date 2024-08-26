@@ -5,13 +5,12 @@ import java.util.List;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkPolyData;
-
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.cylindricalImage.RenderableCylindricalImageFootprintOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkPolyData;
 
 public class RenderableCylindricalImageFootprintGeneratorPipeline
 {

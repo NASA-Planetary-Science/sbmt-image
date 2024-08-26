@@ -8,13 +8,12 @@ import com.beust.jcommander.internal.Lists;
 
 import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
-
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.InstanceGetter;
-import crucible.crust.metadata.impl.SettableMetadata;
-import crucible.crust.metadata.impl.gson.Serializers;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.InstanceGetter;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 
 public class BasemapImage
 {

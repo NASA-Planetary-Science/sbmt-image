@@ -20,7 +20,14 @@ public class SaveModifiedImagePointingFileToCacheOperator<G1 extends IPerspectiv
 {
 	ModifiedInfoFileWriter<G1> writer = null;
 	File file = null;
-
+	private boolean isCustom = false;
+	
+	public SaveModifiedImagePointingFileToCacheOperator(boolean isCustom)
+	{
+		this.isCustom = isCustom;
+	}
+	
+	
 	@Override
 	public void processData() throws IOException, Exception
 	{
@@ -31,8 +38,12 @@ public class SaveModifiedImagePointingFileToCacheOperator<G1 extends IPerspectiv
 			SpacecraftPointingState state = input.getMiddle();
 			SpacecraftPointingDelta delta = input.getRight();
 			File cachedFile = null;
-			if (image.getPointingSource().contains("custom-data"))
+			if (isCustom)
+			{
 				cachedFile = new File(image.getPointingSource());
+				if (cachedFile.exists() == false)
+					cachedFile = FileCache.getFileFromServer(image.getPointingSource());
+			}
 			else
 				cachedFile = FileCache.getFileFromServer(image.getPointingSource());
 			String nameNoExtension = FilenameUtils.removeExtension(cachedFile.getAbsolutePath());

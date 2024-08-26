@@ -22,7 +22,6 @@ import edu.jhuapl.sbmt.layer.impl.ValidityChecker2d;
 import edu.jhuapl.sbmt.layer.impl.ValidityChecker3d;
 import edu.jhuapl.sbmt.layer.impl.ValidityCheckerDoubleFactory;
 import edu.jhuapl.sbmt.pipeline.publisher.BasePipelinePublisher;
-
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;

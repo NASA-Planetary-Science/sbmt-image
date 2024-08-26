@@ -5,7 +5,6 @@ import java.util.List;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
-
 import glum.gui.action.PopAction;
 
 public class HideImageAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>

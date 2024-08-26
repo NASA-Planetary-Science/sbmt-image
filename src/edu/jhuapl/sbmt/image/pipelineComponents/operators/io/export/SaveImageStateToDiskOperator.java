@@ -10,10 +10,9 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageMetadata;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
-
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.impl.InstanceGetter;
-import crucible.crust.metadata.impl.gson.Serializers;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.impl.InstanceGetter;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 
 public class SaveImageStateToDiskOperator<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends BasePipelineOperator<G1, File>
 {

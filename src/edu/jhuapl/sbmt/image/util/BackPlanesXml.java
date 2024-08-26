@@ -25,11 +25,10 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta.MetaField;
-
 import altwg.Fits.HduTags;
 import altwg.XML.XmlDoc;
 import altwg.XML.XmlDocFactory;
+import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta.MetaField;
 import nom.tam.fits.HeaderCard;
 
 

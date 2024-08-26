@@ -13,7 +13,6 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.io.export.SaveImageToENVIOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
-
 import glum.gui.action.PopAction;
 
 public class ExportENVIImageAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>

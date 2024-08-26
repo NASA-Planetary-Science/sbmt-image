@@ -26,7 +26,6 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.ui.table.ImageColumnLookup;
 import edu.jhuapl.sbmt.image.ui.table.ImageListItemHandler;
-
 import glum.gui.GuiUtil;
 import glum.gui.action.PopupMenu;
 import glum.gui.misc.BooleanCellEditor;

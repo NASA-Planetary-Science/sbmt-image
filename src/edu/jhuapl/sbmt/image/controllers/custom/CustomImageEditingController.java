@@ -21,14 +21,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkImageData;
-import vtk.vtkImageReslice;
-import vtk.vtkImageSlice;
-import vtk.vtkImageSliceMapper;
-import vtk.vtkInteractorStyleImage;
-import vtk.vtkTransform;
-import vtk.rendering.jogl.vtkJoglPanelComponent;
-
 import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
@@ -49,6 +41,13 @@ import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
+import vtk.vtkImageReslice;
+import vtk.vtkImageSlice;
+import vtk.vtkImageSliceMapper;
+import vtk.vtkInteractorStyleImage;
+import vtk.vtkTransform;
+import vtk.rendering.jogl.vtkJoglPanelComponent;
 
 public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> implements MouseListener, MouseMotionListener, PropertyChangeListener
 {
@@ -265,6 +264,37 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 
 		dialog.getMaskController().setMaskValues(existingImage.getMaskValues());
 
+		dialog.getImagePathBrowseButton().addActionListener(e ->
+		{
+			File[] files = CustomFileChooser.showOpenDialog(this.getDialog(), "Select Image", List.of("fits", "fit", "FIT", "FITS", "png", "PNG", "JPG", "jpg", "IMG", "img"), false);
+			if (files == null || files.length == 0)
+	        {
+	            return;
+	        }
+
+			String filename = files[0].getAbsolutePath();
+			dialog.getImagePathTextField().setText(filename);
+			String imageFileName = files[0].getName();
+
+			dialog.getImageNameTextField().setText(imageFileName);
+			existingImage.setFilename(filename);
+			layer = null;
+			renderLayerAndAddAttributes();
+			
+			javax.swing.SwingUtilities.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if (renWin != null)
+					{
+						renWin.resetCamera();
+						renWin.Render();
+					}
+				}
+			});
+		});
+		
 		dialog.getBrowseButton().addActionListener(e ->
 		{
 			File[] files = CustomFileChooser.showOpenDialog(this.getDialog(), "Select Pointing File...", List.of("info", "INFO", "sum", "SUM"), false);
@@ -286,7 +316,22 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 				dialog.getImageRotationComboBox().setSelectedItem("" + (int) (orientation2.getRotation()));
 				dialog.getImageFlipComboBox().setSelectedItem(orientation2.getFlip().toString());
 			}
+			layer = null;
 			renderLayerAndAddAttributes();
+			
+			javax.swing.SwingUtilities.invokeLater(new Runnable()
+			{
+				@Override
+				public void run()
+				{
+					if (renWin != null)
+					{
+						renWin.resetCamera();
+						renWin.Render();
+					}
+				}
+			});
+			
 		});
 
 		dialog.getOkButton().addActionListener(e ->
@@ -425,6 +470,7 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 	{
 		imageType = existingImage.getImageType();
 		existingImage.setName(dialog.getImageNameTextField().getText());
+		existingImage.setFilename(dialog.getImagePathTextField().getText());
 		if (dialog.getPointingTypeComboBox().getSelectedItem().equals("Perspective Projection"))
 		{
 			existingImage.setPointingSource(dialog.getPointingFilenameTextField().getText());

@@ -11,7 +11,6 @@ import edu.jhuapl.sbmt.config.SBMTBodyConfiguration;
 import edu.jhuapl.sbmt.config.SBMTFileLocator;
 import edu.jhuapl.sbmt.config.SBMTFileLocators;
 import edu.jhuapl.sbmt.config.ShapeModelConfiguration;
-import edu.jhuapl.sbmt.config.instruments.IInstrumentConfig;
 import edu.jhuapl.sbmt.core.body.BodyViewConfig;
 import edu.jhuapl.sbmt.core.config.IFeatureConfig;
 import edu.jhuapl.sbmt.core.config.Instrument;

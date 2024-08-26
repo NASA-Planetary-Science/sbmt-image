@@ -15,8 +15,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkImageData;
-
 import edu.jhuapl.saavtk.util.ImageDataUtil;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage.RenderablePointedImage;
@@ -26,6 +24,7 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.perspectiveImages.Pers
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
 
 //TODO This can eventually get replaced with a GDAL call, since it handles ENVI
 public class SaveImageToENVIOperator extends BasePipelineOperator<IPerspectiveImage, File>

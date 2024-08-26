@@ -6,7 +6,6 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.ui.custom.table.CustomImageListTableView;
-
 import glum.gui.action.PopupMenu;
 
 public class CustomImageListTableController<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>

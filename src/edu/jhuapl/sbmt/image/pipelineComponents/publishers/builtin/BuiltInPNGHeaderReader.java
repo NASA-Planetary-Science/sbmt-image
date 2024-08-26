@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.jhuapl.sbmt.pipeline.publisher.BasePipelinePublisher;
-
 import nom.tam.fits.FitsException;
 
 public class BuiltInPNGHeaderReader extends BasePipelinePublisher<HashMap<String, String>>

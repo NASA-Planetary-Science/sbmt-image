@@ -3,31 +3,24 @@ package edu.jhuapl.sbmt.image.ui;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.beans.PropertyChangeEvent;
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkProp;
-
 import edu.jhuapl.saavtk.gui.ModelInfoWindow;
-import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
-import edu.jhuapl.saavtk.gui.render.RenderIoUtil;
 import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.saavtk.gui.render.VtkPropProvider;
 import edu.jhuapl.saavtk.model.Model;
 import edu.jhuapl.saavtk.view.light.LightUtil;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
+import vtk.vtkActor;
+import vtk.vtkProp;
 
 public class RendererPreviewPanel extends ModelInfoWindow
 {

@@ -8,6 +8,7 @@ import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
@@ -21,11 +22,6 @@ import javax.swing.event.AncestorListener;
 
 import com.beust.jcommander.internal.Lists;
 import com.google.common.collect.ImmutableSet;
-
-import vtk.vtkActor;
-import vtk.vtkPropCollection;
-import vtk.vtkPropPicker;
-import vtk.rendering.jogl.vtkJoglPanelComponent;
 
 import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
 import edu.jhuapl.saavtk.gui.render.Renderer;
@@ -50,6 +46,7 @@ import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.ImageSearchParametersModel;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
+import edu.jhuapl.sbmt.image.model.PerspectiveImageRenderingState;
 import edu.jhuapl.sbmt.image.model.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.model.SbmtSpectralImageWindowManager;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.CustomImageListToSavedFilePipeline;
@@ -61,8 +58,11 @@ import edu.jhuapl.sbmt.image.ui.custom.importer.CustomImageImporterDialog2;
 import edu.jhuapl.sbmt.image.ui.search.ImagingSearchPanel;
 import edu.jhuapl.sbmt.image.ui.table.popup.ImageListPopupMenu;
 import edu.jhuapl.sbmt.image.util.ImageGalleryGenerator;
-
 import glum.gui.action.PopupMenu;
+import vtk.vtkActor;
+import vtk.vtkPropCollection;
+import vtk.vtkPropPicker;
+import vtk.rendering.jogl.vtkJoglPanelComponent;
 
 public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> implements PickListener //implements Controller<ImageSearchParametersModel, JTabbedPane>
 {
@@ -249,6 +249,10 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 		imageListTableController.getPanel().getShowImageButton().addActionListener(e -> {
 			ImmutableSet<G1> selectedImages = collection.getSelectedItems();
 			if (selectedImages.size() == 0) return;
+			SwingUtilities.invokeLater(() -> {
+				imageListTableController.getPanel().getShowImageButton().setEnabled(false);
+			});
+			
 			for (G1 image : selectedImages) {
 				collection.setImageMapped(image, true);
 			}
@@ -268,6 +272,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 			for (G1 image : selectedImages) {
 				collection.setImageBoundaryShowing(image, true);
 			}
+			
 		});
 
 		imageListTableController.getPanel().getHideImageBorderButton().addActionListener(e -> {
@@ -426,9 +431,17 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 		customImageListTableController.getPanel().getLoadImageButton().addActionListener(e -> {
 			try
 			{
-				LoadFileToCustomImageListPipeline<G1> pipeline = LoadFileToCustomImageListPipeline.of();
+				LoadFileToCustomImageListPipeline<G1> pipeline = LoadFileToCustomImageListPipeline.of(instrument.orElse(null), collection.getSmallBodyModels().get(0).getCustomDataFolder());
+				if (pipeline.getResults() == null) return;
 				List<G1> images = pipeline.getResults().getLeft();
-				collection.setImages(images);
+				HashMap<G1, PerspectiveImageRenderingState<G1>> states = pipeline.getResults().getRight();
+//				collection.setImages(images);
+				for (G1 image : images)
+				{
+					collection.addUserImage(image, states.get(image));
+				}
+				collection.loadUserList();
+//				customImageListTableController.getPanel().repaint();
 			}
 			catch (Exception e1)
 			{
@@ -489,6 +502,8 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 						modelManager.getPolyhedralModel().isEllipsoid(), !image.getPointingSourceType().toString().contains("Cylindrical"), image, instrument.orElse(null), completionBlock);
 		        dialog.getDialog().setLocationRelativeTo(customImageListTableController.getPanel());
 		        dialog.getDialog().setVisible(true);
+		        collection.setImageMapped(image, false, true);
+		        
 			}
 			else if (image.getNumberOfLayers() == 3) //editing custom color image
 			{
@@ -527,6 +542,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 
 	private void updateButtonState()
 	{
+		if (collection.isExecutorDone() == false) return;
 		ImmutableSet<G1> selectedItems = collection.getSelectedItems();
 		boolean allMapped = false;
 		boolean allBorders = false;

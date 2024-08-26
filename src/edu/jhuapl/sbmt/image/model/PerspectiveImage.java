@@ -29,13 +29,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import com.google.common.base.Stopwatch;
 
-import vtk.vtkFeatureEdges;
-import vtk.vtkImageData;
-import vtk.vtkPNGReader;
-import vtk.vtkPolyData;
-import vtk.vtkProp;
-import vtk.vtkTexture;
-
 import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.util.BoundingBox;
@@ -61,14 +54,19 @@ import edu.jhuapl.sbmt.image.util.BackPlanesXml;
 import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta;
 import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta.BPMetaBuilder;
 import edu.jhuapl.sbmt.util.BackplanesLabel;
-
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.gson.Serializers;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 import nom.tam.fits.BasicHDU;
 import nom.tam.fits.Fits;
 import nom.tam.fits.FitsException;
+import vtk.vtkFeatureEdges;
+import vtk.vtkImageData;
+import vtk.vtkPNGReader;
+import vtk.vtkPolyData;
+import vtk.vtkProp;
+import vtk.vtkTexture;
 
 /**
  * This class represents an abstract image of a spacecraft imager instrument.
