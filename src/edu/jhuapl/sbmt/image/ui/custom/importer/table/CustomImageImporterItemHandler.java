@@ -2,7 +2,6 @@ package edu.jhuapl.sbmt.image.ui.custom.importer.table;
 
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
-
 import glum.gui.panel.itemList.BasicItemHandler;
 import glum.gui.panel.itemList.query.QueryComposer;
 import glum.item.BaseItemManager;

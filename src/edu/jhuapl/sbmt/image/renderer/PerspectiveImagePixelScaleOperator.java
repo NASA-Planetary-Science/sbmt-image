@@ -2,12 +2,11 @@ package edu.jhuapl.sbmt.image.renderer;
 
 import java.beans.PropertyChangeEvent;
 
-import vtk.vtkPoints;
-import vtk.vtkPolyData;
-
 import edu.jhuapl.saavtk.util.MathUtil;
 import edu.jhuapl.saavtk.util.Properties;
 import edu.jhuapl.sbmt.image.model.PerspectiveImage;
+import vtk.vtkPoints;
+import vtk.vtkPolyData;
 
 public class PerspectiveImagePixelScaleOperator
 {

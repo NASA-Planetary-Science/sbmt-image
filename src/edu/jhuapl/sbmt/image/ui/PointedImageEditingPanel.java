@@ -15,14 +15,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
@@ -36,13 +34,8 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkProp;
-import vtk.vtkProperty;
-
 import edu.jhuapl.saavtk.gui.ModelInfoWindow;
 import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
-import edu.jhuapl.saavtk.gui.render.RenderIoUtil;
 import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.saavtk.gui.render.VtkPropProvider;
 import edu.jhuapl.saavtk.model.Model;
@@ -60,6 +53,9 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointedImages.Renderab
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointing.offset.PointedImageEditingPipeline;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkActor;
+import vtk.vtkProp;
+import vtk.vtkProperty;
 
 public class PointedImageEditingPanel<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends ModelInfoWindow
 		implements MouseListener, MouseMotionListener

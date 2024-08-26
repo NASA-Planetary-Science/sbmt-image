@@ -17,7 +17,6 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.perspectiveImages.Pers
 import edu.jhuapl.sbmt.image.pipelineComponents.publishers.gdal.InvalidGDALFileTypeException;
 import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.MetadataPreview;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
-
 import glum.gui.action.PopAction;
 
 public class ShowHeadersAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>

@@ -2,16 +2,15 @@ package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.cylindrical
 
 import java.io.IOException;
 
+import edu.jhuapl.saavtk.util.LatLon;
+import edu.jhuapl.saavtk.util.MathUtil;
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkAppendPolyData;
 import vtk.vtkClipPolyData;
 import vtk.vtkFloatArray;
 import vtk.vtkPlane;
 import vtk.vtkPoints;
 import vtk.vtkPolyData;
-
-import edu.jhuapl.saavtk.util.LatLon;
-import edu.jhuapl.saavtk.util.MathUtil;
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class PartialCylindricalClipOperator extends BasePipelineOperator<vtkPolyData, vtkPolyData>
 {

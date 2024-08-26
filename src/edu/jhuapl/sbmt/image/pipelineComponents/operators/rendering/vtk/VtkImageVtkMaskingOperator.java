@@ -3,11 +3,10 @@ package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkImageCanvasSource2D;
 import vtk.vtkImageData;
 import vtk.vtkImageMask;
-
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class VtkImageVtkMaskingOperator //<vtkImageData, vtkImageData>
 		extends BasePipelineOperator<vtkImageData, vtkImageData>

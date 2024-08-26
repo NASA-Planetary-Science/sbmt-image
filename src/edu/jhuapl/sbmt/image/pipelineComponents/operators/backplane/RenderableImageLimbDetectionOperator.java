@@ -11,9 +11,7 @@ import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointedImages.RenderablePointedImageFootprintGeneratorPipeline;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
-import vtk.vtkDataArray;
 import vtk.vtkGenericCell;
-import vtk.vtkImageData;
 import vtk.vtksbCellLocator;
 
 public class RenderableImageLimbDetectionOperator

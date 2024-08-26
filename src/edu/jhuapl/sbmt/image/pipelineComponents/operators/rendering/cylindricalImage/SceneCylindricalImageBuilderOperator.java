@@ -7,10 +7,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkLookupTable;
-import vtk.vtkPolyDataMapper;
-
 import edu.jhuapl.saavtk.view.lod.LodMode;
 import edu.jhuapl.saavtk.view.lod.VtkLodActor;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
@@ -18,6 +14,9 @@ import edu.jhuapl.sbmt.image.model.CylindricalImageRenderables;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.ImageRenderable;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
+import vtk.vtkActor;
+import vtk.vtkLookupTable;
+import vtk.vtkPolyDataMapper;
 
 
 public class SceneCylindricalImageBuilderOperator extends BasePipelineOperator<Pair<List<SmallBodyModel>,IRenderableImage>, Pair<List<vtkActor>, List<ImageRenderable>>>

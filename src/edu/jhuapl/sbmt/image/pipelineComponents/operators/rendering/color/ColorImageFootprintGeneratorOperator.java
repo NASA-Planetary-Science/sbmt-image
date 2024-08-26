@@ -8,11 +8,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkGenericCell;
-import vtk.vtkImageData;
-import vtk.vtkPolyData;
-import vtk.vtksbCellLocator;
-
 import edu.jhuapl.saavtk.util.Frustum;
 import edu.jhuapl.saavtk.util.ImageDataUtil;
 import edu.jhuapl.saavtk.util.IntensityRange;
@@ -28,6 +23,10 @@ import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImage
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkGenericCell;
+import vtk.vtkImageData;
+import vtk.vtkPolyData;
+import vtk.vtksbCellLocator;
 
 public class ColorImageFootprintGeneratorOperator extends BasePipelineOperator<IRenderableImage, Pair<vtkImageData, vtkPolyData>>
 {

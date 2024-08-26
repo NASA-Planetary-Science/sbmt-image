@@ -16,7 +16,6 @@ import edu.jhuapl.saavtk.gui.util.IconUtil;
 import edu.jhuapl.saavtk.gui.util.ToolTipUtil;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
-
 import glum.gui.GuiUtil;
 import glum.gui.action.PopupMenu;
 import glum.gui.misc.BooleanCellEditor;

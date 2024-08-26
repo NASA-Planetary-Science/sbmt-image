@@ -9,7 +9,6 @@ import edu.jhuapl.sbmt.image.model.ImageType;
 import edu.jhuapl.sbmt.image.model.Orientation;
 import edu.jhuapl.sbmt.image.model.SpectralImageMode;
 import edu.jhuapl.sbmt.query.v2.IDataQuery;
-
 import edu.jhuapl.ses.jsqrl.api.Metadata;
 
 public interface IImagingInstrument

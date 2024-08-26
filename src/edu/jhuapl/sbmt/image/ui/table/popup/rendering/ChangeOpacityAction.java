@@ -19,7 +19,6 @@ import javax.swing.event.ChangeListener;
 import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
-
 import glum.gui.action.PopAction;
 import net.miginfocom.swing.MigLayout;
 

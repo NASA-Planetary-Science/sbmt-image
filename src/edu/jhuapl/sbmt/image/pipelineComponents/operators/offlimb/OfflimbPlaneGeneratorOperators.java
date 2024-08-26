@@ -12,14 +12,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
-import vtk.vtkCell;
-import vtk.vtkCellArray;
-import vtk.vtkIdList;
-import vtk.vtkImageCanvasSource2D;
-import vtk.vtkImageData;
-import vtk.vtkImageToPolyDataFilter;
-import vtk.vtkPolyData;
-
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.MathUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
@@ -31,6 +23,13 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.SavePolydataToCache
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.CameraOrientationPipeline;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import vtk.vtkCell;
+import vtk.vtkCellArray;
+import vtk.vtkIdList;
+import vtk.vtkImageCanvasSource2D;
+import vtk.vtkImageData;
+import vtk.vtkImageToPolyDataFilter;
+import vtk.vtkPolyData;
 
 public class OfflimbPlaneGeneratorOperators extends BasePipelineOperator<RenderablePointedImage, Pair<RenderablePointedImage, vtkPolyData>>
 {

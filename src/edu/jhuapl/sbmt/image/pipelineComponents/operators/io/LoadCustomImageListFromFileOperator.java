@@ -3,7 +3,6 @@ package edu.jhuapl.sbmt.image.pipelineComponents.operators.io;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,10 +16,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.beust.jcommander.internal.Lists;
 import com.google.gson.stream.MalformedJsonException;
 
-import edu.jhuapl.ses.jsqrl.api.Key;
-import edu.jhuapl.ses.jsqrl.api.Metadata;
-import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
-import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 import edu.jhuapl.saavtk.util.FileUtil;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
@@ -35,6 +30,10 @@ import edu.jhuapl.sbmt.image.model.Orientation;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageMetadata;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageRenderingState;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 
 public class LoadCustomImageListFromFileOperator<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>
 			extends BasePipelineOperator<File, Pair<List<G1>, HashMap<G1, PerspectiveImageRenderingState<G1>>>>

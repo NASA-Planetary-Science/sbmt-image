@@ -8,8 +8,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkImageData;
-
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
@@ -21,6 +19,7 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.cylindricalImages.Rend
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.LoadImageDataFromCachePipeline;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
 
 public class CylindricalImageRenderables extends ImageRenderable
 {

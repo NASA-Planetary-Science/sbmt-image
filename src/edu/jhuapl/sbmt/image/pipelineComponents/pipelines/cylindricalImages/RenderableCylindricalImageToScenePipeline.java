@@ -6,8 +6,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.google.common.collect.Lists;
 
-import vtk.vtkActor;
-
 import edu.jhuapl.saavtk.util.NativeLibraryLoader;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
@@ -25,6 +23,7 @@ import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.publisher.Publishers;
 import edu.jhuapl.sbmt.pipeline.subscriber.PairSink;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkActor;
 
 public class RenderableCylindricalImageToScenePipeline extends ImageToScenePipeline
 {

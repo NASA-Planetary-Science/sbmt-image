@@ -6,15 +6,14 @@ import java.util.List;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
+import edu.jhuapl.saavtk.util.Configuration;
+import edu.jhuapl.saavtk.util.IntensityRange;
+import edu.jhuapl.saavtk.util.Properties;
 import vtk.vtkActor;
 import vtk.vtkImageData;
 import vtk.vtkPolyData;
 import vtk.vtkProp;
 import vtk.vtkTexture;
-
-import edu.jhuapl.saavtk.util.Configuration;
-import edu.jhuapl.saavtk.util.IntensityRange;
-import edu.jhuapl.saavtk.util.Properties;
 
 public class PerspectiveImageOfflimbPlaneHelper
 {

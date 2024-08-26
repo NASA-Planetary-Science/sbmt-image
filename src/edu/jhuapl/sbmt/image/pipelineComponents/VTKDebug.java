@@ -5,11 +5,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import vtk.vtkActor;
-import vtk.vtkImageData;
-import vtk.vtkPolyData;
-import vtk.vtkPolyDataWriter;
-
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.VtkActorPreview;
 import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.VtkImagePreview;
@@ -17,6 +12,10 @@ import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.VtkLayerPrev
 import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.VtkLayerPreviewOld;
 import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
+import vtk.vtkActor;
+import vtk.vtkImageData;
+import vtk.vtkPolyData;
+import vtk.vtkPolyDataWriter;
 
 public class VTKDebug
 {

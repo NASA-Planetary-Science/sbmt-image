@@ -4,11 +4,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import vtk.vtkImageData;
-
 import edu.jhuapl.sbmt.image.ui.ImagePreviewPanel;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.subscriber.IPipelineSubscriber;
+import vtk.vtkImageData;
 
 public class VtkImagePreview implements IPipelineSubscriber<vtkImageData>
 {

@@ -7,12 +7,6 @@ import org.gdal.gdal.gdal;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkFeatureEdges;
-import vtk.vtkImageData;
-import vtk.vtkPolyData;
-import vtk.vtkPolyDataMapper;
-
 import edu.jhuapl.saavtk.util.NativeLibraryLoader;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
@@ -33,6 +27,11 @@ import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.publisher.Publishers;
 import edu.jhuapl.sbmt.pipeline.subscriber.PairSink;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkActor;
+import vtk.vtkFeatureEdges;
+import vtk.vtkImageData;
+import vtk.vtkPolyData;
+import vtk.vtkPolyDataMapper;
 
 public class ColorImageGeneratorPipeline extends ImageToScenePipeline //implements RenderableImageActorPipeline
 {

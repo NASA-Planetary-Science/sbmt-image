@@ -2,12 +2,11 @@ package edu.jhuapl.sbmt.image.renderer;
 
 import java.io.File;
 
+import edu.jhuapl.saavtk.util.FileCache;
+import edu.jhuapl.saavtk.util.SafeURLPaths;
 import vtk.vtkPolyData;
 import vtk.vtkPolyDataReader;
 import vtk.vtkPolyDataWriter;
-
-import edu.jhuapl.saavtk.util.FileCache;
-import edu.jhuapl.saavtk.util.SafeURLPaths;
 
 public class PerspectiveImageFootprintCacheOperator
 {

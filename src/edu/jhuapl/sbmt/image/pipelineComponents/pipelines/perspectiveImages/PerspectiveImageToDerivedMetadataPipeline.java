@@ -8,8 +8,6 @@ import org.apache.commons.lang3.tuple.Triple;
 
 import com.google.common.collect.Lists;
 
-import vtk.vtkPolyData;
-
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.io.PerspectiveImageToDerviedMetadataOperator;
@@ -21,6 +19,7 @@ import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointedImages.RenderablePointedImageFootprintGeneratorPipeline;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkPolyData;
 
 public class PerspectiveImageToDerivedMetadataPipeline
 {
