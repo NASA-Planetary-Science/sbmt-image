@@ -3,14 +3,14 @@ package edu.jhuapl.sbmt.image.config;
 import java.util.Date;
 import java.util.List;
 
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.SettableMetadata;
 import edu.jhuapl.saavtk.config.ViewConfig;
 import edu.jhuapl.sbmt.core.body.BodyViewConfig;
 import edu.jhuapl.sbmt.core.config.BaseFeatureConfigIO;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
 
 public class ImagingInstrumentConfigIO extends BaseFeatureConfigIO // BaseInstrumentConfigIO implements MetadataManager
 {

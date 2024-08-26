@@ -7,10 +7,6 @@ import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import vtk.vtkDataArray;
-import vtk.vtkGenericCell;
-import vtk.vtksbCellLocator;
-
 import edu.jhuapl.saavtk.util.ImageDataUtil;
 import edu.jhuapl.saavtk.util.LatLon;
 import edu.jhuapl.saavtk.util.MathUtil;
@@ -18,8 +14,10 @@ import edu.jhuapl.sbmt.core.util.BackplaneInfo;
 import edu.jhuapl.sbmt.image.util.BackPlanesXml;
 import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta;
 import edu.jhuapl.sbmt.image.util.BackPlanesXmlMeta.BPMetaBuilder;
-
 import nom.tam.fits.FitsException;
+import vtk.vtkDataArray;
+import vtk.vtkGenericCell;
+import vtk.vtksbCellLocator;
 
 class PerspectiveImageBackplanesHelper
 {

@@ -2,16 +2,15 @@ package edu.jhuapl.sbmt.image.renderer;
 
 import java.beans.PropertyChangeEvent;
 
+import edu.jhuapl.saavtk.util.MathUtil;
+import edu.jhuapl.saavtk.util.Properties;
+import edu.jhuapl.sbmt.image.model.PerspectiveImage;
 import vtk.vtkCell;
 import vtk.vtkCellData;
 import vtk.vtkDataArray;
 import vtk.vtkPoints;
 import vtk.vtkPolyData;
 import vtk.vtkPolyDataNormals;
-
-import edu.jhuapl.saavtk.util.MathUtil;
-import edu.jhuapl.saavtk.util.Properties;
-import edu.jhuapl.sbmt.image.model.PerspectiveImage;
 
 public class PerspectiveImageIlluminationOperator
 {

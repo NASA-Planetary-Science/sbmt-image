@@ -8,15 +8,14 @@ import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.LinkedHashMap;
 
-import vtk.vtkPolyData;
-import vtk.vtkProp;
-import vtk.vtkTexture;
-
 import edu.jhuapl.saavtk.model.AbstractModel;
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.saavtk.util.PolyDataUtil;
 import edu.jhuapl.saavtk.util.Properties;
 import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
+import vtk.vtkPolyData;
+import vtk.vtkProp;
+import vtk.vtkTexture;
 
 
 public abstract class Image extends AbstractModel implements PropertyChangeListener

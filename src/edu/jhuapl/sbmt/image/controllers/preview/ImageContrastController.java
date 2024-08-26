@@ -10,10 +10,9 @@ import javax.swing.event.ChangeEvent;
 
 import com.jidesoft.swing.RangeSlider;
 
-import vtk.vtkImageData;
-
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.vtk.VtkImageContrastPipeline;
+import vtk.vtkImageData;
 
 /**
  * Controller to help govern the contrast values (via <pre>IntensityRange</pre> for a <pre>vtkImageData</pre> object.

@@ -28,13 +28,6 @@ import com.beust.jcommander.internal.Lists;
 import com.beust.jcommander.internal.Maps;
 import com.google.common.collect.ImmutableList;
 
-import crucible.crust.logging.SimpleLogger;
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.SettableMetadata;
-import crucible.crust.metadata.impl.gson.Serializers;
 import edu.jhuapl.saavtk.model.SaavtkItemManager;
 import edu.jhuapl.saavtk.util.ColorUtil;
 import edu.jhuapl.saavtk.util.FileCache;
@@ -66,6 +59,12 @@ import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
+import edu.jhuapl.ses.jsqrl.impl.gson.Serializers;
 import vtk.vtkActor;
 import vtk.vtkImageData;
 import vtk.vtkProp;
@@ -86,7 +85,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	private ConcurrentHashMap<G1, List<vtkActor>> offLimbBoundaryRenderers;
 	private ConcurrentHashMap<G1, PerspectiveImageRenderingState<G1>> renderingStates;
 	@SuppressWarnings("unused")
-	private SimpleLogger logger = SimpleLogger.getInstance();
+//	private SimpleLogger logger = SimpleLogger.getInstance();
 	private IImagingInstrument imagingInstrument;
 //	private IdPair currentBoundaryRange = new IdPair(0, 9);
 //	private int currentBoundaryOffsetAmount = 10;

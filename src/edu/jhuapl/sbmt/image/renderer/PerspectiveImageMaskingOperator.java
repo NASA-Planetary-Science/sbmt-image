@@ -1,9 +1,8 @@
 package edu.jhuapl.sbmt.image.renderer;
 
-import vtk.vtkImageCanvasSource2D;
-
 import edu.jhuapl.saavtk.util.Properties;
 import edu.jhuapl.sbmt.image.model.PerspectiveImage;
+import vtk.vtkImageCanvasSource2D;
 
 public class PerspectiveImageMaskingOperator
 {

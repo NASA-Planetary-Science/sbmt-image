@@ -6,16 +6,14 @@ import java.util.Map;
 
 import org.apache.commons.io.FilenameUtils;
 
-import vtk.vtkActor;
-import vtk.vtkOBJExporter;
-import vtk.rendering.jogl.vtkJoglPanelComponent;
-
 import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
-
 import glum.gui.action.PopAction;
+import vtk.vtkActor;
+import vtk.vtkOBJExporter;
+import vtk.rendering.jogl.vtkJoglPanelComponent;
 
 public class SaveGeometryAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>
 {

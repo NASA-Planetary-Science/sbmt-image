@@ -15,10 +15,6 @@ import javax.swing.SwingUtilities;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkProp;
-import vtk.vtkProperty;
-
 import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.saavtk.model.SaavtkItemManager;
 import edu.jhuapl.saavtk.util.FileCache;
@@ -33,10 +29,12 @@ import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.cylindricalImages.Rend
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointedImages.RenderablePointedImageToScenePipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.RenderableImageActorPipeline;
 import edu.jhuapl.sbmt.image.pipelineComponents.publishers.gdal.InvalidGDALFileTypeException;
-
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.impl.SettableMetadata;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
+import vtk.vtkActor;
+import vtk.vtkProp;
+import vtk.vtkProperty;
 
 public class BasemapImageCollection<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends SaavtkItemManager<G1> implements PropertyChangeListener
 {

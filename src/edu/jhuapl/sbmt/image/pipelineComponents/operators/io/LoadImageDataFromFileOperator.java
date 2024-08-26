@@ -3,14 +3,12 @@ package edu.jhuapl.sbmt.image.pipelineComponents.operators.io;
 import java.io.File;
 import java.io.IOException;
 
-import vtk.vtkImageData;
-import vtk.vtkPolyData;
-import vtk.vtkXMLImageDataReader;
-
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.NonexistentRemoteFile;
 import edu.jhuapl.saavtk.util.UnauthorizedAccessException;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
+import vtk.vtkImageData;
+import vtk.vtkXMLImageDataReader;
 
 public class LoadImageDataFromFileOperator extends BasePipelineOperator<String, vtkImageData>
 {

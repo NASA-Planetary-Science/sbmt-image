@@ -3,13 +3,12 @@ package edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io;
 import java.io.IOException;
 import java.util.List;
 
-import vtk.vtkPolyData;
-
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.pointedImage.RenderablePointedImage;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.pointedImages.RenderablePointedImageFootprintGeneratorPipeline;
+import vtk.vtkPolyData;
 
 public class FilenameToRenderableImageFootprintPipeline
 {

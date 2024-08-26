@@ -13,7 +13,6 @@ import javax.swing.JTable;
 import com.google.common.collect.ImmutableList;
 
 import edu.jhuapl.sbmt.image.model.ImageProperty;
-
 import glum.gui.panel.itemList.BasicItemHandler;
 import glum.gui.panel.itemList.ItemListPanel;
 import glum.gui.panel.itemList.ItemProcessor;

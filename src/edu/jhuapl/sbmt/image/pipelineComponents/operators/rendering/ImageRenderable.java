@@ -7,10 +7,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkActor;
-import vtk.vtkImageData;
-import vtk.vtkPolyData;
-
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.model.IRenderableImage;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.HighResolutionBoundaryOperator;
@@ -18,6 +14,9 @@ import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.LowResol
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VTKImagePolyDataRendererOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkActor;
+import vtk.vtkImageData;
+import vtk.vtkPolyData;
 
 public class ImageRenderable
 {

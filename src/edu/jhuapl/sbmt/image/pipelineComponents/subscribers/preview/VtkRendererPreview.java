@@ -4,12 +4,11 @@ import java.awt.Container;
 import java.io.IOException;
 import java.util.List;
 
-import vtk.vtkActor;
-
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.ui.RendererPreviewPanel;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.subscriber.IPipelineSubscriber;
+import vtk.vtkActor;
 
 public class VtkRendererPreview implements IPipelineSubscriber<vtkActor>
 {

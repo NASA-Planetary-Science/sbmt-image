@@ -21,9 +21,8 @@ import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
 import edu.jhuapl.sbmt.pointing.modules.SpiceReaderPublisher;
 import edu.jhuapl.sbmt.pointing.spice.SpiceInfo;
 import edu.jhuapl.sbmt.pointing.spice.SpicePointingProvider;
-
-import crucible.mantle.spice.adapters.AdapterInstantiationException;
-import crucible.mantle.spice.kernel.KernelInstantiationException;
+import picante.spice.adapters.AdapterInstantiationException;
+import picante.spice.kernel.KernelInstantiationException;
 
 public class BodyPositionPipeline implements IPipeline<SmallBodyModel>
 {

@@ -5,10 +5,9 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkPolyData;
 import vtk.vtkPolyDataWriter;
-
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class SavePolydataToFileOperator extends BasePipelineOperator<Pair<String, vtkPolyData>, Void>
 {

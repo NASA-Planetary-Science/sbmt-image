@@ -3,12 +3,11 @@ package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import edu.jhuapl.saavtk.util.IntensityRange;
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkImageData;
 import vtk.vtkImageMapToColors;
 import vtk.vtkLookupTable;
-
-import edu.jhuapl.saavtk.util.IntensityRange;
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class VtkImageContrastOperator//<InputType extends vtkImageData, OutputType extends vtkImageData>
 		extends BasePipelineOperator<vtkImageData, vtkImageData>

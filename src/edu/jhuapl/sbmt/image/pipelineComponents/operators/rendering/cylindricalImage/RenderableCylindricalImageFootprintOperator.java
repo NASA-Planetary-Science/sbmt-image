@@ -8,8 +8,6 @@ import org.apache.commons.io.FilenameUtils;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkPolyData;
-
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.PolyDataUtil;
 import edu.jhuapl.saavtk.util.SafeURLPaths;
@@ -21,6 +19,7 @@ import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import edu.jhuapl.sbmt.pipeline.operator.PassthroughOperator;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkPolyData;
 
 public class RenderableCylindricalImageFootprintOperator extends BasePipelineOperator<IRenderableImage, vtkPolyData>
 {

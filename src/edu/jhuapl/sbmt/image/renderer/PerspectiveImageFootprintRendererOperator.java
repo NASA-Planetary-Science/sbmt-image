@@ -2,15 +2,14 @@ package edu.jhuapl.sbmt.image.renderer;
 
 import java.util.List;
 
-import vtk.vtkFloatArray;
-import vtk.vtkPointData;
-import vtk.vtkPolyData;
-
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.Frustum;
 import edu.jhuapl.saavtk.util.PolyDataUtil;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.image.model.PerspectiveImage;
+import vtk.vtkFloatArray;
+import vtk.vtkPointData;
+import vtk.vtkPolyData;
 
 public class PerspectiveImageFootprintRendererOperator
 {

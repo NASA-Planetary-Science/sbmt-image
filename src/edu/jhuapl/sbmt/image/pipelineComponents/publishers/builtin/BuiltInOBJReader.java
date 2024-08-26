@@ -7,7 +7,6 @@ import com.google.common.collect.Lists;
 import edu.jhuapl.saavtk.util.PolyDataUtil;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.pipeline.publisher.BasePipelinePublisher;
-
 import nom.tam.fits.FitsException;
 
 public class BuiltInOBJReader extends BasePipelinePublisher<SmallBodyModel>

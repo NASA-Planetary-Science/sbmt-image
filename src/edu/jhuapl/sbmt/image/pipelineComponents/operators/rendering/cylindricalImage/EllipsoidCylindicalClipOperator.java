@@ -2,13 +2,12 @@ package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.cylindrical
 
 import java.io.IOException;
 
+import edu.jhuapl.sbmt.core.body.SmallBodyModel;
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkAlgorithmOutput;
 import vtk.vtkClipPolyData;
 import vtk.vtkPlane;
 import vtk.vtkPolyData;
-
-import edu.jhuapl.sbmt.core.body.SmallBodyModel;
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 
 public class EllipsoidCylindicalClipOperator extends BasePipelineOperator<vtkPolyData, vtkPolyData>

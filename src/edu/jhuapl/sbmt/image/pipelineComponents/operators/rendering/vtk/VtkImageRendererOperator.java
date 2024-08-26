@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 
-import vtk.vtkImageData;
-
 import edu.jhuapl.saavtk.util.ThreadService;
 import edu.jhuapl.saavtk.util.VtkDataTypes;
 import edu.jhuapl.sbmt.layer.api.Layer;
@@ -16,6 +14,7 @@ import edu.jhuapl.sbmt.layer.api.PixelVector;
 import edu.jhuapl.sbmt.layer.impl.PixelDoubleFactory;
 import edu.jhuapl.sbmt.layer.impl.PixelVectorDoubleFactory;
 import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
+import vtk.vtkImageData;
 
 public class VtkImageRendererOperator extends BasePipelineOperator<Layer, vtkImageData>
 {

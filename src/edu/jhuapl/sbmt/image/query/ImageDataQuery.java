@@ -6,11 +6,6 @@ import java.util.TreeSet;
 
 import org.joda.time.DateTime;
 
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.FixedMetadata;
-import crucible.crust.metadata.impl.InstanceGetter;
-import crucible.crust.metadata.impl.SettableMetadata;
 import edu.jhuapl.saavtk.util.Configuration;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.query.database.ImageDatabaseSearchMetadata;
@@ -22,6 +17,11 @@ import edu.jhuapl.sbmt.query.v2.ISearchMetadata;
 import edu.jhuapl.sbmt.query.v2.QueryException;
 import edu.jhuapl.sbmt.query.v2.QueryException.QueryExceptionReason;
 import edu.jhuapl.sbmt.query.v2.QueryException.Severity;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.FixedMetadata;
+import edu.jhuapl.ses.jsqrl.impl.InstanceGetter;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
 
 public class ImageDataQuery extends DatabaseDataQuery
 {

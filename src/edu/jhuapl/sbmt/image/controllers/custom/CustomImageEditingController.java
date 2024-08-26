@@ -21,14 +21,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import com.beust.jcommander.internal.Lists;
 
-import vtk.vtkImageData;
-import vtk.vtkImageReslice;
-import vtk.vtkImageSlice;
-import vtk.vtkImageSliceMapper;
-import vtk.vtkInteractorStyleImage;
-import vtk.vtkTransform;
-import vtk.rendering.jogl.vtkJoglPanelComponent;
-
 import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
@@ -49,6 +41,13 @@ import edu.jhuapl.sbmt.layer.api.Layer;
 import edu.jhuapl.sbmt.pipeline.publisher.IPipelinePublisher;
 import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import edu.jhuapl.sbmt.pipeline.subscriber.Sink;
+import vtk.vtkImageData;
+import vtk.vtkImageReslice;
+import vtk.vtkImageSlice;
+import vtk.vtkImageSliceMapper;
+import vtk.vtkInteractorStyleImage;
+import vtk.vtkTransform;
+import vtk.rendering.jogl.vtkJoglPanelComponent;
 
 public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> implements MouseListener, MouseMotionListener, PropertyChangeListener
 {

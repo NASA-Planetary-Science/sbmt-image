@@ -37,7 +37,6 @@ import edu.jhuapl.sbmt.image.model.Orientation;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageMetadata;
 import edu.jhuapl.sbmt.image.ui.custom.importer.table.CustomImageImporterTableView;
-
 import glum.item.BaseItemManager;
 import glum.item.ItemEventListener;
 import glum.item.ItemEventType;

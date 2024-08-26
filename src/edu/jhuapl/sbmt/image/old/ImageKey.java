@@ -12,13 +12,12 @@ import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
 import edu.jhuapl.sbmt.image.model.ImageType;
 import edu.jhuapl.sbmt.image.model.ImagingInstrument;
-
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.api.StorableAsMetadata;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.InstanceGetter;
-import crucible.crust.metadata.impl.SettableMetadata;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.StorableAsMetadata;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.InstanceGetter;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
 
 /**
  * An ImageKey should be used to uniquely distinguish one image from another.

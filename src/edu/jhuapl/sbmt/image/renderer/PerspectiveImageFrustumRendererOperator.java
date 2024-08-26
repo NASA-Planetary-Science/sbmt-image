@@ -1,15 +1,14 @@
 package edu.jhuapl.sbmt.image.renderer;
 
+import edu.jhuapl.saavtk.util.Frustum;
+import edu.jhuapl.saavtk.util.MathUtil;
+import edu.jhuapl.sbmt.image.model.PerspectiveImage;
 import vtk.vtkActor;
 import vtk.vtkCellArray;
 import vtk.vtkIdList;
 import vtk.vtkPoints;
 import vtk.vtkPolyData;
 import vtk.vtkPolyDataMapper;
-
-import edu.jhuapl.saavtk.util.Frustum;
-import edu.jhuapl.saavtk.util.MathUtil;
-import edu.jhuapl.sbmt.image.model.PerspectiveImage;
 
 public class PerspectiveImageFrustumRendererOperator
 {

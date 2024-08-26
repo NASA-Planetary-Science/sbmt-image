@@ -2,13 +2,12 @@ package edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering;
 
 import java.io.IOException;
 
+import edu.jhuapl.sbmt.image.model.ImageBinPadding;
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 import vtk.vtkImageConstantPad;
 import vtk.vtkImageData;
 import vtk.vtkImageReslice;
 import vtk.vtkImageTranslateExtent;
-
-import edu.jhuapl.sbmt.image.model.ImageBinPadding;
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
 
 public class PadImageOperator extends BasePipelineOperator<vtkImageData, vtkImageData>
 {

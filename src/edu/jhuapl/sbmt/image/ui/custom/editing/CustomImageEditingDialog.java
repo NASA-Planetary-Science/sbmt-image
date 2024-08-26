@@ -20,8 +20,6 @@ import java.awt.Insets;
 import java.awt.Window;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.io.File;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -36,9 +34,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import org.apache.commons.io.FilenameUtils;
-
-import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
 import edu.jhuapl.sbmt.core.util.VtkENVIReader;
 import edu.jhuapl.sbmt.image.controllers.preview.ImageContrastController;
 import edu.jhuapl.sbmt.image.controllers.preview.ImageFillValuesController;

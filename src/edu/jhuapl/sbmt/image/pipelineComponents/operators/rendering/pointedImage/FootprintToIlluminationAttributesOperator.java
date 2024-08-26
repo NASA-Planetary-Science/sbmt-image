@@ -4,17 +4,16 @@ import java.io.IOException;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import edu.jhuapl.saavtk.util.MathUtil;
+import edu.jhuapl.saavtk.util.PolyDataUtil;
+import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
+import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
 import vtk.vtkCell;
 import vtk.vtkCellData;
 import vtk.vtkDataArray;
 import vtk.vtkPoints;
 import vtk.vtkPolyData;
 import vtk.vtkPolyDataNormals;
-
-import edu.jhuapl.saavtk.util.MathUtil;
-import edu.jhuapl.saavtk.util.PolyDataUtil;
-import edu.jhuapl.sbmt.pipeline.operator.BasePipelineOperator;
-import edu.jhuapl.sbmt.pointing.io.PointingFileReader;
 
 public class FootprintToIlluminationAttributesOperator extends BasePipelineOperator<Pair<vtkPolyData, PointingFileReader>, ImageIllumination>
 {

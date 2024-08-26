@@ -5,11 +5,10 @@ import java.util.List;
 import edu.jhuapl.sbmt.core.config.BaseFeatureConfigIO;
 import edu.jhuapl.sbmt.image.interfaces.ImageKeyInterface;
 import edu.jhuapl.sbmt.image.model.BasemapImage;
-
-import crucible.crust.metadata.api.Key;
-import crucible.crust.metadata.api.Metadata;
-import crucible.crust.metadata.api.Version;
-import crucible.crust.metadata.impl.SettableMetadata;
+import edu.jhuapl.ses.jsqrl.api.Key;
+import edu.jhuapl.ses.jsqrl.api.Metadata;
+import edu.jhuapl.ses.jsqrl.api.Version;
+import edu.jhuapl.ses.jsqrl.impl.SettableMetadata;
 
 public class BasemapImageConfigIO extends BaseFeatureConfigIO
 {
