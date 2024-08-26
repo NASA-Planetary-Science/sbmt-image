@@ -249,6 +249,10 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 		imageListTableController.getPanel().getShowImageButton().addActionListener(e -> {
 			ImmutableSet<G1> selectedImages = collection.getSelectedItems();
 			if (selectedImages.size() == 0) return;
+			SwingUtilities.invokeLater(() -> {
+				imageListTableController.getPanel().getShowImageButton().setEnabled(false);
+			});
+			
 			for (G1 image : selectedImages) {
 				collection.setImageMapped(image, true);
 			}
@@ -268,6 +272,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 			for (G1 image : selectedImages) {
 				collection.setImageBoundaryShowing(image, true);
 			}
+			
 		});
 
 		imageListTableController.getPanel().getHideImageBorderButton().addActionListener(e -> {
@@ -537,6 +542,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 
 	private void updateButtonState()
 	{
+		if (collection.isExecutorDone() == false) return;
 		ImmutableSet<G1> selectedItems = collection.getSelectedItems();
 		boolean allMapped = false;
 		boolean allBorders = false;

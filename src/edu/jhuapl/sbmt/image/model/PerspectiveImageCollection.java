@@ -15,6 +15,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import javax.swing.JOptionPane;
@@ -177,7 +178,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 				setOffLimbBoundaryShowing(image, false);
 			renderingStates.remove(image);
 		}
-		imagesByInstrument.clear();
+		imagesByInstrument.get(imagingInstrument).clear();
 		currentBoundaryOffsetByInstrument.put(imagingInstrument, 10);
 		currentBoundaryRangeByInstrument.put(imagingInstrument, new IdPair(0, currentBoundaryOffsetByInstrument.get(imagingInstrument)-1));
 // 		currentBoundaryRange = new IdPair(0, currentBoundaryOffsetAmount-1);
@@ -646,6 +647,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 
 	public boolean getFrustumShowing(G1 image)
 	{
+		if (renderingStates.get(image) == null) return false;
 		return renderingStates.get(image).isFrustumShowing;
 //		return image.isFrustumShowing();
 	}
@@ -697,6 +699,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 
 	public boolean getImageOfflimbShowing(G1 image)
 	{
+		if (renderingStates.get(image) == null) return false;
 		return renderingStates.get(image).isOfflimbShowing;
 //		return image.isOfflimbShowing();
 	}
@@ -790,6 +793,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 
 	public boolean getImageBoundaryShowing(G1 image)
 	{
+		if (renderingStates.get(image) == null) return false;
 		return renderingStates.get(image).isBoundaryShowing;
 //		return image.isBoundaryShowing();
 	}
@@ -1325,8 +1329,26 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 		return actorsToSave;
     }
 
-    private void runThreadOnExecutorService(Thread thread)
+    public List<Future<?>> imageFutures = new ArrayList<Future<?>>();
+    
+    private Future<?> runThreadOnExecutorService(Thread thread)
     {
-    	executor.execute(thread);
+    	Future<?> future = executor.submit(thread);
+    	imageFutures.add(future);
+    	return future;
+    }
+    
+    public boolean isExecutorDone() {
+    
+    	boolean allDone = true;
+    	for(Future<?> future : imageFutures){
+    	    allDone &= future.isDone(); // check if future is done
+    	}
+    	if (allDone == true)
+		{
+    		imageFutures.clear();
+    		executor = Executors.newCachedThreadPool();
+		}
+    	return allDone;
     }
 }
