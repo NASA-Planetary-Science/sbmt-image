@@ -218,7 +218,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
                 searchImageSources[i++] = PointingSource.valueOf(src);
             }
         }
-        instrumentName = Instrument.valueOf(read(instrumentKey, source));
+        instrumentName = Instrument.valueFor(read(instrumentKey, source));
 
         fillValues = read(fillValuesKey, source);
 
@@ -309,7 +309,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         }
         write(imageTypeKey, type.name(), configMetadata);
         writeEnums(imageSourcesKey, searchImageSources, configMetadata);
-        writeEnum(instrumentKey, instrumentName, configMetadata);
+        write(instrumentKey, instrumentName.name(), configMetadata);
         write(flipKey, orientation.getFlip().flip(), configMetadata);
         write(rotationKey, orientation.getRotation(), configMetadata);
         write(fillValuesKey, fillValues, configMetadata);
