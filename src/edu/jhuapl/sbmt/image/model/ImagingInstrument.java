@@ -31,7 +31,8 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
     public IDataQuery searchQuery;
     public PointingSource[] searchImageSources;
     private ImageType type;
-    public Instrument instrumentName;
+    private Instrument instrumentName;
+    private String label;
     private Set<Float> fillValues;
     private int[] linearInterpolationDims;
     private int[] maskValues = new int[] { 0, 0, 0, 0 };
@@ -43,12 +44,12 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
 
     public ImagingInstrument()
     {
-        this(SpectralImageMode.MONO, null, null, null, null, 0.0, null, null, null, null, true, null);
+        this(SpectralImageMode.MONO, null, null, null, null, null, 0.0, null, null, null, null, true, null);
     }
 
     public ImagingInstrument(double rotation, String flip)
     {
-        this(SpectralImageMode.MONO, null, ImageType.GENERIC_IMAGE, null, null, rotation, flip, null, null, null, true, null);
+        this(SpectralImageMode.MONO, null, ImageType.GENERIC_IMAGE, null, null, null, rotation, flip, null, null, null, true, null);
     }
 
     // public ImagingInstrument(ImageType type, Instrument instrumentName)
@@ -63,47 +64,53 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
 
     public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName)
     {
-        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, 0.0, null, null, null, null, true, null);
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, null, 0.0, null, null, null, null, true, null);
     }
 
     public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, Map<PointingSource, Orientation> orientationMap)
     {
-        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, 0.0, null, null, null, null, true, orientationMap);
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, null, 0.0, null, null, null, null, true, orientationMap);
     }
 
     public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, ImageBinPadding binPadding)
     {
-        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, null, null, null, true, null);
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, null, rotation, flip, null, null, null, true, null);
         this.binPadding = binPadding;
     }
 
     public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip)
     {
-        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, null, null, null, true, null);
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, null, rotation, flip, null, null, null, true, null);
     }
 
     public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues)
     {
-        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, fillValues, null, null, true, null);
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, null, rotation, flip, fillValues, null, null, true, null);
     }
 
     public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, int[] linearInterpDims, int[] maskValues)
     {
-        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, fillValues, linearInterpDims, maskValues, true, null);
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, null, rotation, flip, fillValues, linearInterpDims, maskValues, true, null);
     }
 
     public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, boolean isTranspose)
     {
-        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, rotation, flip, fillValues, null, null, isTranspose, null);
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, null, rotation, flip, fillValues, null, null, isTranspose, null);
     }
 
     public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, double rotation, String flip, Collection<Float> fillValues, int[] linearInterpDims, int[] maskValues, boolean isTranspose, Map<PointingSource, Orientation> orientationMap)
+    {
+        this(spectralMode, searchQuery, type, searchImageSources, instrumentName, null, rotation, flip, fillValues, linearInterpDims, maskValues, isTranspose, orientationMap);
+    }
+
+    public ImagingInstrument(SpectralImageMode spectralMode, IDataQuery searchQuery, ImageType type, PointingSource[] searchImageSources, Instrument instrumentName, String label, double rotation, String flip, Collection<Float> fillValues, int[] linearInterpDims, int[] maskValues, boolean isTranspose, Map<PointingSource, Orientation> orientationMap)
     {
         this.spectralMode = spectralMode;
         this.searchQuery = searchQuery;
         this.type = type;
         this.searchImageSources = searchImageSources;
         this.instrumentName = instrumentName;
+        this.label = label != null ? label : instrumentName != null ? instrumentName.name() : null;
         this.fillValues = fillValues != null ? new LinkedHashSet<>(fillValues) : null;
         this.linearInterpolationDims = linearInterpDims != null ? linearInterpDims : new int[] { 0, 0, 0, 0 };
         this.maskValues = maskValues != null ? maskValues : new int[] { 0, 0, 0, 0 };
@@ -125,26 +132,30 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         }
     }
 
+    @Override
     public ImagingInstrument clone() throws CloneNotSupportedException
     {
         PointingSource source0 = searchImageSources != null && searchImageSources.length > 0 ? searchImageSources[0] : null;
         Orientation orientation = getOrientation(source0, null, null, null);
 
-        return new ImagingInstrument(spectralMode, searchQuery.clone(), type, searchImageSources != null
-                ? searchImageSources.clone()
-                : null, instrumentName, orientation.getRotation(), orientation.getFlip().flip(), fillValues, linearInterpolationDims, maskValues, orientation.isTranspose(), orientationMap);
+        return new ImagingInstrument(spectralMode, searchQuery.clone(), type, //
+                searchImageSources != null ? searchImageSources.clone() : null //
+                , instrumentName, label, orientation.getRotation(), orientation.getFlip().flip(), fillValues, linearInterpolationDims, maskValues, orientation.isTranspose(), orientationMap);
     }
 
+    @Override
     public ImageType getType()
     {
         return type;
     }
 
+    @Override
     public PointingSource[] getSearchImageSources()
     {
         return searchImageSources;
     }
 
+    @Override
     public SpectralImageMode getSpectralMode()
     {
         return spectralMode;
@@ -153,7 +164,6 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
     private static final Key<ImagingInstrument> ImagingInstrument_KEY = Key.of("imagingInstrument");
     private static final Key<String> spectralModeKey = Key.of("spectralMode");
     private static final Key<String> queryType = Key.of("queryType");
-    private static final Key<Metadata> queryKey = Key.of("query");
     // private static final Key<String> rootPathKey = Key.of("rootPath");
     // private static final Key<String> tablePrefixKey = Key.of("tablePrefix");
     // private static final Key<String> galleryPrefixKey =
@@ -161,6 +171,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
     private static final Key<String> imageTypeKey = Key.of("imageType");
     private static final Key<String[]> imageSourcesKey = Key.of("imageSources");
     private static final Key<String> instrumentKey = Key.of("instrument");
+    private static final Key<String> labelKey = Key.of("label");
     private static final Key<String> flipKey = Key.of("flip");
     private static final Key<Double> rotationKey = Key.of("rotation");
     private static final Key<Set<Float>> fillValuesKey = Key.of("fillValues");
@@ -222,6 +233,9 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
             }
         }
         instrumentName = Instrument.valueFor(read(instrumentKey, source));
+
+        String label = read(labelKey, source);
+        this.label = label != null ? label : instrumentName.name();
 
         fillValues = read(fillValuesKey, source);
 
@@ -308,6 +322,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         write(imageTypeKey, type.name(), configMetadata);
         writeEnums(imageSourcesKey, searchImageSources, configMetadata);
         write(instrumentKey, instrumentName.name(), configMetadata);
+        write(labelKey, label, configMetadata);
         write(flipKey, orientation.getFlip().flip(), configMetadata);
         write(rotationKey, orientation.getRotation(), configMetadata);
         write(fillValuesKey, fillValues, configMetadata);
@@ -366,14 +381,22 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         return null;
     }
 
+    @Override
     public IDataQuery getSearchQuery()
     {
         return searchQuery;
     }
 
+    @Override
     public Instrument getInstrumentName()
     {
         return instrumentName;
+    }
+
+    @Override
+    public String getLabel()
+    {
+        return label;
     }
 
     @Override
@@ -391,7 +414,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         // this is called.
         if (orientation == null)
         {
-            throw new IllegalArgumentException("Instrument " + getInstrumentName()
+            throw new IllegalArgumentException("Instrument " + instrumentName
                     + " does not have an orientation for pointing type " + source);
         }
 
@@ -410,6 +433,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         return maskValues;
     }
 
+    @Override
     public double[] getFillValues()
     {
         if (fillValues == null)
@@ -497,6 +521,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
                 + Arrays.toString(linearInterpolationDims) + ", maskValues=" + Arrays.toString(maskValues) + "]";
     }
 
+    @Override
     public ImageBinPadding getBinPadding()
     {
         return binPadding;
