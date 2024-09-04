@@ -28,8 +28,9 @@ public class EditPointingAction<G1 extends IPerspectiveImage & IPerspectiveImage
 		try
 		{
 			boolean isCustom = aManager.isUserImage(aItemL.get(0));
-			PointedRenderableImageEditingPipeline pipeline =
-					new PointedRenderableImageEditingPipeline(aItemL.get(0), aManager.getSmallBodyModels(), isCustom);
+			@SuppressWarnings("unused")
+			PointedRenderableImageEditingPipeline<G1> pipeline =
+					new PointedRenderableImageEditingPipeline<G1>(aItemL.get(0), aManager.getSmallBodyModels(), isCustom);
 		}
 		catch (Exception e)
 		{

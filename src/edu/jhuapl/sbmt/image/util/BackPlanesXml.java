@@ -305,15 +305,15 @@ public class BackPlanesXml
         // need to filter the headerCards to make a new list that only contains
         // fits tags matching "PLANE<X>"
         List<HeaderCard> planeCards = new ArrayList<HeaderCard>();
-        for (HeaderCard hdrCard : headerCards)
-        {
-            String fitsKey = hdrCard.getKey();
-            /*
-             * if (HduTags.has(fitsKey)) { if
-             * (PlaneInfo.first6HTags.contains(HduTags
-             * .valueOf(fitsKey.toUpperCase()))) { planeCards.add(hdrCard); } }
-             */
-        }
+//        for (HeaderCard hdrCard : headerCards)
+//        {
+//            String fitsKey = hdrCard.getKey();
+//            /*
+//             * if (HduTags.has(fitsKey)) { if
+//             * (PlaneInfo.first6HTags.contains(HduTags
+//             * .valueOf(fitsKey.toUpperCase()))) { planeCards.add(hdrCard); } }
+//             */
+//        }
 
         NodeList docNodeList = doc
                 .getElementsByTagName("File_Area_Observational");

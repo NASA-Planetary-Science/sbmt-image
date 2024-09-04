@@ -80,7 +80,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 	private PopupMenu<G1> popupMenu;
 	IPositionOrientationManager<SmallBodyModel> positionOrientationManager;
 	private LegacyStatusHandler refStatusHandler;
-	private Renderer renderer;
+//	private Renderer renderer;
     private vtkPropPicker imagePicker;
 
 	public ImageSearchController(ImagingInstrumentConfig config, PerspectiveImageCollection<G1> collection,
@@ -95,7 +95,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 		this.collection.setImagingInstrument(instrument.orElse(null));
 		this.modelManager = modelManager;
 		this.instrument = instrument;
-		this.renderer = renderer;
+//		this.renderer = renderer;
 		imagePicker = new vtkPropPicker();
         imagePicker.PickFromListOn();
         imagePicker.InitializePickList();
@@ -103,7 +103,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
         smallBodyPickList.RemoveAllItems();
         instrument.ifPresent(inst -> {
         	this.imageSearchModel = new ImageSearchParametersModel(config, modelManager, renderer, instrument.orElse(null));
-			this.searchParametersController = new SpectralImageSearchParametersController(config, collection, imageSearchModel, modelManager, pickManager);
+			this.searchParametersController = new SpectralImageSearchParametersController<G1>(config, collection, imageSearchModel, modelManager, pickManager);
 			this.searchParametersController.setupSearchParametersPanel();
 		});
         pane = new JTabbedPane();
@@ -376,7 +376,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 				{
 		    		if (positionOrientationManager != null)
 		    			positionOrientationManager.run(TimeUtil.str2et(sdf.format(dt)));
-		        	String name = image.getName();
+//		        	String name = image.getName();
 //		        	image.propertyChange(new PropertyChangeEvent(this, Properties.MODEL_CHANGED, null, null));
 //		        	if (completionBlock != null) completionBlock.run();
 				}
@@ -392,6 +392,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initCustomGUI()
 	{
 		customPanel = new ImagingSearchPanel();
@@ -629,9 +630,10 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 
 	}
 
+	@SuppressWarnings("unused")
 	private void updateStatusBar(MouseEvent e)
 	{
-		int pickSucceeded = doPick(e, imagePicker, renderer.getRenderWindowPanel());
+//		int pickSucceeded = doPick(e, imagePicker, renderer.getRenderWindowPanel());
 //		if (pickSucceeded == 1)
 		{
 			double[] p = imagePicker.GetPickPosition();
@@ -641,6 +643,7 @@ public class ImageSearchController<G1 extends IPerspectiveImage & IPerspectiveIm
 		}
 	}
 
+	@SuppressWarnings("unused")
 	private int doPick(MouseEvent e, vtkPropPicker picker, vtkJoglPanelComponent renWin)
     {
         int pickSucceeded = 0;

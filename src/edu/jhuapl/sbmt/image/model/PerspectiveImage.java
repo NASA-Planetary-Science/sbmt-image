@@ -141,7 +141,8 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
     public float[] minValue = new float[1];
     public float[] maxValue = new float[1];
     private boolean loadPointingOnly;
-    private final boolean transposeFITSData;
+    @SuppressWarnings("unused")
+	private final boolean transposeFITSData;
     Stopwatch sw;
 
     PerspectiveImageBackplanesHelper backplanesHelper;
@@ -1406,9 +1407,12 @@ abstract public class PerspectiveImage extends Image implements PropertyChangeLi
     private static final Vector3D j = new Vector3D(0.0, 1.0, 0.0);
     private static final Vector3D k = new Vector3D(0.0, 0.0, 1.0);
 
-    private String targetName = null;
-    private String instrumentId = null;
-    private String filterName = null;
+    @SuppressWarnings("unused")
+	private String targetName = null;
+    @SuppressWarnings("unused")
+	private String instrumentId = null;
+    @SuppressWarnings("unused")
+	private String filterName = null;
     private String objectName = null;
 
     private String startTimeString = null;

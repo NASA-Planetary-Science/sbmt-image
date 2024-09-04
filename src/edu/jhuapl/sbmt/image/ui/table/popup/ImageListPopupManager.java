@@ -4,6 +4,8 @@ import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.saavtk.model.ModelManager;
 import edu.jhuapl.saavtk.model.ModelNames;
 import edu.jhuapl.saavtk.popup.PopupManager;
+import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
+import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.model.SbmtInfoWindowManager;
 import edu.jhuapl.sbmt.image.model.SbmtSpectralImageWindowManager;
@@ -15,14 +17,16 @@ import glum.gui.action.PopupMenu;
  */
 public class ImageListPopupManager extends PopupManager
 {
-	public ImageListPopupManager(ModelManager modelManager, SbmtInfoWindowManager infoPanelManager,
+	public <G1 extends IPerspectiveImage  & IPerspectiveImageTableRepresentable> ImageListPopupManager(ModelManager modelManager, SbmtInfoWindowManager infoPanelManager,
 			SbmtSpectralImageWindowManager spectrumPanelManager, Renderer renderer)
 	{
 		super(modelManager);
 
-		PerspectiveImageCollection imageCollection = (PerspectiveImageCollection) modelManager.getModel(ModelNames.IMAGES_V2);
-		PopupMenu popupMenu =
-        		new ImageListPopupMenu(modelManager, imageCollection, infoPanelManager,
+		@SuppressWarnings("unchecked")
+		PerspectiveImageCollection<G1> imageCollection = (PerspectiveImageCollection<G1>) modelManager.getModel(ModelNames.provide("IMAGES_V2"));
+		@SuppressWarnings("unused")
+		PopupMenu<G1> popupMenu =
+        		new ImageListPopupMenu<G1>(modelManager, imageCollection, infoPanelManager,
 						spectrumPanelManager, renderer, renderer);
 		//TODO FIX THIS
 //		registerPopup(modelManager.getModel(ModelNames.IMAGES_V2), popupMenu);

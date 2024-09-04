@@ -70,7 +70,8 @@ public class PerspectiveFootprint implements DataActor
     private double imageOffset;
     private vtkImageData displayedImage = null;
     private String preRenderedName = null;
-    private int imageWidth=0, imageHeight=0, imageDepth=0;
+    @SuppressWarnings("unused")
+	private int imageWidth=0, imageHeight=0, imageDepth=0;
     private ImageKeyInterface key = null;
     private vtkPolyDataMapper footprintMapper;
     private vtkPolyDataMapper boundaryMapper;
@@ -536,6 +537,7 @@ public class PerspectiveFootprint implements DataActor
         textureCoords.Delete();
 	}
 
+	@SuppressWarnings("unused")
 	private vtkPlaneCollection clipPlanes()
 	{
 		double[] top = new double[3];
@@ -910,7 +912,7 @@ public class PerspectiveFootprint implements DataActor
 	    double[] frustum3 = frus3[0];
 //	    double[] boresightDirection = new double[3];
 //	    double[] upVector = new double[3];
-	    PerspectiveImageMetadata image;
+//	    PerspectiveImageMetadata image;
 	    vtkPolyData emptyPolyData;
 	    double offset =0.003;
 

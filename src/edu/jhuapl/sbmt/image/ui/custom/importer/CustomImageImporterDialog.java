@@ -60,6 +60,7 @@ public class CustomImageImporterDialog<G1 extends IPerspectiveImage & IPerspecti
 	private boolean isEllipsoid;
 //	private BaseItemManager<G1> imageCollection;
 	private Optional<G1> existingImage;
+	@SuppressWarnings("unused")
 	private ImageType imageType = null;
 
 	public CustomImageImporterDialog(Window parent, boolean isEditMode, boolean isEllipsoid,
@@ -143,7 +144,8 @@ public class CustomImageImporterDialog<G1 extends IPerspectiveImage & IPerspecti
 	        String filename = file.getAbsolutePath();
 	        imagePathTextField.setText(filename);
 	        String imageFileName = file.getName();
-	        String extension = FilenameUtils.getExtension(imageFileName).toLowerCase();
+	        @SuppressWarnings("unused")
+			String extension = FilenameUtils.getExtension(imageFileName).toLowerCase();
 //	        if (extension.equals("fits") || extension.equals("fit"))
 //	        {
 //	        	imageTypeComboBox.setSelectedItem(instrument.getType());
@@ -397,6 +399,7 @@ public class CustomImageImporterDialog<G1 extends IPerspectiveImage & IPerspecti
 
 	private void storeImage()
 	{
+		@SuppressWarnings("unused")
 		String filename = imagePathTextField.getText();
 
 		existingImage.ifPresent(image -> {

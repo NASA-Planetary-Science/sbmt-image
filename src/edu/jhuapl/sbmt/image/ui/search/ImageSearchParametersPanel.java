@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.border.TitledBorder;
 
@@ -72,7 +71,7 @@ public class ImageSearchParametersPanel extends JPanel
     protected JScrollPane hierarchicalSearchScrollPane;
     private JButton clearRegionButton;
     private JButton clearResultsButton;
-    private JTextField textField;
+//    private JTextField textField;
     private JPanel auxPanel;
     private JRadioButton parametersRadioButton;
     private JRadioButton filenameRadioButton;

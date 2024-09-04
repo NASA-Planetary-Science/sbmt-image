@@ -29,7 +29,7 @@ import vtk.vtkImageData;
 
 public class OfflimbControlsController<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>
 {
-	OfflimbImageControlPanel controlsPanel;
+	OfflimbImageControlPanel<G1> controlsPanel;
 	PerspectiveImageCollection<G1> collection;
 	ImageContrastController contrastController;
 	G1 image;
@@ -68,7 +68,7 @@ public class OfflimbControlsController<G1 extends IPerspectiveImage & IPerspecti
 			}
 		});
 
-		controlsPanel = new OfflimbImageControlPanel();
+		controlsPanel = new OfflimbImageControlPanel<G1>();
 		controlsPanel.getShowOfflimbButton().setSelected(collection.getImageOfflimbShowing(image));
 		controlsPanel.getShowBoundaryButton().setSelected(collection.getOffLimbBoundaryShowing(image));
 
@@ -142,7 +142,7 @@ public class OfflimbControlsController<G1 extends IPerspectiveImage & IPerspecti
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Color currColor =  collection.getOffLimbBoundaryColor(image);
+//				Color currColor =  collection.getOffLimbBoundaryColor(image);
 				Color color = ColorChooser.showColorChooser(null, new int[] {0,0});
 				collection.setOffLimbBoundaryColor(image, color);
 			}

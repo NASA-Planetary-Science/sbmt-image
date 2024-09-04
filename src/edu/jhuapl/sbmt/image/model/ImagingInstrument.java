@@ -494,7 +494,7 @@ public class ImagingInstrument implements MetadataManager, IImagingInstrument
         return result;
     }
 
-    @Override
+    @Override 
     public boolean equals(Object obj)
     {
         if (this == obj)

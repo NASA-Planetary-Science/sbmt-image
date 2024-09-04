@@ -19,6 +19,7 @@ public class SaveBackplanesAction<G1 extends IPerspectiveImage & IPerspectiveIma
 	/**
 	 *
 	 */
+	@SuppressWarnings("unused")
 	private final PerspectiveImageCollection<G1> aManager;
 
 	/**
@@ -80,6 +81,7 @@ public class SaveBackplanesAction<G1 extends IPerspectiveImage & IPerspectiveIma
 				if (file != null)
 				{
 //	                    String imgName = file.getName();
+					@SuppressWarnings("unused")
 					File imgName = file;
 					String lblName = file.getAbsolutePath();
 					lblName = lblName.substring(0, lblName.length() - 4);
@@ -88,6 +90,7 @@ public class SaveBackplanesAction<G1 extends IPerspectiveImage & IPerspectiveIma
 //	                    else
 //	                        lblName += ".LBL";
 
+					@SuppressWarnings("unused")
 					File lblFile = new File(lblName);
 
 					//TODO FIX

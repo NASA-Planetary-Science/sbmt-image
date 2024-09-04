@@ -8,6 +8,7 @@ import glum.item.BaseItemManager;
 
 public class CustomImageImporterItemHandler<G1 extends IPerspectiveImage  & IPerspectiveImageTableRepresentable > extends BasicItemHandler<G1, CustomImageImporterColumnLookup>
 {
+	@SuppressWarnings("unused")
 	private final BaseItemManager<G1> imageCollection;
 
 	public CustomImageImporterItemHandler(BaseItemManager<G1> aManager, QueryComposer<CustomImageImporterColumnLookup> aComposer)

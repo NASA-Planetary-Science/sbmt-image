@@ -121,7 +121,8 @@ public class BasicPerspectiveImage extends PerspectiveImage
         return result;
     }
 
-    protected String getImagerPath(File imageFile)
+    @SuppressWarnings("deprecation")
+	protected String getImagerPath(File imageFile)
     {
         return getKey().getInstrument().getSearchQuery().getRootPath();
     }

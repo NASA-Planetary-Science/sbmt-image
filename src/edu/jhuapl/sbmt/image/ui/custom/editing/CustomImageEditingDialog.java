@@ -393,6 +393,7 @@ public class CustomImageEditingDialog<G1 extends IPerspectiveImage & IPerspectiv
 		return fillValuesController.getView();
 	}
 
+	@SuppressWarnings("unused")
 	private String checkForEnviFile(String imagePath, boolean isEnviSupported)
 	{
 		if (VtkENVIReader.isENVIFilename(imagePath))

@@ -119,10 +119,10 @@ public class BackPlanesXmlMeta
 //        private String srcFileName = "";
 //        private String creationDateTime = "";
         private Map<MetaField, String> metaStrings;
-        private long fileSize = 0;
-        private long numRecords1 = 0;
-        private long numRecords2 = 0;
-        private int tableOffset = 0;
+//        private long fileSize = 0;
+//        private long numRecords1 = 0;
+//        private long numRecords2 = 0;
+//        private int tableOffset = 0;
         private int lines = 0;
         private int samples = 0;
         private long headerSize = 0;

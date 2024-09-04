@@ -24,28 +24,43 @@ public class CompositePerspectiveImage implements IPerspectiveImage, IPerspectiv
 	private boolean boundaryShowing = false;
 	private String status = "Unloaded";
 	private int index;
+	@SuppressWarnings("unused")
 	private String filename;
+	@SuppressWarnings("unused")
 	private PointingSource pointingSourceType;
+	@SuppressWarnings("unused")
 	private String pointingSource;
+	@SuppressWarnings("unused")
 	private ImageType imageType;
+	@SuppressWarnings("unused")
 	private boolean simulateLighting = false;
 //	private double offset = -1.0;
 //	private double defaultOffset = -1.0;
 	private String name;
+	@SuppressWarnings("unused")
 	private double rotation = 0.0;
-    private String flip = "None";
+    @SuppressWarnings("unused")
+	private String flip = "None";
 	//Linear interpolation dimensions
+	@SuppressWarnings("unused")
 	private int[] linearInterpolatorDims = null;
+	@SuppressWarnings("unused")
 	private double et;
+	@SuppressWarnings("unused")
 	private Long longTime;
 
 	//fill values
+	@SuppressWarnings("unused")
 	private double[] fillValues = new double[] {};
 
 	//masking
+	@SuppressWarnings("unused")
 	private int[] maskValues = new int[] {0, 0, 0, 0};
+	@SuppressWarnings("unused")
 	private int[] autoMaskValues = new int[] {0, 0, 0, 0};
+	@SuppressWarnings("unused")
 	private boolean useAutoMask = false;
+	@SuppressWarnings("unused")
 	private CylindricalBounds bounds = null;
 
 	private static final Key<List<IPerspectiveImage>> IMAGES_KEY = Key.of("images");

@@ -179,6 +179,7 @@ public class CustomImageImporterDialog2<G1 extends IPerspectiveImage & IPerspect
 //		}
 	}
 
+	@SuppressWarnings("deprecation")
 	private JPanel buildImageTypeInput()
 	{
 		JPanel panel = new JPanel();
@@ -299,6 +300,7 @@ public class CustomImageImporterDialog2<G1 extends IPerspectiveImage & IPerspect
 		return storeImage(filename, newFilepath, pointingSourceType, newPointingFilepath, "");
 	}
 
+	@SuppressWarnings("unchecked")
 	private G1 storeImage(String filename, String newFilepath, PointingSource pointingSourceType, String newPointingFilepath, String flip)
 	{
 		ImageType imageType = (ImageType)imageTypeComboBox.getSelectedItem();

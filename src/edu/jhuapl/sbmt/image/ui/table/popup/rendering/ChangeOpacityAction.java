@@ -18,19 +18,20 @@ import javax.swing.event.ChangeListener;
 
 import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
+import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import glum.gui.action.PopAction;
 import net.miginfocom.swing.MigLayout;
 
-public class ChangeOpacityAction<G1 extends IPerspectiveImage> extends PopAction<G1>
+public class ChangeOpacityAction<G1 extends IPerspectiveImage  & IPerspectiveImageTableRepresentable> extends PopAction<G1>
 {
-    private PerspectiveImageCollection aManager;
+    private PerspectiveImageCollection<G1> aManager;
     private final Renderer renderer;
 
 	/**
 	 * @param imagePopupMenu
 	 */
-	public ChangeOpacityAction(PerspectiveImageCollection aManager, Renderer renderer)
+	public ChangeOpacityAction(PerspectiveImageCollection<G1> aManager, Renderer renderer)
 	{
 		this.aManager = aManager;
 		this.renderer = renderer;
@@ -43,20 +44,20 @@ public class ChangeOpacityAction<G1 extends IPerspectiveImage> extends PopAction
 		if (aItemL.size() != 1)
 			return;
 
-		ImageOpacityChanger opacityChanger = new ImageOpacityChanger(aManager);
+		ImageOpacityChanger<G1> opacityChanger = new ImageOpacityChanger<G1>(aManager);
         opacityChanger.setLocationRelativeTo(renderer);
         opacityChanger.setVisible(true);
 	}
 }
 
-class ImageOpacityChanger extends JDialog implements ChangeListener
+class ImageOpacityChanger<G1 extends IPerspectiveImage  & IPerspectiveImageTableRepresentable> extends JDialog implements ChangeListener
 {
     private JLabel opacityLabel;
     private JSpinner opacitySpinner;
     private JButton btnNewButton;
-    PerspectiveImageCollection aManager;
+    PerspectiveImageCollection<G1> aManager;
 
-    public ImageOpacityChanger(PerspectiveImageCollection aManager)
+    public ImageOpacityChanger(PerspectiveImageCollection<G1> aManager)
     {
     	this.aManager = aManager;
 

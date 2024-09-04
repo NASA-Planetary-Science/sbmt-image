@@ -2,10 +2,10 @@
 <classpath>
 	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src">
 		<attributes>
-			<attribute name="optional" value="true"/>
 			<attribute name="maven.pomderived" value="true"/>
+			<attribute name="optional" value="true"/>
 		</attributes>
-	</classpathentry>
+	</classpathentry> 
 	<classpathentry kind="src" output="target/test-classes" path="test">
 		<attributes>
 			<attribute name="optional" value="true"/>

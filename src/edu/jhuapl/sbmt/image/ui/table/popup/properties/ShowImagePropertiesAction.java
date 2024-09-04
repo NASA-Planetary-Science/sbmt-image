@@ -79,6 +79,7 @@ public class ShowImagePropertiesAction<G1 extends IPerspectiveImage & IPerspecti
 			if (image.getPointingSourceType() == PointingSource.LOCAL_CYLINDRICAL)
 			{
 				CylindricalImageToRenderableImagePipeline pipeline = CylindricalImageToRenderableImagePipeline.of(List.of(aItemL.get(0)));
+				@SuppressWarnings("unused")
 				List<HashMap<String, String>> metadata = pipeline.getMetadata();
 				List<IRenderableImage> renderableImages = pipeline.getRenderableImages();
 				boolean invertY = false;
@@ -102,6 +103,7 @@ public class ShowImagePropertiesAction<G1 extends IPerspectiveImage & IPerspecti
 			{
 				if (image.getNumberOfLayers() == 3)
 				{
+					@SuppressWarnings("unchecked")
 					Pair<vtkImageData, vtkPolyData>[] imageAndPolyData = new Pair[1];
 
 					Just.of(image.getImages())

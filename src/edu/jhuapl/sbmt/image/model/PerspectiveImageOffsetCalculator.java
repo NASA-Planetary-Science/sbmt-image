@@ -257,7 +257,7 @@ class PerspectiveImageOffsetCalculator
         double height = (double) image.getImageHeight();
         if (targetPixelCoordinates[0] == Double.MAX_VALUE || targetPixelCoordinates[1] == Double.MAX_VALUE)
         {
-            targetPixelCoordinates = image.getPixelFromPoint(image.bodyOrigin);
+            targetPixelCoordinates = image.getPixelFromPoint(PerspectiveImage.bodyOrigin);
             targetPixelCoordinates[0] = height - 1 - targetPixelCoordinates[0];
         }
 

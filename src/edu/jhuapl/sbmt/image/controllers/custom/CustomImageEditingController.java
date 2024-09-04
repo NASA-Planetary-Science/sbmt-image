@@ -19,8 +19,6 @@ import javax.swing.SwingUtilities;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import com.beust.jcommander.internal.Lists;
-
 import edu.jhuapl.saavtk.gui.dialog.CustomFileChooser;
 import edu.jhuapl.saavtk.util.IntensityRange;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
@@ -31,7 +29,6 @@ import edu.jhuapl.sbmt.image.interfaces.IImagingInstrument;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.CylindricalBounds;
-import edu.jhuapl.sbmt.image.model.ImageType;
 import edu.jhuapl.sbmt.image.model.Orientation;
 import edu.jhuapl.sbmt.image.pipelineComponents.operators.rendering.vtk.VtkImageRendererOperator;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.io.IPerspectiveImageToLayerAndMetadataPipeline;
@@ -53,9 +50,9 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 {
 	CustomImageEditingDialog<G1> dialog;
 	private G1 existingImage;
-	private boolean isPerspective;
-	private ImageType imageType = null;
-	private List<Layer> layers = Lists.newArrayList();
+//	private boolean isPerspective;
+//	private ImageType imageType = null;
+//	private List<Layer> layers = Lists.newArrayList();
 	private Layer layer;
 
 	private vtkJoglPanelComponent renWin;
@@ -75,7 +72,7 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 		this.existingImage = existingImage;
 		this.isEllipsoid = isEllipsoid;
 		this.completionBlock = completionBlock;
-		this.isPerspective = isPerspective;
+//		this.isPerspective = isPerspective;
 		this.instrument = instrument;
 
 		if (!existingImage.getPointingSource().equals("FILE NOT FOUND"))
@@ -468,7 +465,7 @@ public class CustomImageEditingController<G1 extends IPerspectiveImage & IPerspe
 
 	private void storeImage()
 	{
-		imageType = existingImage.getImageType();
+//		imageType = existingImage.getImageType();
 		existingImage.setName(dialog.getImageNameTextField().getText());
 		existingImage.setFilename(dialog.getImagePathTextField().getText());
 		if (dialog.getPointingTypeComboBox().getSelectedItem().equals("Perspective Projection"))

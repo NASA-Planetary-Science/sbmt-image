@@ -36,8 +36,8 @@ public class ImageMaskController
 	private JPanel panel;
 	private VtkImageMaskPipeline maskPipeline;
 	private Function<Pair<Layer, int[]>, Void> completionBlock;
-	private int[] currentMaskValues;
-	private int leftMask = 0, rightMask = 0, topMask = 0, bottomMask = 0;
+//	private int[] currentMaskValues;
+//	private int leftMask = 0, rightMask = 0, topMask = 0, bottomMask = 0;
 	private JButton applyButton;
 	private boolean showApplyButton = false;
 	private boolean applyImmediately = true;
@@ -54,7 +54,7 @@ public class ImageMaskController
 		this.maskPipeline = new VtkImageMaskPipeline();
 		this.panel = new JPanel();
 		this.completionBlock = completionBlock;
-		this.currentMaskValues = currentMaskValues;
+//		this.currentMaskValues = currentMaskValues;
 		panel.setLayout(new GridBagLayout());
 		initGUI();
 	}

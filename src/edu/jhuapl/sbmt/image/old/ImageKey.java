@@ -58,7 +58,8 @@ public class ImageKey implements ImageKeyInterface, StorableAsMetadata<ImageKey>
         this(name, source, null, null, instrument, null, 0, null);
     }
 
-    public ImageKey(String name, PointingSource source, FileType fileType, ImageType imageType, IImagingInstrument instrument, String band, int slice, String pointingFile)
+    @SuppressWarnings("deprecation")
+	public ImageKey(String name, PointingSource source, FileType fileType, ImageType imageType, IImagingInstrument instrument, String band, int slice, String pointingFile)
     {
         Preconditions.checkNotNull(name);
         Preconditions.checkNotNull(source);
@@ -172,6 +173,7 @@ public class ImageKey implements ImageKeyInterface, StorableAsMetadata<ImageKey>
         return result;
     }
 
+	@SuppressWarnings("deprecation")
 	public static void initializeSerializationProxy()
 	{
 		InstanceGetter.defaultInstanceGetter().register(IMAGE_KEY, (metadata) -> {

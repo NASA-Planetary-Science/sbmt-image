@@ -12,12 +12,12 @@ public class HideImageAction<G1 extends IPerspectiveImage & IPerspectiveImageTab
     /**
 	 *
 	 */
-	private final PerspectiveImageCollection aManager;
+	private final PerspectiveImageCollection<G1> aManager;
 
 	/**
 	 * @param imagePopupMenu
 	 */
-	public HideImageAction(PerspectiveImageCollection aManager)
+	public HideImageAction(PerspectiveImageCollection<G1> aManager)
 	{
 		this.aManager = aManager;
 	}

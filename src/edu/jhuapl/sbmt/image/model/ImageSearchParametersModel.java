@@ -510,7 +510,8 @@ public class ImageSearchParametersModel implements Model, MetadataManager
         return outputArrayList;
     }
 
-    private List<List<String>> inputFormatToList(List<String[]> inputArrayList)
+    @SuppressWarnings({ "deprecation", "unused" })
+	private List<List<String>> inputFormatToList(List<String[]> inputArrayList)
     {
         // In case there is an exception when reading the time from the input file.
         String now = String.valueOf(new Date().getTime());

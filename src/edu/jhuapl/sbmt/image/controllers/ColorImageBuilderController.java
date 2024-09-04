@@ -27,18 +27,19 @@ import vtk.vtkActor;
 
 public class ColorImageBuilderController<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable>
 {
-	ColorImageBuilderPanel panel;
+	ColorImageBuilderPanel<G1> panel;
 	PerspectiveImageCollection<G1> imageCollection;
 	Optional<G1> existingImage;
 
 	public ColorImageBuilderController(List<SmallBodyModel> smallBodyModels, PerspectiveImageCollection<G1> imageCollection, Optional<G1> existingImage)
 	{
 		this.existingImage = existingImage;
-		this.panel = new ColorImageBuilderPanel(smallBodyModels);
+		this.panel = new ColorImageBuilderPanel<G1>(smallBodyModels);
 		this.imageCollection = imageCollection;
 		initGUI(smallBodyModels);
 	}
 
+	@SuppressWarnings("unchecked")
 	private void initGUI(List<SmallBodyModel> smallBodyModels)
 	{
 		panel.getPreviewButton().addActionListener(e -> {

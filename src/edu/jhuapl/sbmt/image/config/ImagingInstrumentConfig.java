@@ -28,6 +28,7 @@ import edu.jhuapl.sbmt.image.query.ImageDataQuery;
 import edu.jhuapl.sbmt.query.v2.DataQuerySourcesMetadata;
 import edu.jhuapl.sbmt.query.v2.IDataQuery;
 
+@SuppressWarnings("deprecation")
 public class ImagingInstrumentConfig implements IFeatureConfig
 {
 	public Date imageSearchDefaultStartDate;
@@ -39,9 +40,11 @@ public class ImagingInstrumentConfig implements IFeatureConfig
 	public boolean hasHierarchicalImageSearch = false;
 	public List<ImagingInstrument> imagingInstruments = null;
 	public HierarchicalSearchSpecification hierarchicalImageSearchSpecification;
+	@SuppressWarnings("unused")
 	private List<ImageKeyInterface> imageMapKeys = null;
 	public boolean hasImageMap = false;
 	public String rootDirOnServer = "";
+	@SuppressWarnings("unused")
 	private BodyViewConfig config;
 
 	// put these in an interface?
@@ -63,6 +66,7 @@ public class ImagingInstrumentConfig implements IFeatureConfig
 	}
 
 	// Imaging instrument helper methods.
+	@SuppressWarnings("unused")
 	private static ImagingInstrument setupImagingInstrument(SBMTBodyConfiguration bodyConfig,
 			ShapeModelConfiguration modelConfig, Instrument instrument, PointingSource[] pointingSources,
 			ImageType imageType)
@@ -79,6 +83,7 @@ public class ImagingInstrumentConfig implements IFeatureConfig
 				imageType);
 	}
 
+	@SuppressWarnings("unused")
 	private static ImagingInstrument setupImagingInstrument(SBMTBodyConfiguration bodyConfig,
 			ShapeModelConfiguration modelConfig, Instrument instrument, IDataQuery queryBase,
 			PointingSource[] imageSources, ImageType imageType)
