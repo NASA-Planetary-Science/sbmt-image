@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.jhuapl.ses.srn.sbmt</groupId>
   <artifactId>sbmt-image</artifactId>
-  <version>1.2.5-b1-SNAPSHOT</version>
+  <version>1.2.5-b2-SNAPSHOT</version>
   <name>sbmt-image</name>
   <description>SBMT Image library</description>
   <packaging>jar</packaging>
@@ -33,9 +33,9 @@
 		<version>1.82</version>
 	</dependency>
 	<dependency>
-		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>
+		<groupId>edu.jhuapl.ses.sbmt</groupId>
 		<artifactId>sbmt-layer</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.0</version>
 	</dependency>
 	<dependency>
 		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>
@@ -45,7 +45,7 @@
 	<dependency>
 		<groupId>edu.jhuapl.ses.srn.sbmt</groupId>
 		<artifactId>sbmt-util</artifactId>
-		<version>1.0.10</version>
+		<version>1.0.11</version>
 	</dependency>
   </dependencies>
   <build>
