@@ -40,6 +40,8 @@ public interface IImagingInstrument
 
     Instrument getInstrumentName();
 
+    String getLabel();
+
     FillDetector<Float> getFillDetector(Image image);
 
     int[] getLinearInterpolationDims();
