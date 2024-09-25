@@ -23,7 +23,7 @@ public class ImageListPopupManager extends PopupManager
 		super(modelManager);
 
 		@SuppressWarnings("unchecked")
-		PerspectiveImageCollection<G1> imageCollection = (PerspectiveImageCollection<G1>) modelManager.getModel(ModelNames.provide("IMAGES_V2"));
+		PerspectiveImageCollection<G1> imageCollection = (PerspectiveImageCollection<G1>) modelManager.getModel(ModelNames.IMAGES_V2);
 		@SuppressWarnings("unused")
 		PopupMenu<G1> popupMenu =
         		new ImageListPopupMenu<G1>(modelManager, imageCollection, infoPanelManager,
