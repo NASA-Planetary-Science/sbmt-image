@@ -128,6 +128,7 @@ public class RendererPreviewPanel2 extends ModelInfoWindow implements MouseListe
 		//*************************
 		//zip the sources together
 		//*************************
+		@SuppressWarnings("unused")
 		IPipelinePublisher<Pair<SmallBodyModel, RenderablePointedImage>> sceneObjects = Publishers.formPair(Just.of(updatedBodies), Just.of(renderableImages));
 
 //		//***************************************************************************

@@ -21,12 +21,12 @@ import glum.gui.action.PopAction;
 public class BoundaryColorAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>
 {
 
-	private PerspectiveImageCollection aManager;
+	private PerspectiveImageCollection<G1> aManager;
 
 	// State vars
 		private Map<JMenuItem, PopAction<G1>> actionM;
 
-    public BoundaryColorAction(PerspectiveImageCollection aManager, Component aParent, JMenu aMenu)
+    public BoundaryColorAction(PerspectiveImageCollection<G1> aManager, Component aParent, JMenu aMenu)
     {
     	this.aManager = aManager;
 
@@ -60,13 +60,13 @@ public class BoundaryColorAction<G1 extends IPerspectiveImage & IPerspectiveImag
 		if (aItemL.size() == 0)
 			return;
 
-		for (IPerspectiveImage aItem : aItemL)
-		{
-//			aManager.setImageBoundaryColor(aItem, color);
-			//TODO FIX THIS
-//			PerspectiveImageBoundary boundary = this.imagePopupMenu.imageBoundaryCollection.getBoundary(imageKey);
-//            boundary.setBoundaryColor(color);
-		}
+//		for (IPerspectiveImage aItem : aItemL)
+//		{
+////			aManager.setImageBoundaryColor(aItem, color);
+//			//TODO FIX THIS
+////			PerspectiveImageBoundary boundary = this.imagePopupMenu.imageBoundaryCollection.getBoundary(imageKey);
+////            boundary.setBoundaryColor(color);
+//		}
 	}
 
     @Override
@@ -74,6 +74,7 @@ public class BoundaryColorAction<G1 extends IPerspectiveImage & IPerspectiveImag
 	{
 		super.setChosenItems(aItemC, aAssocMI);
 		// Determine if all selected items have the same (custom) color
+		@SuppressWarnings("unchecked")
 		Color initColor = aManager.getImageBoundaryColor((G1)aItemC.toArray()[0]);
 		boolean isSameCustomColor = true;
 		for (G1 aItem : aItemC)

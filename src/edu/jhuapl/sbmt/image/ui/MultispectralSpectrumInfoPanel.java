@@ -39,7 +39,8 @@ public class MultispectralSpectrumInfoPanel extends ModelInfoWindow implements P
     private PerspectiveImage perspectiveImage;
     private XYSeriesCollection xyDataset;
     private int nsegments;
-    private PopupMenu spectralImagesPopupMenu;
+    @SuppressWarnings("unused")
+	private PopupMenu spectralImagesPopupMenu;
 
     public MultispectralSpectrumInfoPanel(PerspectiveImage perspectiveImage, ModelManager modelManager, PopupMenu spectralImagesPopupMenu)
     {

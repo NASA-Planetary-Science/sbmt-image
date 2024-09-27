@@ -30,7 +30,6 @@ import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import edu.jhuapl.saavtk.gui.ModelInfoWindow;
@@ -232,7 +231,6 @@ public class LayerPreviewPanelOld<G1 extends IPerspectiveImage & IPerspectiveIma
 		return null; //imageCollection;
 	}
 
-	@SuppressWarnings("unchecked")
 	private void initComponents()
 	{
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
@@ -289,7 +287,7 @@ public class LayerPreviewPanelOld<G1 extends IPerspectiveImage & IPerspectiveIma
 			else
 				for (int i=0; i<5; i++)
 				{
-					String paddedIndex = StringUtils.leftPad(""+(i+1), 2);
+//					String paddedIndex = StringUtils.leftPad(""+(i+1), 2);
 					layerNames[i] = "PLANE" + (i+1);
 				}
 			layerComboBox = new JComboBox<String>(layerNames);

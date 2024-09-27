@@ -16,11 +16,12 @@ import edu.jhuapl.sbmt.image.pipelineComponents.subscribers.preview.VtkRendererP
 
 public class ColorImageBuilderPanel<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends JPanel
 {
+	@SuppressWarnings("unused")
 	private List<SmallBodyModel> smallBodyModels;
 	private JPanel previewPanel;
-	private SingleImagePreviewPanel redPreview;
-	private SingleImagePreviewPanel greenPreview;
-	private SingleImagePreviewPanel bluePreview;
+	private SingleImagePreviewPanel<G1> redPreview;
+	private SingleImagePreviewPanel<G1> greenPreview;
+	private SingleImagePreviewPanel<G1> bluePreview;
 	private JButton saveAndCloseButton;
 	private JButton previewButton;
 	private JButton cancelButton;
@@ -29,9 +30,9 @@ public class ColorImageBuilderPanel<G1 extends IPerspectiveImage & IPerspectiveI
 	public ColorImageBuilderPanel(List<SmallBodyModel> smallBodyModels)
 	{
 		this.smallBodyModels = smallBodyModels;
-		redPreview = new SingleImagePreviewPanel("Red Image", s ->  { this.redComplete = redPreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); });
-		greenPreview = new SingleImagePreviewPanel("Green Image", s -> { this.greenComplete = greenPreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); } );
-		bluePreview = new SingleImagePreviewPanel("Blue Image", s ->   { this.blueComplete = bluePreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); } );
+		redPreview = new SingleImagePreviewPanel<G1>("Red Image", s ->  { this.redComplete = redPreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); });
+		greenPreview = new SingleImagePreviewPanel<G1>("Green Image", s -> { this.greenComplete = greenPreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); } );
+		bluePreview = new SingleImagePreviewPanel<G1>("Blue Image", s ->   { this.blueComplete = bluePreview.getPerspectiveImage() != null ? true : false; checkForButtonStatus(); } );
 		initGUI();
 	}
 

@@ -20,7 +20,7 @@ public class ExportAction<G1 extends IPerspectiveImage & IPerspectiveImageTableR
 	// State vars
 	private Map<JMenuItem, PopAction<G1>> actionM;
 
-	public ExportAction(PerspectiveImageCollection aManager, Component aParent, JMenu aMenu)
+	public ExportAction(PerspectiveImageCollection<G1> aManager, Component aParent, JMenu aMenu)
 	{
 		actionM = new HashMap<>();
 

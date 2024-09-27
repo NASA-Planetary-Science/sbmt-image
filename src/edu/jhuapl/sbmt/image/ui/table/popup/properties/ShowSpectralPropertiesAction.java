@@ -13,8 +13,10 @@ public class ShowSpectralPropertiesAction<G1 extends IPerspectiveImage & IPerspe
     /**
 	 *
 	 */
+	@SuppressWarnings("unused")
 	private final PerspectiveImageCollection<G1> aManager;
 
+	@SuppressWarnings("unused")
 	private final SbmtSpectralImageWindowManager spectrumPanelManager;
 
 	/**
@@ -33,11 +35,11 @@ public class ShowSpectralPropertiesAction<G1 extends IPerspectiveImage & IPerspe
 		if (aItemL.size() != 1)
 			return;
 
-		for (IPerspectiveImage aItem : aItemL)
-		{
-			//TODO make only valid for images with nLayers > 1 (spectra-type)
-//			spectrumPanelManager.addData(aItem);
-		}
+//		for (IPerspectiveImage aItem : aItemL)
+//		{
+//			//TODO make only valid for images with nLayers > 1 (spectra-type)
+////			spectrumPanelManager.addData(aItem);
+//		}
 	}
 
 //	public void actionPerformed(ActionEvent e)

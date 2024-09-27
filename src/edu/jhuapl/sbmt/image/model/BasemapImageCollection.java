@@ -15,7 +15,6 @@ import javax.swing.SwingUtilities;
 
 import com.beust.jcommander.internal.Lists;
 
-import edu.jhuapl.saavtk.model.FileType;
 import edu.jhuapl.saavtk.model.SaavtkItemManager;
 import edu.jhuapl.saavtk.util.FileCache;
 import edu.jhuapl.saavtk.util.IntensityRange;
@@ -40,10 +39,10 @@ public class BasemapImageCollection<G1 extends IPerspectiveImage & IPerspectiveI
 {
 	private List<SmallBodyModel> smallBodyModels;
 	private HashMap<G1, List<vtkActor>> imageRenderers;
-	private HashMap<G1, PerspectiveImageRenderingState<G1>> renderingStates;
+	private HashMap<G1, PerspectiveImageRenderingState> renderingStates;
 	private static ExecutorService executor = Executors.newCachedThreadPool();
 
-	class PerspectiveImageRenderingState<G1>
+	class PerspectiveImageRenderingState
 	{
 		boolean isMapped = false;
 		boolean isFrustumShowing = false;
@@ -62,7 +61,7 @@ public class BasemapImageCollection<G1 extends IPerspectiveImage & IPerspectiveI
 	public BasemapImageCollection(List<SmallBodyModel> smallBodyModels)
 	{
 		this.imageRenderers = new HashMap<G1, List<vtkActor>>();
-		this.renderingStates = new HashMap<G1, PerspectiveImageRenderingState<G1>>();
+		this.renderingStates = new HashMap<G1, PerspectiveImageRenderingState>();
 		this.smallBodyModels = smallBodyModels;
 	}
 
@@ -93,7 +92,8 @@ public class BasemapImageCollection<G1 extends IPerspectiveImage & IPerspectiveI
         return null;
     }
 
-    public G1 addImage(BasemapImage image)
+    @SuppressWarnings("unchecked")
+	public G1 addImage(BasemapImage image)
     {
     	Optional<G1> existing = getAllItems().stream().filter(existingImage -> existingImage.getName() == image.getImageName()).findFirst();
     	if (existing.isPresent()) return existing.get();
@@ -106,7 +106,7 @@ public class BasemapImageCollection<G1 extends IPerspectiveImage & IPerspectiveI
     	double[] fillValues = new double[] {};
     	ImageRotation rotation = image.getRotation();
     	ImageFlip flip = image.getFlip();
-    	FileType fileType = image.getPointingFileType();
+//    	FileType fileType = image.getPointingFileType();
     	String pointingFileName = "";
     	if (image.getPointingFileName() != null && !image.getPointingFileName().contains("null"))
     	{
@@ -128,7 +128,7 @@ public class BasemapImageCollection<G1 extends IPerspectiveImage & IPerspectiveI
 		compImage.setName(image.getImageName());
 		allImages.add((G1)compImage);
     	setAllItems(allImages);
-		PerspectiveImageRenderingState<G1> state = new PerspectiveImageRenderingState<G1>();
+		PerspectiveImageRenderingState state = new PerspectiveImageRenderingState();
 		renderingStates.put((G1)compImage,state);
 
 		return (G1)compImage;
@@ -148,7 +148,7 @@ public class BasemapImageCollection<G1 extends IPerspectiveImage & IPerspectiveI
 		for (G1 image : images)
 		{
 			if (renderingStates.get(image) != null) continue;
-			PerspectiveImageRenderingState<G1> state = new PerspectiveImageRenderingState<G1>();
+			PerspectiveImageRenderingState state = new PerspectiveImageRenderingState();
 			renderingStates.put(image,state);
 		}
 	}
@@ -338,7 +338,7 @@ public class BasemapImageCollection<G1 extends IPerspectiveImage & IPerspectiveI
 			{
 				if (image.getImageType() != ImageType.GENERIC_IMAGE)
 				{
-					pipeline = new RenderablePointedImageToScenePipeline(image, smallBodyModels);
+					pipeline = new RenderablePointedImageToScenePipeline<G1>(image, smallBodyModels);
 
 				}
 				else

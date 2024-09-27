@@ -41,6 +41,7 @@ public class CustomImageImporterTableView<G1 extends IPerspectiveImage & IPerspe
 	private String type = "Perspective Projection";
 	private JScrollPane scrollPane;
 
+	@SuppressWarnings("unused")
 	private PopupMenu<G1> popupMenu;
 
 	public CustomImageImporterTableView(BaseItemManager<G1> collection, PopupMenu<G1> popupMenu)

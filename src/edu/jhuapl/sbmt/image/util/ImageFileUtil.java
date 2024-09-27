@@ -46,7 +46,8 @@ public class ImageFileUtil
         Preconditions.checkNotNull(instrument);
         Preconditions.checkNotNull(imageSource);
 
-        String pointingRoot = instrument.getSearchQuery().getRootPath();
+        @SuppressWarnings("deprecation")
+		String pointingRoot = instrument.getSearchQuery().getRootPath();
         String pointingDir = String.join("/", pointingRoot, imageSource.getPointingDir());
         String pointingType = imageSource.getPointingType();
         String extension = "." + pointingType;

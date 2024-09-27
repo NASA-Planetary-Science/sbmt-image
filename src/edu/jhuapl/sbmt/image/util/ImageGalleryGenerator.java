@@ -162,7 +162,8 @@ public abstract class ImageGalleryGenerator
             return null;
         }
 
-        IDataQuery query = instrument.getSearchQuery();
+        @SuppressWarnings("deprecation")
+		IDataQuery query = instrument.getSearchQuery();
 
         if (query == null)
         {

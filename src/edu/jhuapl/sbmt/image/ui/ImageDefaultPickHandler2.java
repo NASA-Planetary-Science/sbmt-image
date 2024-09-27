@@ -34,6 +34,7 @@ public class ImageDefaultPickHandler2 implements PickListener
 		refModelManager = aModelManager;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public void handlePickAction(InputEvent aEvent, PickMode aMode, PickTarget aPrimaryTarg, PickTarget aSurfaceTarg)
 	{

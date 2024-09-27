@@ -22,6 +22,7 @@ import glum.gui.action.PopAction;
 public class ShowHeadersAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>
 {
 	private MetadataPreview preview = null;
+	@SuppressWarnings("unused")
 	private PerspectiveImageCollection<G1> aManager;
 	private SmallBodyModel smallBodyModel;
 
@@ -49,6 +50,7 @@ public class ShowHeadersAction<G1 extends IPerspectiveImage & IPerspectiveImageT
 			if (image.getPointingSourceType() == PointingSource.LOCAL_CYLINDRICAL)
 			{
 				CylindricalImageToRenderableImagePipeline pipeline = CylindricalImageToRenderableImagePipeline.of(List.of(aItemL.get(0)));
+				@SuppressWarnings("unused")
 				List<HashMap<String, String>> metadata = pipeline.getMetadata();
 				List<HashMap<String, String>> metadatas = List.of(pipeline.getMetadata().get(0));
 				preview = new MetadataPreview("Metadata for " + image.getName());
@@ -77,6 +79,7 @@ public class ShowHeadersAction<G1 extends IPerspectiveImage & IPerspectiveImageT
 				{
 					PerspectiveImageToRenderableImagePipeline pipeline = new PerspectiveImageToRenderableImagePipeline(List.of(aItemL.get(0)));
 					List<IRenderableImage> renderableImages = pipeline.getRenderableImages();
+					@SuppressWarnings("unused")
 					List<HashMap<String, String>> metadata = pipeline.getMetadata();
 					HashMap<String, String> derivedMetadata = new PerspectiveImageToDerivedMetadataPipeline(renderableImages.get(0), List.of(smallBodyModel)).getMetadata();
 					List<HashMap<String, String>> metadatas = List.of(pipeline.getMetadata().get(0), derivedMetadata);

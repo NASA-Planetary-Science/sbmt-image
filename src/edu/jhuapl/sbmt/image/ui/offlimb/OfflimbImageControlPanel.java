@@ -10,30 +10,34 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
+import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 
 
-public class OfflimbImageControlPanel extends JPanel
+
+public class OfflimbImageControlPanel<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends JPanel
 {
 
     private JLabel footprintDepthLabel;
     private JLabel footprintDepthValue;
-    private DepthSlider footprintDepthSlider;
+    private DepthSlider<G1> footprintDepthSlider;
 
     private JLabel footprintTransparencyLabel;
     private JLabel footprintTransparencyValue;
-    private AlphaSlider footprintTransparencySlider;
+    private AlphaSlider<G1> footprintTransparencySlider;
 
 //    private JLabel imageContrastLabel;
 //    private JLabel imageContrastValue;
 //    private ContrastSlider imageContrastSlider;
 
     private JCheckBox showOfflimbButton;
-    private ShowBoundaryButton showBoundaryButton;
+    private ShowBoundaryButton<G1> showBoundaryButton;
 //    private ColorChooser boundaryColorPicker;
     private JButton chooseBoundaryColorBtn;
-	private SyncContrastSlidersButton syncContrastButton;
+	private SyncContrastSlidersButton<G1> syncContrastButton;
 	private JButton resetButton;
 
+	@SuppressWarnings("unused")
 	private DecimalFormat formatter;
 
     public OfflimbImageControlPanel()
@@ -52,7 +56,7 @@ public class OfflimbImageControlPanel extends JPanel
         footprintDepthValue = new JLabel(" 0");
         depthPanel.add(footprintDepthValue);
 
-        footprintDepthSlider = new DepthSlider();
+        footprintDepthSlider = new DepthSlider<G1>();
         footprintDepthSlider.setValue(0);
         depthPanel.add(footprintDepthSlider);
 
@@ -66,7 +70,7 @@ public class OfflimbImageControlPanel extends JPanel
         footprintTransparencyValue = new JLabel(" 50%");
         transparencyPanel.add(footprintTransparencyValue);
 
-        footprintTransparencySlider = new AlphaSlider();
+        footprintTransparencySlider = new AlphaSlider<G1>();
         footprintTransparencySlider.setValue(50);
         transparencyPanel.add(footprintTransparencySlider);
 
@@ -83,14 +87,14 @@ public class OfflimbImageControlPanel extends JPanel
 //        contrastPanel.add(imageContrastValue);
 
 //        imageContrastSlider = new ContrastSlider(image, false);
-        syncContrastButton = new SyncContrastSlidersButton();
+        syncContrastButton = new SyncContrastSlidersButton<G1>();
         syncContrastButton.setSelected(true);
 //        contrastPanel.add(imageContrastSlider);
 
 //        syncContrastButton = syncButton;
 //        buttonPanel.add(syncContrastButton);
 
-        showBoundaryButton = new ShowBoundaryButton();
+        showBoundaryButton = new ShowBoundaryButton<G1>();
         buttonPanel.add(showBoundaryButton);
 
         chooseBoundaryColorBtn = new JButton("Set Boundary Color");
@@ -133,7 +137,7 @@ public class OfflimbImageControlPanel extends JPanel
         return footprintDepthValue;
     }
 
-    public DepthSlider getFootprintDepthSlider()
+    public DepthSlider<G1> getFootprintDepthSlider()
     {
         return footprintDepthSlider;
     }
@@ -143,7 +147,7 @@ public class OfflimbImageControlPanel extends JPanel
         return footprintTransparencyValue;
     }
 
-    public AlphaSlider getFootprintTransparencySlider()
+    public AlphaSlider<G1> getFootprintTransparencySlider()
     {
         return footprintTransparencySlider;
     }
@@ -163,27 +167,27 @@ public class OfflimbImageControlPanel extends JPanel
         return showOfflimbButton;
     }
 
-    public ShowBoundaryButton getShowBoundaryButton()
+    public ShowBoundaryButton<G1> getShowBoundaryButton()
     {
         return showBoundaryButton;
     }
-    public SyncContrastSlidersButton getSyncContrastButton()
+    public SyncContrastSlidersButton<G1> getSyncContrastButton()
     {
         return syncContrastButton;
     }
 
-    public void setFootprintDepthSlider(DepthSlider footprintDepthSlider)
+    public void setFootprintDepthSlider(DepthSlider<G1> footprintDepthSlider)
     {
         this.footprintDepthSlider = footprintDepthSlider;
     }
 
     public void setFootprintTransparencySlider(
-            AlphaSlider footprintTransparencySlider)
+            AlphaSlider<G1> footprintTransparencySlider)
     {
         this.footprintTransparencySlider = footprintTransparencySlider;
     }
 
-    public void setShowBoundaryButton(ShowBoundaryButton showbounds)
+    public void setShowBoundaryButton(ShowBoundaryButton<G1> showbounds)
     {
         this.showBoundaryButton = showbounds;
     }

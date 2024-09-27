@@ -35,7 +35,7 @@ import edu.jhuapl.sbmt.pipeline.publisher.Just;
 import glum.gui.GuiUtil;
 
 
-public class SingleImagePreviewPanel extends JPanel
+public class SingleImagePreviewPanel<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends JPanel
 {
 	JTextField imageTextField;
 	JButton deleteImageButton;
@@ -159,7 +159,7 @@ public class SingleImagePreviewPanel extends JPanel
 		previewPanel.validate();
 	}
 
-	public class PerspectiveImageTransferHandler<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends TransferHandler {
+	public class PerspectiveImageTransferHandler extends TransferHandler {
 
         @Override
         public boolean canImport(TransferSupport support) {
@@ -172,7 +172,8 @@ public class SingleImagePreviewPanel extends JPanel
             if (canImport(support)) {
                 try {
                     Transferable t = support.getTransferable();
-                    G1 value = (G1)t.getTransferData(PerspectiveImageTransferable.PERSPECTIVE_IMAGE_DATA_FLAVOR);
+                    @SuppressWarnings("unchecked")
+					G1 value = (G1)t.getTransferData(PerspectiveImageTransferable.PERSPECTIVE_IMAGE_DATA_FLAVOR);
                     if (value instanceof G1) {
                         Component component = support.getComponent();
                         if (component instanceof JTextField) {

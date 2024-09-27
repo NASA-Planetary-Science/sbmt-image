@@ -14,11 +14,11 @@ import edu.jhuapl.saavtk.util.Properties;
 
 public class SbmtInfoWindowManager implements WindowManager, PropertyChangeListener
 {
-    static HashMap<Class, InfoWindowManagerBuilder<Model>> registeredPanels = new HashMap<Class, InfoWindowManagerBuilder<Model>>();
+    static HashMap<Class<?>, InfoWindowManagerBuilder<Model>> registeredPanels = new HashMap<Class<?>, InfoWindowManagerBuilder<Model>>();
 
     static HashMap<Model, ModelInfoWindow> activatedInfoPanels = new HashMap<Model, ModelInfoWindow>();
 
-    public static void registerInfoWindowManager(Class model, InfoWindowManagerBuilder<Model> builder)
+    public static void registerInfoWindowManager(Class<?> model, InfoWindowManagerBuilder<Model> builder)
     {
     	registeredPanels.put(model, builder);
     }

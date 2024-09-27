@@ -10,7 +10,7 @@ import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import glum.gui.panel.itemList.BasicItemHandler;
 import glum.gui.panel.itemList.query.QueryComposer;
 
-public class ImageListItemHandler<G1 extends IPerspectiveImage  & IPerspectiveImageTableRepresentable > extends BasicItemHandler<G1, ImageColumnLookup>
+public class ImageListItemHandler<G1 extends IPerspectiveImage  & IPerspectiveImageTableRepresentable> extends BasicItemHandler<G1, ImageColumnLookup>
 {
 	private final PerspectiveImageCollection<G1> imageCollection;
 
@@ -24,6 +24,7 @@ public class ImageListItemHandler<G1 extends IPerspectiveImage  & IPerspectiveIm
 	@Override
 	public Object getColumnValue(G1 image, ImageColumnLookup aEnum)
 	{
+		@SuppressWarnings("unused")
 		DecimalFormat formatter = new DecimalFormat("##.####");
 		switch (aEnum)
 		{

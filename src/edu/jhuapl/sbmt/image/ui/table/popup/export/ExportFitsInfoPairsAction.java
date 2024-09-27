@@ -67,7 +67,7 @@ public class ExportFitsInfoPairsAction<G1 extends IPerspectiveImage & IPerspecti
 //				file = CustomFileChooser.showSaveDialog(null, "Save Pointing file as...", defaultFileName + "." + defaultFileType);
 				file = new File(outDir, defaultFileName + "." + defaultFileType);
 
-				String filename = file.getAbsolutePath();
+//				String filename = file.getAbsolutePath();
 				//What is below was dumb.  Export the file from the cache instead.
 				//TODO for now, we don't have a good SUMFileWriter, so export things as INFO files.
 //				PerspectiveImageToRenderableImagePipeline pipeline = new PerspectiveImageToRenderableImagePipeline(List.of(aItem));

@@ -8,7 +8,6 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Date;
-import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -92,8 +91,8 @@ public class ImageListTableView<G1 extends IPerspectiveImage & IPerspectiveImage
 	// for table
 	private JButton selectAllB, selectInvertB, selectNoneB;
 	private PerspectiveImageCollection<G1> imageCollection;
-	private ItemListPanel<IPerspectiveImage> imageILP;
-	private ItemHandler<IPerspectiveImage> imageItemHandler;
+	private ItemListPanel<G1> imageILP;
+	private ItemHandler<G1> imageItemHandler;
 
 	private PopupMenu<G1> popupMenu;
 
@@ -160,7 +159,7 @@ public class ImageListTableView<G1 extends IPerspectiveImage & IPerspectiveImage
 			{
 				Object source = e.getSource();
 
-				List<G1> tmpL = imageCollection.getSelectedItems().asList();
+//				List<G1> tmpL = imageCollection.getSelectedItems().asList();
 				if (source == selectAllB)
 					ItemManagerUtil.selectAll(imageCollection);
 				else if (source == selectNoneB)
@@ -281,9 +280,9 @@ public class ImageListTableView<G1 extends IPerspectiveImage & IPerspectiveImage
 		tmpComposer.getItem(ImageColumnLookup.Filename).defaultSize *= 4;
 		tmpComposer.getItem(ImageColumnLookup.Date).defaultSize *= 2;
 
-		ImageListItemHandler imageItemHandler = new ImageListItemHandler(imageCollection, tmpComposer);
+		ImageListItemHandler<G1> imageItemHandler = new ImageListItemHandler<G1>(imageCollection, tmpComposer);
 		ItemProcessor<G1> tmpIP = imageCollection;
-		imageILP = new ItemListPanel<>(imageItemHandler, tmpIP, true);
+		imageILP = new ItemListPanel<G1>(imageItemHandler, tmpIP, true);
 		imageILP.setSortingEnabled(true);
 		JTable imageTable = imageILP.getTable();
 		imageTable.setDragEnabled(true);
@@ -308,7 +307,7 @@ public class ImageListTableView<G1 extends IPerspectiveImage & IPerspectiveImage
 		this.resultsLabel = resultsLabel;
 	}
 
-	public ItemHandler<IPerspectiveImage> getTableHandler()
+	public ItemHandler<G1> getTableHandler()
 	{
 		return imageItemHandler;
 	}
@@ -396,7 +395,7 @@ public class ImageListTableView<G1 extends IPerspectiveImage & IPerspectiveImage
 		return galleryButton;
 	}
 
-	public class PerspectiveImageTransferHandler<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends TransferHandler
+	public class PerspectiveImageTransferHandler extends TransferHandler
 	{
 
 		@Override

@@ -15,7 +15,8 @@ import glum.gui.action.PopAction;
 public class ShowOffLimbSettingsAction<G1 extends IPerspectiveImage & IPerspectiveImageTableRepresentable> extends PopAction<G1>
 {
 	private PerspectiveImageCollection<G1> aManager;
-	private OfflimbControlsController offlimbController;
+	private OfflimbControlsController<G1> offlimbController;
+	@SuppressWarnings("unused")
 	private JPanel offLimbPanel;
 
 	public ShowOffLimbSettingsAction(PerspectiveImageCollection<G1> aManager)
@@ -31,7 +32,7 @@ public class ShowOffLimbSettingsAction<G1 extends IPerspectiveImage & IPerspecti
 
 		try
 		{
-			offlimbController = new OfflimbControlsController(aManager, aItemL.get(0));
+			offlimbController = new OfflimbControlsController<G1>(aManager, aItemL.get(0));
 		}
 		catch (Exception e)
 		{

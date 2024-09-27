@@ -94,12 +94,12 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
 
     public void setupSearchParametersPanel()
     {
-        boolean showSourceLabelAndComboBox = true; //imageSources.length > 1 ? true : false;
+        boolean showSourceLabelAndComboBox = true; 
         panel.getSourceLabel().setVisible(showSourceLabelAndComboBox);
         panel.getSourceComboBox().setVisible(showSourceLabelAndComboBox);
 
         PointingSource imageSources[] = model.getInstrument().getSearchImageSources();
-        panel.getSourceComboBox().setModel(new DefaultComboBoxModel(imageSources));
+        panel.getSourceComboBox().setModel(new DefaultComboBoxModel<PointingSource>(imageSources));
 
         panel.getSourceComboBox().addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent evt) {
@@ -137,7 +137,7 @@ public class ImageSearchParametersController<G1 extends IPerspectiveImage & IPer
                 sourceComboBoxItemStateChanged(evt);
             }
         });
-        panel.getHasLimbComboBox().setModel(new DefaultComboBoxModel(new String[] { "with or without", "with only", "without only" }));
+        panel.getHasLimbComboBox().setModel(new DefaultComboBoxModel<String>(new String[] { "with or without", "with only", "without only" }));
 
         panel.getHasLimbComboBox().addItemListener(new ItemListener()
         {

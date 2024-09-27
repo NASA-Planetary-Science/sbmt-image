@@ -42,6 +42,7 @@ enum ImagePropertiesColumnLookup
 
 class ImagePropertiesItemHandler extends BasicItemHandler<ImageProperty, ImagePropertiesColumnLookup>
 {
+	@SuppressWarnings("unused")
 	private List<ImageProperty> properties;
 
 	public ImagePropertiesItemHandler(List<ImageProperty> properties, QueryComposer<ImagePropertiesColumnLookup> aComposer)

@@ -82,7 +82,7 @@ public class ImageDataQuery extends DatabaseDataQuery
         int limbType = metadata.get(ImageDatabaseSearchMetadata.HAS_LIMB);
         DateTime startDate = new DateTime(metadata.get(DatabaseSearchMetadata.START_DATE));
         DateTime stopDate = new DateTime(metadata.get(DatabaseSearchMetadata.STOP_DATE));
-        List<Integer> polygonTypes = metadata.get(DatabaseSearchMetadata.POLYGON_TYPES);
+//        List<Integer> polygonTypes = metadata.get(DatabaseSearchMetadata.POLYGON_TYPES);
         
         double minIncidence = Math.min(fromIncidence, toIncidence);
         double maxIncidence = Math.max(fromIncidence, toIncidence);
@@ -144,11 +144,11 @@ public class ImageDataQuery extends DatabaseDataQuery
             int numProducts = camerasSelectedArray.length;
 
             // Populate search parameters
-            args.put("numProducts", new Integer(numProducts).toString());
+            args.put("numProducts", Integer.valueOf(numProducts).toString());
             for(int i=0; i<numProducts; i++)
             {
-                args.put("cameraType"+i, new Integer(camerasSelectedArray[i]+1).toString());
-                args.put("filterType"+i, new Integer(filtersSelectedArray[i]+1).toString());
+                args.put("cameraType"+i, Integer.valueOf(camerasSelectedArray[i]+1).toString());
+                args.put("filterType"+i, Integer.valueOf(filtersSelectedArray[i]+1).toString());
             }
         }
         else

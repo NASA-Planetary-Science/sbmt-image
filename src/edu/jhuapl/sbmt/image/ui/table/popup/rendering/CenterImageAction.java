@@ -8,20 +8,22 @@ import edu.jhuapl.saavtk.gui.render.Renderer;
 import edu.jhuapl.sbmt.core.body.SmallBodyModel;
 import edu.jhuapl.sbmt.core.pointing.PointingSource;
 import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImage;
+import edu.jhuapl.sbmt.image.interfaces.IPerspectiveImageTableRepresentable;
 import edu.jhuapl.sbmt.image.model.PerspectiveImageCollection;
 import edu.jhuapl.sbmt.image.pipelineComponents.pipelines.rendering.PerspectiveImageCenterImagePipeline;
 import glum.gui.action.PopAction;
 
-public class CenterImageAction<G1 extends IPerspectiveImage> extends PopAction<G1>
+public class CenterImageAction<G1 extends IPerspectiveImage  & IPerspectiveImageTableRepresentable> extends PopAction<G1>
 {
-	private final PerspectiveImageCollection aManager;
+	@SuppressWarnings("unused")
+	private final PerspectiveImageCollection<G1> aManager;
 	private final Renderer renderer;
 	private final List<SmallBodyModel> smallBodyModels;
 
 	/**
 	 * @param imagePopupMenu
 	 */
-	public CenterImageAction(PerspectiveImageCollection aManager, Renderer renderer, List<SmallBodyModel> smallBodyModels)
+	public CenterImageAction(PerspectiveImageCollection<G1> aManager, Renderer renderer, List<SmallBodyModel> smallBodyModels)
 	{
 		this.aManager = aManager;
 		this.renderer = renderer;

@@ -264,6 +264,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 	 * @param info
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private G1 convertCustomImageKeyInterfaceToModern(CustomImageKeyInterface info)
 	{
 		PerspectiveImageMetadata image = null;
@@ -1097,6 +1098,7 @@ public class PerspectiveImageCollection<G1 extends IPerspectiveImage & IPerspect
 		}
 		else
 		{
+			@SuppressWarnings("deprecation")
 			ImmutableList<G1> filteredImages = ImmutableList.copyOf(imagesByInstrument.get(imagingInstrument).stream().filter(image -> image.getImageType() == imagingInstrument.getType()).toList());
 			setAllItems(filteredImages);
 		}

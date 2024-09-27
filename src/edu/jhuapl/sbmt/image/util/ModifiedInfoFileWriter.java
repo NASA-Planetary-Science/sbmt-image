@@ -90,6 +90,7 @@ public class ModifiedInfoFileWriter<G1 extends IPerspectiveImage & IPerspectiveI
 			out.write(String.format("%-22s= ( %16d , %16d )\n", OFFLIMB_DISPLAY_RANGE, image.getOfflimbIntensityRange().min,
 					image.getOfflimbIntensityRange().max));
 
+			@SuppressWarnings("unused")
 			boolean writeApplyAdustments = false;
 
 //			if (!flatten)
